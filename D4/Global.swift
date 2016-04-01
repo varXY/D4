@@ -29,6 +29,27 @@ var priceFormatter: NSNumberFormatter = {
 	return pf
 }()
 
+// 获取不重复随机数
+func getRandomNumbers(amount: Int, lessThan: Int) -> [Int] {
+	var result = [Int]()
+
+	if lessThan <= 1 {
+		result = [0]
+	} else {
+		repeat {
+			let range = UInt32(lessThan)
+			let number = Int(arc4random_uniform(range))
+			if let sameAtIndex = result.indexOf(number) {
+				result.removeAtIndex(sameAtIndex)
+			}
+			result.append(number)
+		} while result.count < amount
+	}
+
+	return result
+}
+
+
 // 延迟执行
 func delay(seconds seconds: Double, completion:()->()) {
 	let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64( Double(NSEC_PER_SEC) * seconds ))

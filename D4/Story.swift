@@ -10,6 +10,7 @@ import Foundation
 import AVOSCloud
 
 struct AVKey {
+	static let className = "Story"
 	static let sentences = "Sentences"
 	static let colors = "Colors"
 	static let rating = "Rating"
@@ -30,6 +31,14 @@ struct Story {
 		colors = object.objectForKey(AVKey.colors) as! [Int]
 		rating = object.objectForKey(AVKey.rating) as! Int
 		auther = object.objectForKey(AVKey.auther) as! String
+	}
+
+	init(sentences: [String], colors: [Int]) {
+		date = NSDate()
+		self.sentences = sentences
+		self.colors = colors
+		rating = 0
+		auther = "56fe08e479bc4400523bc0c3"
 	}
 
 }
