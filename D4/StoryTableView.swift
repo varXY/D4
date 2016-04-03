@@ -76,7 +76,7 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 extension StoryTableView: UIScrollViewDelegate {
 
 	func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-			let translation = scrollView.panGestureRecognizer.translationInView(scrollView.superview)
+			let translation = self.panGestureRecognizer.translationInView(self.superview)
 			if translation.y < -20 {
 				customDelegate?.storyTableViewDidScroll(.Down)
 			} else if translation.y > 20{

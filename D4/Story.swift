@@ -9,13 +9,6 @@
 import Foundation
 import AVOSCloud
 
-struct AVKey {
-	static let className = "Story"
-	static let sentences = "Sentences"
-	static let colors = "Colors"
-	static let rating = "Rating"
-	static let auther = "Auther"
-}
 
 struct Story {
 

@@ -15,6 +15,8 @@ let ScreenWidth = ScreenBounds.width
 let ScreenHeight = ScreenBounds.height
 let BarHeight = UIApplication.sharedApplication().statusBarFrame.height
 
+let TriggerDistance: CGFloat = 80
+
 // 日期和数字格式转换
 let dateFormatter: NSDateFormatter = {
 	let formatter = NSDateFormatter()

@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		window?.backgroundColor = UIColor.blackColor()
-		window?.layer.cornerRadius = 10
+		window?.layer.cornerRadius = 5
 		window?.clipsToBounds = true
 
 		let mainVC = MainViewController()

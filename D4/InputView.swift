@@ -9,19 +9,29 @@
 import Foundation
 import UIKit
 
-class TestView: UIView {
+class InputView: UIView {
 
 	var startPosition: Int!
 
-	override init(frame: CGRect) {
-		super.init(frame: frame)
-		self.backgroundColor = UIColor.whiteColor()
+	init() {
+		super.init(frame: CGRectMake(-ScreenWidth, 0, ScreenWidth, ScreenHeight))
+		backgroundColor = UIColor.whiteColor()
 		exclusiveTouch = true
 
 		let subView = UIView(frame: self.bounds)
 		subView.backgroundColor = UIColor.clearColor()
 		self.addSubview(subView)
 	}
+
+//	override init(frame: CGRect) {
+//		super.init(frame: frame)
+//		self.backgroundColor = UIColor.whiteColor()
+//		exclusiveTouch = true
+//
+//		let subView = UIView(frame: self.bounds)
+//		subView.backgroundColor = UIColor.clearColor()
+//		self.addSubview(subView)
+//	}
 
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		guard let touch = touches.first else { return }
@@ -47,19 +57,6 @@ class TestView: UIView {
 		return Int(x * 10 + y)
 	}
 
-//	func simpleLocation(location: CGPoint) -> CGPoint {
-//		let x = location.x / (ScreenWidth / 5)
-//		let y = location.y / (ScreenHeight / 6)
-//		let simplePoint = CGPoint(x: floor(x), y: floor(y))
-//		return simplePoint
-//	}
-//
-//	func locationToColorValue(location: CGPoint) -> (Int, Int) {
-//		let x = location.x / (ScreenWidth / 5)
-//		let y = location.y / (ScreenHeight / 6)
-//		let value = (x: Int(floor(y)), y: Int(floor(x)))
-//		return value
-//	}
 
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")

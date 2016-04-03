@@ -12,15 +12,32 @@ import AVOSCloud
 typealias Completion = (Bool?, NSError?) -> Void
 typealias GotStorys = [Story] -> Void
 
-protocol LeanCloud {
+struct AVKey {
+	static let classStory = "Story"
+	static let sentences = "Sentences"
+	static let colors = "Colors"
+	static let rating = "Rating"
+	static let auther = "Auther"
+
+	static let classAuthor = "Author"
+}
+
+protocol LeanCloud: UserDefaults {
+	func createAndSaveAuthor()
 	func saveStory(story: Story, completion: Completion)
 	func getDailyStory(gotStorys: GotStorys)
 }
 
 extension LeanCloud {
 
+	func createAndSaveAuthor() {
+		if author() == nil {
+
+		}
+	}
+
 	func saveStory(story: Story, completion: Completion) {
-		let object = AVObject(className: AVKey.className)
+		let object = AVObject(className: AVKey.classStory)
 		object.setObject(story.sentences, forKey: AVKey.sentences)
 		object.setObject(story.colors, forKey: AVKey.colors)
 		object.setObject(story.rating, forKey: AVKey.rating)
@@ -35,7 +52,7 @@ extension LeanCloud {
 		print(#function)
 		var storys = [Story]()
 
-		let query = AVQuery(className: AVKey.className)
+		let query = AVQuery(className: AVKey.classStory)
 		query.addAscendingOrder(AVKey.rating)
 		query.findObjectsInBackgroundWithBlock { (results, error) in
 			if let objects = results as? [AVObject] {

@@ -18,15 +18,13 @@ class MainViewController: UIViewController, LeanCloud {
 		super.viewDidLoad()
 		view.backgroundColor = UIColor.blackColor()
 
-		let refreshLabel = UILabel(frame: CGRectMake(0, 20, ScreenWidth, 50))
-		refreshLabel.textColor = UIColor.whiteColor()
-		refreshLabel.textAlignment = .Center
-		refreshLabel.text = "Test Refresh"
-		view.addSubview(refreshLabel)
+		let scrollView = BackgroundScrollView()
+		scrollView.movementDelegate = self
+		view.addSubview(scrollView)
 		
 		storyTableView = StoryTableView(frame: CGRectMake(0, 0, ScreenWidth, ScreenHeight), storys: [Story]())
 		storyTableView.customDelegate = self
-		view.addSubview(storyTableView)
+		scrollView.addSubview(storyTableView)
 
 	}
 
@@ -69,6 +67,13 @@ class MainViewController: UIViewController, LeanCloud {
 		segmentedControl.selectedSegmentIndex == 0 ? reloadDailyStory() : loadSelfStory()
 	}
 
+}
+
+extension MainViewController: BackgroundScrollViewDelegate {
+
+	func didScrollLeftOrRight(scrollType: ScrollType) {
+		print(scrollType)
+	}
 }
 
 extension MainViewController: StoryTableViewDelegate {
