@@ -46,6 +46,9 @@ extension UIView {
 		}
 	}
 
+	func inOutAnimate(distance: CGFloat, toAlpha: CGFloat) {
+	}
+
 	// 加边框
 	func addBorder(borderColor borderColor: UIColor, width: CGFloat) {
 		self.layer.borderColor = borderColor.CGColor

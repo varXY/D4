@@ -13,9 +13,10 @@ import UIKit
 let ScreenBounds = UIScreen.mainScreen().bounds
 let ScreenWidth = ScreenBounds.width
 let ScreenHeight = ScreenBounds.height
-let BarHeight = UIApplication.sharedApplication().statusBarFrame.height
+let StatusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
 
-let TriggerDistance: CGFloat = 80
+let titleBarHeight: CGFloat = 50
+let TriggerDistance: CGFloat = 50
 
 // 日期和数字格式转换
 let dateFormatter: NSDateFormatter = {

@@ -14,7 +14,7 @@ enum StoryTableViewScrollType {
 }
 
 protocol StoryTableViewDelegate: class {
-	func storyTableViewDidScroll(scrollType: StoryTableViewScrollType)
+	func showOrHideToolbar(show: Bool)
 }
 
 class StoryTableView: UITableView {
@@ -25,7 +25,7 @@ class StoryTableView: UITableView {
 		}
 	}
 
-	weak var customDelegate: StoryTableViewDelegate?
+	weak var SDelegate: StoryTableViewDelegate?
 
 	init(frame: CGRect, storys: [Story]) {
 		self.storys = storys
@@ -36,6 +36,10 @@ class StoryTableView: UITableView {
 		dataSource = self
 		delegate = self
 		exclusiveTouch = true
+
+		let headerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
+		headerView.backgroundColor = UIColor.clearColor()
+		self.tableHeaderView = headerView
 
 	}
 
@@ -78,9 +82,9 @@ extension StoryTableView: UIScrollViewDelegate {
 	func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
 			let translation = self.panGestureRecognizer.translationInView(self.superview)
 			if translation.y < -20 {
-				customDelegate?.storyTableViewDidScroll(.Down)
+				SDelegate?.showOrHideToolbar(true)
 			} else if translation.y > 20{
-				customDelegate?.storyTableViewDidScroll(.Up)
+				SDelegate?.showOrHideToolbar(false)
 			}
 
 	}

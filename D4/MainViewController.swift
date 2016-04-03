@@ -12,44 +12,47 @@ import AVOSCloud
 
 class MainViewController: UIViewController, LeanCloud {
 
-	var storyTableView: StoryTableView!
+	var xyScrollView: XYScrollView!
+	var statusView: UIView!
+
+	var statusBarHidden = false
+
+	override func prefersStatusBarHidden() -> Bool {
+		return statusBarHidden
+	}
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		view.backgroundColor = UIColor.blackColor()
+		automaticallyAdjustsScrollViewInsets = false
 
-		let scrollView = BackgroundScrollView()
-		scrollView.movementDelegate = self
-		view.addSubview(scrollView)
-		
-		storyTableView = StoryTableView(frame: CGRectMake(0, 0, ScreenWidth, ScreenHeight), storys: [Story]())
-		storyTableView.customDelegate = self
-		scrollView.addSubview(storyTableView)
+		xyScrollView = XYScrollView(VC: self)
+		xyScrollView.XYDelegate = self
+		view.addSubview(xyScrollView)
 
+		statusView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
+		statusView.backgroundColor = UIColor.whiteColor()
+		view.addSubview(statusView)
 	}
 
-	override func viewWillAppear(animated: Bool) {
+ 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		view.layer.cornerRadius = 10
-		navigationController?.navigationBarHidden = true
-		navigationController?.toolbarHidden = false
-		setupToolbar()
+		setupBars()
 
 		delay(seconds: 3.0, completion: { self.reloadDailyStory() })
 	}
 
 	func reloadDailyStory() {
 		getDailyStory { (storys) in
-			self.storyTableView.storys = storys
+			self.xyScrollView.storys = storys
 		}
 	}
 
 	func loadSelfStory() {
-		let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-		storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+		
 	}
 
-	func setupToolbar() {
+	func setupBars() {
 		let segmentedControl = UISegmentedControl(items: ["每日100", "我的故事"])
 		segmentedControl.selectedSegmentIndex = 0
 		segmentedControl.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 140, height: 29))
@@ -59,6 +62,8 @@ class MainViewController: UIViewController, LeanCloud {
 		let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
 		let toolBarItems = [space, barButton, space]
 
+		navigationController?.navigationBarHidden = true
+		navigationController?.toolbarHidden = false
 		navigationController?.toolbar.tintColor = UIColor.blackColor()
 		setToolbarItems(toolBarItems, animated: true)
 	}
@@ -69,18 +74,20 @@ class MainViewController: UIViewController, LeanCloud {
 
 }
 
-extension MainViewController: BackgroundScrollViewDelegate {
+extension MainViewController: XYScrollViewDelegate {
 
-	func didScrollLeftOrRight(scrollType: ScrollType) {
+	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		print(scrollType)
+		let hidden = topViewIndex != 1
+		navigationController?.setToolbarHidden(hidden, animated: true)
+		statusBarHidden = hidden
+		setNeedsStatusBarAppearanceUpdate()
+		statusView.alpha = hidden ? 0.0 : 1.0
+	}
+
+	func setToolBarHiddenByStoryTableView(hidden: Bool) {
+		navigationController?.setToolbarHidden(hidden, animated: true)
 	}
 }
 
-extension MainViewController: StoryTableViewDelegate {
-
-	func storyTableViewDidScroll(scrollType: StoryTableViewScrollType) {
-		let hide = scrollType == .Down
-		navigationController?.setToolbarHidden(hide, animated: true)
-	}
-}
 

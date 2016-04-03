@@ -19,7 +19,10 @@
 		3179194B1CABB2CD00DB9A0A /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3179194A1CABB2CD00DB9A0A /* CoreTelephony.framework */; };
 		3179194D1CABB2D500DB9A0A /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3179194C1CABB2D500DB9A0A /* CoreLocation.framework */; };
 		317BC7F11CB08C86000A36FB /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317BC7F01CB08C86000A36FB /* UserDefaults.swift */; };
-		317BC7F31CB09804000A36FB /* BackgroundScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317BC7F21CB09804000A36FB /* BackgroundScrollView.swift */; };
+		31B6424C1CB0A75100D901CF /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B6424B1CB0A75100D901CF /* SettingView.swift */; };
+		31B642501CB0DAE900D901CF /* XYScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B6424F1CB0DAE900D901CF /* XYScrollView.swift */; };
+		31B642521CB0FCE800D901CF /* ColorSelectingDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B642511CB0FCE800D901CF /* ColorSelectingDot.swift */; };
+		31B642541CB1036B00D901CF /* Rect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B642531CB1036B00D901CF /* Rect.swift */; };
 		31FF3A271CACF28D008B2C69 /* Story.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A261CACF28D008B2C69 /* Story.swift */; };
 		31FF3A2F1CACFB8A008B2C69 /* UIColor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A291CACFB8A008B2C69 /* UIColor+.swift */; };
 		31FF3A301CACFB8A008B2C69 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A2A1CACFB8A008B2C69 /* UIImage+.swift */; };
@@ -29,7 +32,7 @@
 		31FF3A341CACFB8A008B2C69 /* Array+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A2E1CACFB8A008B2C69 /* Array+.swift */; };
 		31FF3A361CACFBCE008B2C69 /* MyColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A351CACFBCE008B2C69 /* MyColor.swift */; };
 		31FF3A381CAD03F0008B2C69 /* LeanCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A371CAD03F0008B2C69 /* LeanCloud.swift */; };
-		31FF3A3B1CAD053E008B2C69 /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A3A1CAD053E008B2C69 /* InputView.swift */; };
+		31FF3A3B1CAD053E008B2C69 /* WriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A3A1CAD053E008B2C69 /* WriteView.swift */; };
 		31FF3A3D1CAD08CF008B2C69 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FF3A3C1CAD08CF008B2C69 /* Global.swift */; };
 /* End PBXBuildFile section */
 
@@ -48,7 +51,10 @@
 		3179194A1CABB2CD00DB9A0A /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		3179194C1CABB2D500DB9A0A /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		317BC7F01CB08C86000A36FB /* UserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
-		317BC7F21CB09804000A36FB /* BackgroundScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundScrollView.swift; sourceTree = "<group>"; };
+		31B6424B1CB0A75100D901CF /* SettingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		31B6424F1CB0DAE900D901CF /* XYScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XYScrollView.swift; sourceTree = "<group>"; };
+		31B642511CB0FCE800D901CF /* ColorSelectingDot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSelectingDot.swift; sourceTree = "<group>"; };
+		31B642531CB1036B00D901CF /* Rect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Rect.swift; sourceTree = "<group>"; };
 		31FF3A261CACF28D008B2C69 /* Story.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Story.swift; sourceTree = "<group>"; };
 		31FF3A291CACFB8A008B2C69 /* UIColor+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+.swift"; sourceTree = "<group>"; };
 		31FF3A2A1CACFB8A008B2C69 /* UIImage+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
@@ -58,7 +64,7 @@
 		31FF3A2E1CACFB8A008B2C69 /* Array+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+.swift"; sourceTree = "<group>"; };
 		31FF3A351CACFBCE008B2C69 /* MyColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyColor.swift; sourceTree = "<group>"; };
 		31FF3A371CAD03F0008B2C69 /* LeanCloud.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LeanCloud.swift; sourceTree = "<group>"; };
-		31FF3A3A1CAD053E008B2C69 /* InputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
+		31FF3A3A1CAD053E008B2C69 /* WriteView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteView.swift; sourceTree = "<group>"; };
 		31FF3A3C1CAD08CF008B2C69 /* Global.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -144,6 +150,7 @@
 			isa = PBXGroup;
 			children = (
 				31FF3A261CACF28D008B2C69 /* Story.swift */,
+				31B642531CB1036B00D901CF /* Rect.swift */,
 				31FF3A351CACFBCE008B2C69 /* MyColor.swift */,
 				31FF3A371CAD03F0008B2C69 /* LeanCloud.swift */,
 				317BC7F01CB08C86000A36FB /* UserDefaults.swift */,
@@ -167,9 +174,11 @@
 		31FF3A391CAD052D008B2C69 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				31FF3A3A1CAD053E008B2C69 /* InputView.swift */,
-				317BC7F21CB09804000A36FB /* BackgroundScrollView.swift */,
+				31B6424F1CB0DAE900D901CF /* XYScrollView.swift */,
 				311EC7831CAE39280021FFB7 /* StoryTableView.swift */,
+				31FF3A3A1CAD053E008B2C69 /* WriteView.swift */,
+				31B642511CB0FCE800D901CF /* ColorSelectingDot.swift */,
+				31B6424B1CB0A75100D901CF /* SettingView.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -247,19 +256,22 @@
 				31FF3A331CACFB8A008B2C69 /* UIImageView+.swift in Sources */,
 				317919321CABB25900DB9A0A /* MainViewController.swift in Sources */,
 				317919301CABB25900DB9A0A /* AppDelegate.swift in Sources */,
+				31B642541CB1036B00D901CF /* Rect.swift in Sources */,
 				31FF3A361CACFBCE008B2C69 /* MyColor.swift in Sources */,
 				317BC7F11CB08C86000A36FB /* UserDefaults.swift in Sources */,
-				317BC7F31CB09804000A36FB /* BackgroundScrollView.swift in Sources */,
 				311EC7841CAE39280021FFB7 /* StoryTableView.swift in Sources */,
 				317919381CABB25900DB9A0A /* D4.xcdatamodeld in Sources */,
+				31B642501CB0DAE900D901CF /* XYScrollView.swift in Sources */,
 				31FF3A301CACFB8A008B2C69 /* UIImage+.swift in Sources */,
+				31B642521CB0FCE800D901CF /* ColorSelectingDot.swift in Sources */,
 				31FF3A3D1CAD08CF008B2C69 /* Global.swift in Sources */,
 				31FF3A321CACFB8A008B2C69 /* UIView+.swift in Sources */,
 				31FF3A271CACF28D008B2C69 /* Story.swift in Sources */,
 				31FF3A311CACFB8A008B2C69 /* String+.swift in Sources */,
 				31FF3A381CAD03F0008B2C69 /* LeanCloud.swift in Sources */,
 				31FF3A2F1CACFB8A008B2C69 /* UIColor+.swift in Sources */,
-				31FF3A3B1CAD053E008B2C69 /* InputView.swift in Sources */,
+				31B6424C1CB0A75100D901CF /* SettingView.swift in Sources */,
+				31FF3A3B1CAD053E008B2C69 /* WriteView.swift in Sources */,
 				31FF3A341CACFB8A008B2C69 /* Array+.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

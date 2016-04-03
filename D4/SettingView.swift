@@ -1,39 +1,27 @@
 //
-//  TestView.swift
+//  InputView.swift
 //  D4
 //
-//  Created by 文川术 on 3/31/16.
+//  Created by 文川术 on 4/3/16.
 //  Copyright © 2016 xiaoyao. All rights reserved.
 //
 
 import Foundation
 import UIKit
 
-class InputView: UIView {
+class SettingView: UIView {
 
 	var startPosition: Int!
 
 	init() {
-		super.init(frame: CGRectMake(-ScreenWidth, 0, ScreenWidth, ScreenHeight))
-		backgroundColor = UIColor.whiteColor()
+		super.init(frame: CGRectMake(0, 0, ScreenWidth, ScreenHeight))
+		backgroundColor = UIColor.purpleColor()
 		exclusiveTouch = true
-
-		let subView = UIView(frame: self.bounds)
-		subView.backgroundColor = UIColor.clearColor()
-		self.addSubview(subView)
 	}
 
-//	override init(frame: CGRect) {
-//		super.init(frame: frame)
-//		self.backgroundColor = UIColor.whiteColor()
-//		exclusiveTouch = true
-//
-//		let subView = UIView(frame: self.bounds)
-//		subView.backgroundColor = UIColor.clearColor()
-//		self.addSubview(subView)
-//	}
-
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		print(#function)
+		
 		guard let touch = touches.first else { return }
 		startPosition = locationToColorCode(touch.locationInView(self))
 
