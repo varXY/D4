@@ -16,6 +16,26 @@ let colorCode = [0, 10, 20, 30, 40,
                  4, 14, 24, 34, 44,
                  5, 15, 25, 35, 45]
 
+func fourRandomColorCode() -> [Int] {
+	let indexes = getRandomNumbers(4, lessThan: colorCode.count)
+	var colorCodes = [Int]()
+	for i in indexes {
+		colorCodes.append(colorCode[i])
+	}
+	return colorCodes
+
+}
+
+func randomColorCode() -> Int {
+	let index = getRandomNumbers(1, lessThan: colorCode.count)[0]
+	return colorCode[index]
+}
+
+func randomBTColors() -> [UIColor] {
+	let index = getRandomNumbers(1, lessThan: colorCode.count)[0]
+	return MyColor.code(colorCode[index]).BTColors
+}
+
 enum MyColor {
 	case code(Int)
 

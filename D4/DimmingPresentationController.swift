@@ -1,0 +1,67 @@
+//
+//  DimmingPresentationController.swift
+//  StoreSearch
+//
+//  Created by 文川术 on 15/8/13.
+//  Copyright (c) 2015年 xiaoyao. All rights reserved.
+//
+
+import UIKit
+
+class DimmingPresentationController: UIPresentationController {
+
+//	lazy var dimmingView = UIView()
+
+	// The presentationTransitionWillBegin() method is invoked when the new view controller is about to be shown on the screen. Here you create the GradientView object, make it as big as the containerView, and insert it behind everything else in this “container view”.
+	
+	override func presentationTransitionWillBegin() {
+		super.presentationTransitionWillBegin()
+		print(#function)
+		let dimmingView = UIView()
+		print(containerView?.bounds)
+		dimmingView.frame = containerView!.bounds
+		dimmingView.backgroundColor = UIColor.whiteColor()
+		containerView?.addSubview(presentingViewController.view)
+		containerView?.addSubview(dimmingView)
+		containerView?.addSubview(presentedView()!)
+//		containerView?.addSubview(dimmingView)
+//		containerView!.insertSubview(dimmingView, atIndex: 0)
+
+		dimmingView.alpha = 1
+
+		// The important thing to know about the transitionCoordinator is that any of your animations should be done in a closure passed to animateAlongsideTransition() to keep the transition smooth.
+
+		if let transitionCoordinator = presentedViewController.transitionCoordinator() {
+
+			transitionCoordinator.animateAlongsideTransition({ (_) -> Void in
+				dimmingView.alpha = 1
+			}, completion: nil)
+		}
+	}
+
+	override func dismissalTransitionWillBegin() {
+		super.dismissalTransitionWillBegin()
+		print(#function)
+		let dimmingView = UIView()
+		print(containerView?.bounds)
+		dimmingView.frame = containerView!.bounds
+		dimmingView.backgroundColor = UIColor.whiteColor()
+		print(dimmingView.frame)
+		if let transitionCoordinator = presentedViewController.transitionCoordinator() {
+			transitionCoordinator.animateAlongsideTransition({ (_) -> Void in
+				dimmingView.alpha = 0
+			}, completion: nil)
+		}
+	}
+
+	override func dismissalTransitionDidEnd(completed: Bool) {
+		if !completed {
+			print(1)
+		}
+		UIApplication.sharedApplication().keyWindow?.addSubview(self.presentingViewController.view)
+	}
+	
+	override func shouldRemovePresentersView() -> Bool {
+		return false
+	}
+}

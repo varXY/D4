@@ -29,6 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		window?.rootViewController = navi
 		window?.makeKeyAndVisible()
 
+//		let statusView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
+//		statusView.backgroundColor = UIColor.whiteColor()
+//		window?.rootViewController!.view.addSubview(statusView)
 
 		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
 		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)

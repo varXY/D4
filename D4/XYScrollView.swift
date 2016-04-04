@@ -16,6 +16,7 @@ enum XYScrollType {
 protocol XYScrollViewDelegate: class {
 	func setToolBarHiddenByStoryTableView(hidden: Bool)
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int)
+	func writeViewWillInputText(index: Int, oldText: String?, colorCode: Int)
 }
 
 class XYScrollView: UIScrollView {
@@ -49,12 +50,16 @@ class XYScrollView: UIScrollView {
 
 	weak var XYDelegate: XYScrollViewDelegate?
 
+	var animateTime: Double = 0.5
+
 	init(VC: UIViewController) {
 		super.init(frame: VC.view.bounds)
 		backgroundColor = UIColor.clearColor()
 		contentSize = CGSize(width: frame.width, height: 0)
+		exclusiveTouch = true
 		alwaysBounceHorizontal = true
 		directionalLockEnabled = true
+		scrollsToTop = false
 		delegate = self
 
 		switch VC {
@@ -66,13 +71,16 @@ class XYScrollView: UIScrollView {
 			X0_contentView.contentSize = CGSize(width: 0, height: frame.height)
 			X0_contentView.alwaysBounceVertical = true
 			X0_contentView.directionalLockEnabled = true
+			X0_contentView.scrollsToTop = false
 			X0_contentView.delegate = self
 			writeView = WriteView()
 			writeView.delegate = self
 			X0_contentView.addSubview(writeView)
 			X0_contentView.alpha = 0.0
+			X0_contentView.decelerationRate = UIScrollViewDecelerationRateFast
 
 			X1_storyTableView = StoryTableView(frame: bounds, storys: [Story]())
+			X1_storyTableView.scrollsToTop = false
 			X1_storyTableView.SDelegate = self
 
 			X2_contentView = UIScrollView(frame: bounds)
@@ -80,6 +88,7 @@ class XYScrollView: UIScrollView {
 			X2_contentView.contentSize = CGSize(width: 0, height: frame.height)
 			X2_contentView.alwaysBounceVertical = true
 			X2_contentView.directionalLockEnabled = true
+			X2_contentView.scrollsToTop = false
 			X2_contentView.delegate = self
 			settingView = SettingView()
 			X2_contentView.addSubview(settingView)
@@ -114,14 +123,20 @@ class XYScrollView: UIScrollView {
 				switch scrollType {
 				case .Left:
 					topViewIndex = 0
-					UIView.animateWithDuration(0.3, animations: { 
+					writeView.firstColor = true
+					X0_contentView.scrollEnabled = false
+
+					UIView.animateWithDuration(animateTime, animations: {
 						self.X1_storyTableView.alpha = 0.0
 						self.X0_contentView.alpha = 1.0
 						self.X0_contentView.frame.origin.x += ScreenWidth
+						}, completion: { (_) in
+							self.writeView.firstColor = false
 					})
+
 				case .Right:
 					topViewIndex = 2
-					UIView.animateWithDuration(0.3, animations: {
+					UIView.animateWithDuration(animateTime, animations: {
 						self.X1_storyTableView.alpha = 0.0
 						self.X2_contentView.alpha = 1.0
 						self.X2_contentView.frame.origin.x -= ScreenWidth
@@ -135,7 +150,7 @@ class XYScrollView: UIScrollView {
 				switch scrollType {
 				case .Right:
 					topViewIndex = 1
-					UIView.animateWithDuration(0.3, animations: {
+					UIView.animateWithDuration(animateTime, animations: {
 						self.X1_storyTableView.alpha = 1.0
 						self.X0_contentView.alpha = 0.0
 						self.X0_contentView.frame.origin.x -= ScreenWidth
@@ -148,7 +163,7 @@ class XYScrollView: UIScrollView {
 				switch scrollType {
 				case .Left:
 					topViewIndex = 1
-					UIView.animateWithDuration(0.3, animations: {
+					UIView.animateWithDuration(animateTime, animations: {
 						self.X1_storyTableView.alpha = 1.0
 						self.X2_contentView.alpha = 0.0
 						self.X2_contentView.frame.origin.x += ScreenWidth
@@ -204,8 +219,17 @@ extension XYScrollView: UIScrollViewDelegate {
 			moveContentViewToTop(.Right)
 			XYDelegate?.xyScrollViewDidScroll(.Right, topViewIndex: topViewIndex)
 		}
-		if triggeredUp { XYDelegate?.xyScrollViewDidScroll(.Up, topViewIndex: topViewIndex) }
-		if triggeredDown { XYDelegate?.xyScrollViewDidScroll(.Down, topViewIndex: topViewIndex) }
+		if triggeredUp {
+			XYDelegate?.xyScrollViewDidScroll(.Up, topViewIndex: topViewIndex)
+		}
+
+		if triggeredDown {
+			XYDelegate?.xyScrollViewDidScroll(.Down, topViewIndex: topViewIndex)
+		}
+	}
+
+	func scrollViewShouldScrollToTop(scrollView: UIScrollView) -> Bool {
+		return true
 	}
 }
 
@@ -221,6 +245,14 @@ extension XYScrollView: WriteViewDelegate {
 	func selectingColor(selecting: Bool) {
 		scrollEnabled = !selecting
 		X0_contentView.scrollEnabled = !selecting
+	}
+
+	func willInputText(index: Int, oldText: String?, colorCode: Int) {
+		XYDelegate?.writeViewWillInputText(index, oldText: oldText, colorCode: colorCode)
+	}
+
+	func canUpLoad(can: Bool) {
+//		X0_contentView.scrollEnabled = can
 	}
 
 }

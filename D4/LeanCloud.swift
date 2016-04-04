@@ -53,7 +53,7 @@ extension LeanCloud {
 		var storys = [Story]()
 
 		let query = AVQuery(className: AVKey.classStory)
-		query.addAscendingOrder(AVKey.rating)
+//		query.addAscendingOrder(AVKey.rating)
 		query.findObjectsInBackgroundWithBlock { (results, error) in
 			if let objects = results as? [AVObject] {
 

@@ -15,7 +15,7 @@ let ScreenWidth = ScreenBounds.width
 let ScreenHeight = ScreenBounds.height
 let StatusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
 
-let titleBarHeight: CGFloat = 50
+let smallBlockHeight: CGFloat = 50
 let TriggerDistance: CGFloat = 50
 
 // 日期和数字格式转换

@@ -69,9 +69,9 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		let colorCode = storys[indexPath.row].colors[0]
 		cell.backgroundColor = MyColor.code(colorCode).BTColors[0]
 		cell.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
-		let date = storys[indexPath.row].date
-		let string = dateFormatter.stringFromDate(date)
-		cell.textLabel!.text = string
+//		let date = storys[indexPath.row].date
+//		let string = dateFormatter.stringFromDate(date)
+		cell.textLabel!.text = storys[indexPath.row].sentences[0]
 
 		return cell
 	}
