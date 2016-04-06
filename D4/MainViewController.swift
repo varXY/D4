@@ -31,20 +31,29 @@ class MainViewController: UIViewController, LeanCloud {
 		view.addSubview(xyScrollView)
 		xyScrollView.X1_storyTableView.scrollsToTop = true
 
-		let blurEffect = UIBlurEffect(style: .ExtraLight)
+		let blurEffect = UIBlurEffect(style: .Light)
 		statusView = UIVisualEffectView(effect: blurEffect)
 		statusView.frame = CGRectMake(0, 0, ScreenWidth, 20)
 		view.addSubview(statusView)
 		
 		setupBars()
 
-		delay(seconds: 3.0, completion: { self.reloadDailyStory() })
+		delay(seconds: 2.0, completion: { self.reloadDailyStory() })
 
 	}
 
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
+	}
 
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+
+	}
+
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		hideStatusView(true)
 	}
 
 
@@ -66,12 +75,22 @@ class MainViewController: UIViewController, LeanCloud {
 
 			let distance: CGFloat = hide ? -20 : 20
 
-			UIView.animateWithDuration(0.3, animations: {
+			UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+
 				self.statusView.frame.origin.y += distance
-			}) { (_) in
-				if !hide { self.setNeedsStatusBarAppearanceUpdate() }
-			}
-			
+
+				}, completion: { (finished) in
+
+					if !hide { self.setNeedsStatusBarAppearanceUpdate() }
+					
+			})
+
+//			UIView.animateWithDuration(0.3, animations: {
+//				self.statusView.frame.origin.y += distance
+//			}) { (_) in
+//				if !hide { self.setNeedsStatusBarAppearanceUpdate() }
+//			}
+
 		}
 
 
@@ -84,8 +103,15 @@ class MainViewController: UIViewController, LeanCloud {
 		segmentedControl.addTarget(self, action: #selector(segmentedControlSelected(_:)), forControlEvents: .ValueChanged)
 
 		let barButton = UIBarButtonItem(customView: segmentedControl)
+
+		let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(goToAddPage))
+
+		let infoButton = UIButton(type: .InfoDark)
+		infoButton.addTarget(self, action: #selector(goToInfoPage), forControlEvents: .TouchUpInside)
+		let infoBarButton = UIBarButtonItem(customView: infoButton)
+
 		let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
-		let toolBarItems = [space, barButton, space]
+		let toolBarItems = [addButton, space, barButton, space, infoBarButton]
 
 		navigationController?.navigationBarHidden = true
 		navigationController?.toolbarHidden = false
@@ -97,9 +123,39 @@ class MainViewController: UIViewController, LeanCloud {
 		segmentedControl.selectedSegmentIndex == 0 ? reloadDailyStory() : loadSelfStory()
 	}
 
+	func goToAddPage() {
+		xyScrollView.moveContentViewToTop(.Left)
+
+		let hidden = xyScrollView.topViewIndex != 1
+		navigationController?.setToolbarHidden(hidden, animated: true)
+		hideStatusView(hidden)
+
+		if xyScrollView.writeView.firstColor == false {
+			xyScrollView.writeView.labelsGetRandomColors()
+		}
+	}
+
+	func goToInfoPage() {
+		xyScrollView.moveContentViewToTop(.Right)
+
+		let hidden = xyScrollView.topViewIndex != 1
+		navigationController?.setToolbarHidden(hidden, animated: true)
+		hideStatusView(hidden)
+	}
+
 }
 
 extension MainViewController: XYScrollViewDelegate {
+
+	func didSelectedStory(storyIndex: Int, touchPoint: CGPoint) {
+
+		let detailVC = DetailViewController()
+		detailVC.storys = xyScrollView.storys
+		detailVC.topStoryIndex = storyIndex
+		detailVC.touchPoint = touchPoint
+		detailVC.delegate = self
+		presentViewController(detailVC, animated: true, completion: nil)
+	}
 
 	func writeViewWillInputText(index: Int, oldText: String?, colorCode: Int) {
 		let inputVC = InputViewController()
@@ -110,8 +166,8 @@ extension MainViewController: XYScrollViewDelegate {
 		presentViewController(inputVC, animated: true, completion: nil)
 	}
 
-	func writeViewWillInputText(index: Int, text: String?) {
-
+	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
+		print(#function)
 	}
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
@@ -140,6 +196,15 @@ extension MainViewController: XYScrollViewDelegate {
 
 	func setToolBarHiddenByStoryTableView(hidden: Bool) {
 		navigationController?.setToolbarHidden(hidden, animated: true)
+	}
+}
+
+extension MainViewController: DetailViewControllerDelegate {
+
+	func detailViewControllerWillDismiss() {
+		delay(seconds: 0.4) {
+			self.hideStatusView(false)
+		}
 	}
 }
 

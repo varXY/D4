@@ -49,7 +49,6 @@ extension LeanCloud {
 	}
 
 	func getDailyStory(gotStorys: GotStorys) {
-		print(#function)
 		var storys = [Story]()
 
 		let query = AVQuery(className: AVKey.classStory)
@@ -64,9 +63,14 @@ extension LeanCloud {
 					index += 1
 				} while index < objects.count
 
+				gotStorys(storys)
+
 			}
 
-			gotStorys(storys)
+			if error != nil {
+				print(error)
+			}
+
 
 		}
 

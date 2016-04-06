@@ -15,6 +15,7 @@ enum StoryTableViewScrollType {
 
 protocol StoryTableViewDelegate: class {
 	func showOrHideToolbar(show: Bool)
+	func didSelectedStory(storyIndex: Int, touchPoint: CGPoint)
 }
 
 class StoryTableView: UITableView {
@@ -24,6 +25,8 @@ class StoryTableView: UITableView {
 			reloadData()
 		}
 	}
+
+	var touchPoint: CGPoint!
 
 	weak var SDelegate: StoryTableViewDelegate?
 
@@ -41,6 +44,12 @@ class StoryTableView: UITableView {
 		headerView.backgroundColor = UIColor.clearColor()
 		self.tableHeaderView = headerView
 
+	}
+
+	override func touchesShouldBegin(touches: Set<UITouch>, withEvent event: UIEvent?, inContentView view: UIView) -> Bool {
+		guard let touch = touches.first else { return false }
+		touchPoint = touch.locationInView(self)
+		return true
 	}
 
 	required init?(coder aDecoder: NSCoder) {
@@ -66,14 +75,18 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = UITableViewCell(style: .Default, reuseIdentifier: "cell")
+		return cell
+	}
+
+	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 		let colorCode = storys[indexPath.row].colors[0]
 		cell.backgroundColor = MyColor.code(colorCode).BTColors[0]
 		cell.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
-//		let date = storys[indexPath.row].date
-//		let string = dateFormatter.stringFromDate(date)
 		cell.textLabel!.text = storys[indexPath.row].sentences[0]
+	}
 
-		return cell
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		SDelegate?.didSelectedStory(indexPath.row, touchPoint: touchPoint)
 	}
 }
 

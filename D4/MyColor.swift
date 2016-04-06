@@ -16,14 +16,15 @@ let colorCode = [0, 10, 20, 30, 40,
                  4, 14, 24, 34, 44,
                  5, 15, 25, 35, 45]
 
-func fourRandomColorCode() -> [Int] {
+func fiveRandomColorCode() -> [Int] {
 	let indexes = getRandomNumbers(4, lessThan: colorCode.count)
 	var colorCodes = [Int]()
 	for i in indexes {
 		colorCodes.append(colorCode[i])
 	}
+	
+	colorCodes.append(colorCodes[0])
 	return colorCodes
-
 }
 
 func randomColorCode() -> Int {

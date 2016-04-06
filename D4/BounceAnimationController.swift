@@ -22,20 +22,22 @@ class BounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning
 				toView.frame = transitionContext.finalFrameForViewController(toViewController)
 
 				transitionContext.containerView()!.addSubview(toView)
-
+				print(toView.center)
 				toView.alpha = 0.0
-				toView.transform = CGAffineTransformMakeScale(0.5, 0.5)
+				toView.transform = CGAffineTransformMakeScale(0.7, 0.7)
 
+				UIView.animateWithDuration(transitionDuration(transitionContext), delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 
-				UIView.animateKeyframesWithDuration(transitionDuration(transitionContext), delay: 0.0, options: .CalculationModeCubic, animations: {
-
+					toView.center = CGPoint(x: ScreenWidth / 2, y: ScreenHeight / 2)
 					toView.alpha = 1.0
 					toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
 
+					}, completion: { (finished) in
 
-					}, completion: { (finished) -> Void in
-					transitionContext.completeTransition(finished)
+						transitionContext.completeTransition(finished)
+
 				})
+
 			}
 		}
 	}

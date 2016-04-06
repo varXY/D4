@@ -49,6 +49,11 @@ class InputViewController: UIViewController {
 
 		textView.becomeFirstResponder()
 	}
+
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		view.backgroundColor = UIColor.clearColor()
+	}
 }
 
 extension InputViewController: UITextViewDelegate {
@@ -75,7 +80,7 @@ extension InputViewController: UIViewControllerTransitioningDelegate {
 	}
 
 	func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		return FadeOutAnimationController()
+		return SlideOutAnimationController()
 
 	}
 }

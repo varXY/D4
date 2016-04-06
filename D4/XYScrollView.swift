@@ -9,28 +9,39 @@
 import Foundation
 import UIKit
 
-enum XYScrollType {
-	case Up, Down, Left, Right
+@objc enum XYScrollType: Int {
+	case Up, Down, Left, Right, NotScrollYet
 }
 
-protocol XYScrollViewDelegate: class {
-	func setToolBarHiddenByStoryTableView(hidden: Bool)
+@objc protocol XYScrollViewDelegate: class {
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int)
-	func writeViewWillInputText(index: Int, oldText: String?, colorCode: Int)
+	optional func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int)
+	optional func setToolBarHiddenByStoryTableView(hidden: Bool)
+	optional func writeViewWillInputText(index: Int, oldText: String?, colorCode: Int)
+	optional func didSelectedStory(storyIndex: Int, touchPoint: CGPoint)
 }
 
 class XYScrollView: UIScrollView {
 
 	var X0_contentView: UIScrollView!
+	var X1_contentView: UIScrollView!
 	var X1_storyTableView: StoryTableView!
 	var X2_contentView: UIScrollView!
 
 	var writeView: WriteView!
 	var settingView: SettingView!
 
-	var Y0_contentView: UIScrollView!
-	var Y1_contentView: UIScrollView!
-	var Y2_contentView: UIScrollView!
+	var Y0_storyView: StoryView!
+	var Y1_storyView: StoryView!
+	var Y2_storyView: StoryView!
+
+	var topView: UIScrollView!
+	var middleView: UIScrollView!
+	var bottomView: UIScrollView!
+
+	let topOrigin = CGPoint(x: 0, y: -ScreenHeight)
+	let middleOrigin = CGPoint(x: 0, y: 0)
+	let bottomOrigin = CGPoint(x: 0, y: ScreenHeight)
 
 	var storys: [Story]! {
 		didSet {
@@ -40,13 +51,33 @@ class XYScrollView: UIScrollView {
 		}
 	}
 
+	var initTopStoryIndex: Int! {
+		didSet {
+			if initTopStoryIndex != 0 {
+				let storyView_0 = StoryView(story: storys[initTopStoryIndex - 1])
+				storyView_0.tag = 110
+				X0_contentView.addSubview(storyView_0)
+			}
+
+			let storyView_1 = StoryView(story: storys[initTopStoryIndex])
+			storyView_1.tag = 110
+			X1_contentView.addSubview(storyView_1)
+
+			let storyView_2 = StoryView(story: storys[initTopStoryIndex + 1])
+			storyView_2.tag = 110
+			X2_contentView.addSubview(storyView_2)
+
+			topStoryIndex = initTopStoryIndex
+
+		}
+	}
+
+	var topStoryIndex = 0
+
 	var inMainVC = false
 	var topViewIndex = 1
 
-	var triggeredLeft = false
-	var triggeredRight = false
-	var triggeredUp = false
-	var triggeredDown = false
+	var scrolledType: XYScrollType = .NotScrollYet
 
 	weak var XYDelegate: XYScrollViewDelegate?
 
@@ -56,23 +87,21 @@ class XYScrollView: UIScrollView {
 		super.init(frame: VC.view.bounds)
 		backgroundColor = UIColor.clearColor()
 		contentSize = CGSize(width: frame.width, height: 0)
-		exclusiveTouch = true
 		alwaysBounceHorizontal = true
-		directionalLockEnabled = true
-		scrollsToTop = false
-		delegate = self
+		commonSetUp(self)
+
+		X0_contentView = UIScrollView(frame: bounds)
+		X2_contentView = UIScrollView(frame: bounds)
+		commonSetUp(X0_contentView)
+		commonSetUp(X2_contentView)
 
 		switch VC {
 		case is MainViewController:
 			inMainVC = true
 
-			X0_contentView = UIScrollView(frame: bounds)
 			X0_contentView.frame.origin.x = -ScreenWidth
 			X0_contentView.contentSize = CGSize(width: 0, height: frame.height)
 			X0_contentView.alwaysBounceVertical = true
-			X0_contentView.directionalLockEnabled = true
-			X0_contentView.scrollsToTop = false
-			X0_contentView.delegate = self
 			writeView = WriteView()
 			writeView.delegate = self
 			X0_contentView.addSubview(writeView)
@@ -83,13 +112,9 @@ class XYScrollView: UIScrollView {
 			X1_storyTableView.scrollsToTop = false
 			X1_storyTableView.SDelegate = self
 
-			X2_contentView = UIScrollView(frame: bounds)
 			X2_contentView.frame.origin.x = ScreenWidth
 			X2_contentView.contentSize = CGSize(width: 0, height: frame.height)
 			X2_contentView.alwaysBounceVertical = true
-			X2_contentView.directionalLockEnabled = true
-			X2_contentView.scrollsToTop = false
-			X2_contentView.delegate = self
 			settingView = SettingView()
 			X2_contentView.addSubview(settingView)
 			X2_contentView.alpha = 0.0
@@ -98,22 +123,40 @@ class XYScrollView: UIScrollView {
 			addSubview(X0_contentView)
 			addSubview(X2_contentView)
 
+		case is DetailViewController:
+			X0_contentView.frame.origin.y = -ScreenHeight
+			X0_contentView.contentSize = CGSize(width: 0, height: frame.height)
+			X0_contentView.alwaysBounceVertical = true
+
+			X1_contentView = UIScrollView(frame: bounds)
+			commonSetUp(X1_contentView)
+			X1_contentView.contentSize = CGSize(width: 0, height: frame.height)
+			X1_contentView.alwaysBounceVertical = true
+
+			X2_contentView.frame.origin.y = ScreenHeight
+			X2_contentView.contentSize = CGSize(width: 0, height: frame.height)
+			X2_contentView.alwaysBounceVertical = true
+
+			topView = X0_contentView
+			middleView = X1_contentView
+			bottomView = X2_contentView
+
+			addSubview(X0_contentView)
+			addSubview(X1_contentView)
+			addSubview(X2_contentView)
+
 		default:
 			break
 
 		}
-	}
-	
-	required init?(coder aDecoder: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
+
 	}
 
-	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		super.touchesEnded(touches, withEvent: event)
-		
-		guard let touch = touches.first else { return }
-		print(#function)
-		print(touch.locationInView(self))
+	func commonSetUp(scrollView: UIScrollView) {
+		scrollView.exclusiveTouch = true
+		scrollView.directionalLockEnabled = true
+		scrollView.scrollsToTop = false
+		scrollView.delegate = self
 	}
 
 
@@ -124,7 +167,6 @@ class XYScrollView: UIScrollView {
 				case .Left:
 					topViewIndex = 0
 					writeView.firstColor = true
-					X0_contentView.scrollEnabled = false
 
 					UIView.animateWithDuration(animateTime, animations: {
 						self.X1_storyTableView.alpha = 0.0
@@ -172,7 +214,82 @@ class XYScrollView: UIScrollView {
 				}
 			}
 
+		} else {
+
+			switch scrolledType {
+			case .Up:
+				if topStoryIndex >= 1 {
+					topStoryIndex -= 1
+
+					changeStoryForContentView(topView, storyIndex: topStoryIndex)
+					bringSubviewToFront(topView)
+
+					UIView.animateWithDuration(animateTime, animations: {
+						self.topView.alpha = 1.0
+						self.middleView.alpha = 0.2
+						self.topView.frame.origin = self.middleOrigin
+						}, completion: { (_) in
+							self.middleView.alpha = 0.0
+							self.middleView.frame.origin = self.topOrigin
+
+							if self.topStoryIndex > 1 {
+								self.changeStoryForContentView(self.middleView, storyIndex: self.topStoryIndex - 1)
+							}
+
+
+							self.reorderView()
+					})
+
+				}
+
+
+			case .Down:
+				if topStoryIndex <= storys.count - 2 {
+					topStoryIndex += 1
+					changeStoryForContentView(bottomView, storyIndex: topStoryIndex)
+					bringSubviewToFront(bottomView)
+					UIView.animateWithDuration(animateTime, animations: {
+						self.bottomView.alpha = 1.0
+						self.middleView.alpha = 0.2
+						self.bottomView.frame.origin = self.middleOrigin
+						}, completion: { (_) in
+							self.middleView.alpha = 0.0
+							self.middleView.frame.origin = self.bottomOrigin
+
+							if self.topStoryIndex < self.storys.count - 1 {
+								self.changeStoryForContentView(self.middleView, storyIndex: self.topStoryIndex + 1)
+							}
+
+
+							self.reorderView()
+					})
+				}
+
+
+			default:
+				break
+			}
+
 		}
+	}
+
+	func changeStoryForContentView(contentView: UIScrollView, storyIndex: Int) {
+		if let storyView = contentView.viewWithTag(110) as? StoryView {
+			storyView.reloadStory(storys[storyIndex])
+		}
+	}
+
+	func reorderView() {
+		let contentViews = [X0_contentView, X1_contentView, X2_contentView]
+		for contentView in contentViews {
+			if contentView.frame.origin == topOrigin { topView = contentView }
+			if contentView.frame.origin == middleOrigin { middleView = contentView }
+			if contentView.frame.origin == bottomOrigin { bottomView = contentView }
+		}
+	}
+
+	required init?(coder aDecoder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
 	}
 
 
@@ -182,61 +299,47 @@ class XYScrollView: UIScrollView {
 extension XYScrollView: UIScrollViewDelegate {
 
 	func scrollViewDidScroll(scrollView: UIScrollView) {
+		print(scrollView.contentOffset)
 
 		if self.contentOffset.x < -TriggerDistance {
-			triggeredLeft = true
-			triggeredRight = false
+			scrolledType = .Left
 		} else if self.contentOffset.x > TriggerDistance {
-			triggeredLeft = false
-			triggeredRight = true
-		} else {
-			triggeredLeft = false
-			triggeredRight = false
+			scrolledType = .Right
 		}
 
 		if scrollView.contentOffset.y > TriggerDistance {
-			triggeredUp = true
-			triggeredDown = false
+			scrolledType = .Down
 		} else if scrollView.contentOffset.y < -TriggerDistance {
-			triggeredUp = false
-			triggeredDown = true
-		} else {
-			triggeredUp = false
-			triggeredDown = false
+			scrolledType = .Up
 		}
+
 	}
 
 	func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
 
+		XYDelegate?.xyScrollViewWillScroll?(scrolledType, topViewIndex: topViewIndex)
+
+		moveContentViewToTop(scrolledType)
+
+		XYDelegate?.xyScrollViewDidScroll(scrolledType, topViewIndex: topViewIndex)
 	}
 
 	func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-		if triggeredLeft {
-			moveContentViewToTop(.Left)
-			XYDelegate?.xyScrollViewDidScroll(.Left, topViewIndex: topViewIndex)
-		}
-		if triggeredRight {
-			moveContentViewToTop(.Right)
-			XYDelegate?.xyScrollViewDidScroll(.Right, topViewIndex: topViewIndex)
-		}
-		if triggeredUp {
-			XYDelegate?.xyScrollViewDidScroll(.Up, topViewIndex: topViewIndex)
-		}
 
-		if triggeredDown {
-			XYDelegate?.xyScrollViewDidScroll(.Down, topViewIndex: topViewIndex)
-		}
+
+
 	}
 
-	func scrollViewShouldScrollToTop(scrollView: UIScrollView) -> Bool {
-		return true
-	}
 }
 
 extension XYScrollView: StoryTableViewDelegate {
 
 	func showOrHideToolbar(show: Bool) {
-		XYDelegate?.setToolBarHiddenByStoryTableView(show)
+		XYDelegate?.setToolBarHiddenByStoryTableView!(show)
+	}
+
+	func didSelectedStory(storyIndex: Int, touchPoint: CGPoint) {
+		XYDelegate?.didSelectedStory!(storyIndex, touchPoint: touchPoint)
 	}
 }
 
@@ -248,7 +351,7 @@ extension XYScrollView: WriteViewDelegate {
 	}
 
 	func willInputText(index: Int, oldText: String?, colorCode: Int) {
-		XYDelegate?.writeViewWillInputText(index, oldText: oldText, colorCode: colorCode)
+		XYDelegate?.writeViewWillInputText!(index, oldText: oldText, colorCode: colorCode)
 	}
 
 	func canUpLoad(can: Bool) {

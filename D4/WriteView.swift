@@ -25,11 +25,7 @@ class WriteView: UIView {
 
 	var ready = false
 
-	var selectedDotIndex: Int! {
-		didSet {
-			selectingColor = true
-		}
-	}
+	var selectedDotIndex: Int!
 
 	var selectedBlockIndex: Int!
 
@@ -46,15 +42,16 @@ class WriteView: UIView {
 		multipleTouchEnabled = false
 		exclusiveTouch = true
 
+		colorCodes = fiveRandomColorCode()
+
 		var index = 0
 		repeat {
 			let label = UILabel(frame: blockFrame(CGFloat(index)))
-			let colorCode = randomColorCode()
-			colorCodes.append(colorCode)
-			label.backgroundColor = MyColor.code(colorCode).BTColors[0]
-			label.textColor = MyColor.code(colorCode).BTColors[1]
+			label.backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
+			label.textColor = MyColor.code(colorCodes[index]).BTColors[1]
 			label.textAlignment = .Center
 			label.text = ""
+			label.numberOfLines = 0
 			label.adjustsFontSizeToFitWidth = true
 			label.addBorder(borderColor: UIColor.clearColor(), width: 0.0)
 			labels.append(label)
@@ -81,11 +78,15 @@ class WriteView: UIView {
 		guard let touch = touches.first else { return }
 		startLocation = touch.locationInView(self)
 		locationToDotIndex(startLocation)
-		delegate?.selectingColor(selectingColor)
+		if selectedDotIndex != nil {
+			selectingColor = true
+			delegate?.selectingColor(selectingColor)
+		}
 
 	}
 
 	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+
 		guard let touch = touches.first else { return }
 		let currentLocation = touch.locationInView(self)
 
@@ -97,43 +98,20 @@ class WriteView: UIView {
 			startPosition = currentPosition
 		}
 
-		touchMoved = true
 
 	}
 
 	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-		print(#function)
-
-		if !touchMoved {
-//			locationToBlockIndex(startLocation)
-//			if selectedBlockIndex != nil {
-//				delegate?.willInputText(selectedBlockIndex, oldText: labels[selectedBlockIndex].text, colorCode: colorCodes[selectedBlockIndex])
-//			}
-
-
-		} else {
-			if selectingColor {
-				selectingColor = false
-				delegate?.selectingColor(selectingColor)
-			}
-			touchMoved = false
+		if selectingColor {
+			selectingColor = false
+			delegate?.selectingColor(selectingColor)
 		}
 	}
 
 	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-
-		if !touchMoved {
-//			locationToBlockIndex(startLocation)
-//			if selectedBlockIndex != nil {
-//				delegate?.willInputText(selectedBlockIndex, oldText: labels[selectedBlockIndex].text, colorCode: colorCodes[selectedBlockIndex])
-//			}
-
-		} else {
-			if selectingColor {
-				selectingColor = false
-				delegate?.selectingColor(selectingColor)
-			}
-			touchMoved = false
+		if selectingColor {
+			selectingColor = false
+			delegate?.selectingColor(selectingColor)
 		}
 	}
 
@@ -156,31 +134,24 @@ class WriteView: UIView {
 	}
 
 	func labelsGetRandomColors() {
-		let colorCodes = fourRandomColorCode()
-		self.colorCodes.removeAll()
-		self.colorCodes = colorCodes + [colorCodes[0]]
-		changeLabelBackgoundColorAtDotIndex(3, colorCode: colorCodes[0])
-		for i in 0..<3 {
-			changeLabelBackgoundColorAtDotIndex(i, colorCode: colorCodes[i + 1])
+		self.colorCodes = fiveRandomColorCode()
+		for i in 0..<4 {
+			changeLabelBackgoundColorAtDotIndex(i, colorCode: colorCodes[i])
 		}
 	}
 
 	func changeLabelBackgoundColorAtDotIndex(dotIndex: Int, colorCode: Int) {
-		if dotIndex != 0 {
-			colorCodes[dotIndex] = colorCode
 
-			labels[dotIndex].backgroundColor = MyColor.code(colorCode).BTColors[0]
-			labels[dotIndex].textColor = MyColor.code(colorCode).BTColors[1]
-		} else {
-			colorCodes[0] = colorCode
+		colorCodes[dotIndex] = colorCode
+		labels[dotIndex].backgroundColor = MyColor.code(colorCode).BTColors[0]
+		labels[dotIndex].textColor = MyColor.code(colorCode).BTColors[1]
+
+		if dotIndex == 0 {
 			colorCodes[4] = colorCode
-
-			labels[0].backgroundColor = MyColor.code(colorCode).BTColors[0]
-			labels[0].textColor = MyColor.code(colorCode).BTColors[1]
-
 			labels[4].backgroundColor = MyColor.code(colorCode).BTColors[0]
 			labels[4].textColor = MyColor.code(colorCode).BTColors[1]
 		}
+
 	}
 
 
@@ -207,6 +178,9 @@ class WriteView: UIView {
 			let frame = activateBlockFrame(CGFloat(i))
 			if frame.contains(location) {
 				selectedBlockIndex = i
+				break
+			} else {
+				selectedBlockIndex = nil
 			}
 		}
 	}
@@ -216,6 +190,9 @@ class WriteView: UIView {
 			let frame = dots[i].frame
 			if frame.contains(location) {
 				selectedDotIndex = i
+				break
+			} else {
+				selectedBlockIndex = nil
 			}
 		}
 
@@ -236,9 +213,9 @@ extension WriteView: UIGestureRecognizerDelegate {
 	}
 }
 
-extension WriteView: ColorSelectingDotDelegate {
-
-	func selectingColor(selecting: Bool) {
-		delegate?.selectingColor(selecting)
-	}
-}
+//extension WriteView: ColorSelectingDotDelegate {
+//
+//	func selectingColor(selecting: Bool) {
+//		delegate?.selectingColor(selecting)
+//	}
+//}
