@@ -63,18 +63,20 @@ class XYScrollView: UIScrollView {
 			storyView_1.tag = 110
 			X1_contentView.addSubview(storyView_1)
 
-			let storyView_2 = StoryView(story: storys[initTopStoryIndex + 1])
-			storyView_2.tag = 110
-			X2_contentView.addSubview(storyView_2)
+			if initTopStoryIndex != storys.count - 1 {
+				let storyView_2 = StoryView(story: storys[initTopStoryIndex + 1])
+				storyView_2.tag = 110
+				X2_contentView.addSubview(storyView_2)
+			}
 
 			topStoryIndex = initTopStoryIndex
-
 		}
 	}
 
 	var topStoryIndex = 0
 
 	var inMainVC = false
+	var doneReorder = true
 	var topViewIndex = 1
 
 	var scrolledType: XYScrollType = .NotScrollYet
@@ -127,6 +129,7 @@ class XYScrollView: UIScrollView {
 			X0_contentView.frame.origin.y = -ScreenHeight
 			X0_contentView.contentSize = CGSize(width: 0, height: frame.height)
 			X0_contentView.alwaysBounceVertical = true
+			X0_contentView.alpha = 0.0
 
 			X1_contentView = UIScrollView(frame: bounds)
 			commonSetUp(X1_contentView)
@@ -136,6 +139,7 @@ class XYScrollView: UIScrollView {
 			X2_contentView.frame.origin.y = ScreenHeight
 			X2_contentView.contentSize = CGSize(width: 0, height: frame.height)
 			X2_contentView.alwaysBounceVertical = true
+			X2_contentView.alpha = 0.0
 
 			topView = X0_contentView
 			middleView = X1_contentView
@@ -153,6 +157,8 @@ class XYScrollView: UIScrollView {
 	}
 
 	func commonSetUp(scrollView: UIScrollView) {
+		scrollView.layer.cornerRadius = globalRadius
+		scrollView.clipsToBounds = true
 		scrollView.exclusiveTouch = true
 		scrollView.directionalLockEnabled = true
 		scrollView.scrollsToTop = false
@@ -173,7 +179,10 @@ class XYScrollView: UIScrollView {
 						self.X0_contentView.alpha = 1.0
 						self.X0_contentView.frame.origin.x += ScreenWidth
 						}, completion: { (_) in
-							self.writeView.firstColor = false
+							delay(seconds: 0.5, completion: {
+								self.writeView.firstColor = false
+								self.writeView.layer.cornerRadius = globalRadius
+							})
 					})
 
 				case .Right:
@@ -192,11 +201,14 @@ class XYScrollView: UIScrollView {
 				switch scrollType {
 				case .Right:
 					topViewIndex = 1
-					UIView.animateWithDuration(animateTime, animations: {
+					UIView.animateWithDuration(animateTime, animations: { 
 						self.X1_storyTableView.alpha = 1.0
 						self.X0_contentView.alpha = 0.0
 						self.X0_contentView.frame.origin.x -= ScreenWidth
+						}, completion: { (_) in
+							self.writeView.layer.cornerRadius = 0
 					})
+
 				default: break
 				}
 			}
@@ -218,18 +230,19 @@ class XYScrollView: UIScrollView {
 
 			switch scrolledType {
 			case .Up:
-				if topStoryIndex >= 1 {
+				if topStoryIndex >= 1 && doneReorder {
 					topStoryIndex -= 1
+					doneReorder = false
 
 					changeStoryForContentView(topView, storyIndex: topStoryIndex)
 					bringSubviewToFront(topView)
 
 					UIView.animateWithDuration(animateTime, animations: {
 						self.topView.alpha = 1.0
-						self.middleView.alpha = 0.2
+						self.middleView.alpha = 0.0
 						self.topView.frame.origin = self.middleOrigin
 						}, completion: { (_) in
-							self.middleView.alpha = 0.0
+//							self.middleView.alpha = 0.0
 							self.middleView.frame.origin = self.topOrigin
 
 							if self.topStoryIndex > 1 {
@@ -244,16 +257,19 @@ class XYScrollView: UIScrollView {
 
 
 			case .Down:
-				if topStoryIndex <= storys.count - 2 {
+				if topStoryIndex <= storys.count - 2 && doneReorder {
 					topStoryIndex += 1
+					doneReorder = false
+
 					changeStoryForContentView(bottomView, storyIndex: topStoryIndex)
 					bringSubviewToFront(bottomView)
+
 					UIView.animateWithDuration(animateTime, animations: {
 						self.bottomView.alpha = 1.0
-						self.middleView.alpha = 0.2
+						self.middleView.alpha = 0.0
 						self.bottomView.frame.origin = self.middleOrigin
 						}, completion: { (_) in
-							self.middleView.alpha = 0.0
+//							self.middleView.alpha = 0.0
 							self.middleView.frame.origin = self.bottomOrigin
 
 							if self.topStoryIndex < self.storys.count - 1 {
@@ -286,6 +302,7 @@ class XYScrollView: UIScrollView {
 			if contentView.frame.origin == middleOrigin { middleView = contentView }
 			if contentView.frame.origin == bottomOrigin { bottomView = contentView }
 		}
+		doneReorder = true
 	}
 
 	required init?(coder aDecoder: NSCoder) {
@@ -299,29 +316,41 @@ class XYScrollView: UIScrollView {
 extension XYScrollView: UIScrollViewDelegate {
 
 	func scrollViewDidScroll(scrollView: UIScrollView) {
-		print(scrollView.contentOffset)
 
 		if self.contentOffset.x < -TriggerDistance {
 			scrolledType = .Left
 		} else if self.contentOffset.x > TriggerDistance {
 			scrolledType = .Right
+		} else {
+			scrolledType = .NotScrollYet
 		}
 
-		if scrollView.contentOffset.y > TriggerDistance {
-			scrolledType = .Down
-		} else if scrollView.contentOffset.y < -TriggerDistance {
-			scrolledType = .Up
+		if scrollView != self {
+			if scrollView.contentOffset.y > TriggerDistance {
+				scrolledType = .Down
+			} else if scrollView.contentOffset.y < -TriggerDistance {
+				scrolledType = .Up
+			} else {
+				scrolledType = .NotScrollYet
+			}
 		}
+
 
 	}
 
 	func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
 
 		XYDelegate?.xyScrollViewWillScroll?(scrolledType, topViewIndex: topViewIndex)
-
+		
 		moveContentViewToTop(scrolledType)
 
+		if !inMainVC {
+			topViewIndex = topStoryIndex
+		}
+
 		XYDelegate?.xyScrollViewDidScroll(scrolledType, topViewIndex: topViewIndex)
+
+		scrolledType = .NotScrollYet
 	}
 
 	func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {

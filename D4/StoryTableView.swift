@@ -22,7 +22,11 @@ class StoryTableView: UITableView {
 
 	var storys: [Story] {
 		didSet {
-			reloadData()
+			UIView.animateWithDuration(0.3, animations: { 
+				self.contentOffset = CGPoint(x: 0, y: 0)
+				}) { (_) in
+					self.reloadData()
+			}
 		}
 	}
 
@@ -34,6 +38,8 @@ class StoryTableView: UITableView {
 		self.storys = storys
 		super.init(frame: frame, style: .Plain)
 		contentOffset.y = -20
+		layer.cornerRadius = globalRadius
+		clipsToBounds = true
 		backgroundColor = UIColor.clearColor()
 		separatorStyle = .None
 		dataSource = self
@@ -48,6 +54,7 @@ class StoryTableView: UITableView {
 
 	override func touchesShouldBegin(touches: Set<UITouch>, withEvent event: UIEvent?, inContentView view: UIView) -> Bool {
 		guard let touch = touches.first else { return false }
+		
 		touchPoint = touch.locationInView(self)
 		return true
 	}
@@ -75,6 +82,8 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = UITableViewCell(style: .Default, reuseIdentifier: "cell")
+		cell.selectedBackgroundView = UIView()
+		cell.selectedBackgroundView?.backgroundColor = UIColor.whiteColor()
 		return cell
 	}
 
@@ -85,8 +94,41 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		cell.textLabel!.text = storys[indexPath.row].sentences[0]
 	}
 
+	func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+		let cell = tableView.cellForRowAtIndexPath(indexPath)
+		let colorCode = storys[indexPath.row].colors[0]
+		cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[0]
+		return true
+	}
+
+	func tableView(tableView: UITableView, didUnhighlightRowAtIndexPath indexPath: NSIndexPath) {
+		let cell = tableView.cellForRowAtIndexPath(indexPath)
+		let colorCode = storys[indexPath.row].colors[0]
+		delay(seconds: 0.5) {
+			cell?.textLabel?.alpha = 0.0
+			cell!.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
+
+			UIView.animateWithDuration(0.3, animations: {
+				cell?.textLabel?.alpha = 1.0
+			})
+		}
+	}
+
+	func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+
+		return indexPath
+	}
+
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		SDelegate?.didSelectedStory(indexPath.row, touchPoint: touchPoint)
+		delay(seconds: 0.5) { 
+			tableView.deselectRowAtIndexPath(indexPath, animated: true)
+		}
+	}
+
+	func tableView(tableView: UITableView, willDeselectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+
+		return indexPath
 	}
 }
 

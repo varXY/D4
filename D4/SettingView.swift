@@ -16,33 +16,18 @@ class SettingView: UIView {
 	init() {
 		super.init(frame: CGRectMake(0, 0, ScreenWidth, ScreenHeight))
 		backgroundColor = UIColor.purpleColor()
+		layer.cornerRadius = globalRadius
+		clipsToBounds = true
 		exclusiveTouch = true
 	}
 
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		print(#function)
-		
-		guard let touch = touches.first else { return }
-		startPosition = locationToColorCode(touch.locationInView(self))
 
 	}
 
 	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-		guard let touch = touches.first else { return }
-		let currentPosition = locationToColorCode(touch.locationInView(self))
-		if currentPosition != startPosition {
-			print(startPosition)
-			backgroundColor = MyColor.code(currentPosition).BTColors[0]
-			startPosition = currentPosition
-		}
-		print(currentPosition)
 
-	}
 
-	func locationToColorCode(location: CGPoint) -> Int {
-		let x = floor(location.x / (ScreenWidth / 5))
-		let y = floor(location.y / (ScreenHeight / 6))
-		return Int(x * 10 + y)
 	}
 
 

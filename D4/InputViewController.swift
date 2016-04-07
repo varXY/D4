@@ -52,7 +52,7 @@ class InputViewController: UIViewController {
 
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-		view.backgroundColor = UIColor.clearColor()
+//		view.backgroundColor = UIColor.clearColor()
 	}
 }
 

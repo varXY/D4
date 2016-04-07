@@ -31,7 +31,6 @@ class WriteView: UIView {
 
 	var labels = [UILabel]()
 	var dots = [UIView]()
-	var bottomSign: UIView!
 	var colorCodes = [Int]()
 
 	weak var delegate: WriteViewDelegate?
@@ -41,26 +40,36 @@ class WriteView: UIView {
 		backgroundColor = UIColor.clearColor()
 		multipleTouchEnabled = false
 		exclusiveTouch = true
-
+		clipsToBounds = true
+		
 		colorCodes = fiveRandomColorCode()
 
 		var index = 0
 		repeat {
-			let label = UILabel(frame: blockFrame(CGFloat(index)))
+			let label = UILabel(frame: blockFrame(index))
 			label.backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
 			label.textColor = MyColor.code(colorCodes[index]).BTColors[1]
 			label.textAlignment = .Center
 			label.text = ""
 			label.numberOfLines = 0
 			label.adjustsFontSizeToFitWidth = true
+			label.drawTextInRect(CGRectMake(10, 10, label.frame.width - 20, label.frame.height - 20))
 			label.addBorder(borderColor: UIColor.clearColor(), width: 0.0)
 			labels.append(label)
 			addSubview(label)
 
-			if index != 0 {
-				let dotIndex = index - 1
-				let dot = UIView(frame: dotFrame(CGFloat(dotIndex)))
+			if index == 0 {
+				label.font = UIFont.boldSystemFontOfSize(19)
+			}
+
+			if index == 4 {
+				label.font = UIFont.italicSystemFontOfSize(19)
+			}
+
+			if index != 4 {
+				let dot = UIView(frame: dotFrame(index))
 				dot.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
+				dot.layer.cornerRadius = dotLength / 2
 				addSubview(dot)
 				dots.append(dot)
 			}
@@ -127,10 +136,8 @@ class WriteView: UIView {
 
 	func checkText() {
 		let empty = labels.filter( { $0.text == "" })
-//		bottomSign.backgroundColor = empty.count == 0 ? UIColor.redColor() : UIColor.whiteColor()
 		ready = empty.count == 0
-		delegate?.canUpLoad(ready)
-
+		print(ready)
 	}
 
 	func labelsGetRandomColors() {
@@ -158,12 +165,22 @@ class WriteView: UIView {
 
 	func newStory() -> Story? {
 		if ready {
+			ready = false
 			let sentences: [String] = [labels[0].text!, labels[1].text!, labels[2].text!, labels[3].text!, labels[4].text!]
 			let story = Story(sentences: sentences, colors: colorCodes)
 			return story
 		} else {
 			return nil
 		}
+
+	}
+
+	func clearContent() {
+		var i = 0
+		repeat {
+			labels[i].text = ""
+			i += 1
+		} while i < labels.count
 
 	}
 
@@ -174,28 +191,25 @@ class WriteView: UIView {
 	}
 
 	func locationToBlockIndex(location: CGPoint) {
-		for i in 0..<labels.count {
-			let frame = activateBlockFrame(CGFloat(i))
-			if frame.contains(location) {
+		selectedBlockIndex = nil
+		var i = 0
+		repeat {
+			if activateBlockFrame(i).contains(location) {
 				selectedBlockIndex = i
-				break
-			} else {
-				selectedBlockIndex = nil
 			}
-		}
+			i += 1
+		} while selectedBlockIndex == nil && i < labels.count
 	}
 
 	func locationToDotIndex(location: CGPoint) {
-		for i in 0..<dots.count {
-			let frame = dots[i].frame
-			if frame.contains(location) {
+		selectedDotIndex = nil
+		var i = 0
+		repeat {
+			if dots[i].frame.contains(location) {
 				selectedDotIndex = i
-				break
-			} else {
-				selectedBlockIndex = nil
 			}
-		}
-
+			i += 1
+		} while selectedDotIndex == nil && i < dots.count
 	}
 
 

@@ -15,7 +15,12 @@ class MainViewController: UIViewController, LeanCloud {
 	var xyScrollView: XYScrollView!
 	var statusView: UIVisualEffectView!
 
+	var statusBarStyle = UIStatusBarStyle.Default
 	var statusBarHidden = false
+
+	override func preferredStatusBarStyle() -> UIStatusBarStyle {
+		return statusBarStyle
+	}
 
 	override func prefersStatusBarHidden() -> Bool {
 		return statusBarHidden
@@ -31,11 +36,6 @@ class MainViewController: UIViewController, LeanCloud {
 		view.addSubview(xyScrollView)
 		xyScrollView.X1_storyTableView.scrollsToTop = true
 
-		let blurEffect = UIBlurEffect(style: .Light)
-		statusView = UIVisualEffectView(effect: blurEffect)
-		statusView.frame = CGRectMake(0, 0, ScreenWidth, 20)
-		view.addSubview(statusView)
-		
 		setupBars()
 
 		delay(seconds: 2.0, completion: { self.reloadDailyStory() })
@@ -59,7 +59,11 @@ class MainViewController: UIViewController, LeanCloud {
 
 	func reloadDailyStory() {
 		getDailyStory { (storys) in
-			self.xyScrollView.storys = storys
+			if storys.count != 0 {
+				self.xyScrollView.storys = storys
+			} else {
+				print("Get zero story online")
+			}
 		}
 	}
 
@@ -85,18 +89,25 @@ class MainViewController: UIViewController, LeanCloud {
 					
 			})
 
-//			UIView.animateWithDuration(0.3, animations: {
-//				self.statusView.frame.origin.y += distance
-//			}) { (_) in
-//				if !hide { self.setNeedsStatusBarAppearanceUpdate() }
-//			}
-
 		}
 
 
 	}
 
 	func setupBars() {
+		let hour = Int(dateFormatter_HH.stringFromDate(NSDate()))
+		let night = (hour > 18 && hour < 24) || (hour >= 0 && hour < 6)
+		let blurEffect = night ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
+		let tintColor = night ? UIColor.whiteColor() : UIColor.blackColor()
+		let barStyle = night ? UIBarStyle.Black : UIBarStyle.Default
+
+		statusBarStyle = night ? UIStatusBarStyle.LightContent : UIStatusBarStyle.Default
+		setNeedsStatusBarAppearanceUpdate()
+		
+		statusView = UIVisualEffectView(effect: blurEffect)
+		statusView.frame = CGRectMake(0, 0, ScreenWidth, 20)
+		view.addSubview(statusView)
+
 		let segmentedControl = UISegmentedControl(items: ["每日100", "我的故事"])
 		segmentedControl.selectedSegmentIndex = 0
 		segmentedControl.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 140, height: 29))
@@ -106,16 +117,19 @@ class MainViewController: UIViewController, LeanCloud {
 
 		let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(goToAddPage))
 
-		let infoButton = UIButton(type: .InfoDark)
+		let infoButton = UIButton(type: .InfoLight)
 		infoButton.addTarget(self, action: #selector(goToInfoPage), forControlEvents: .TouchUpInside)
 		let infoBarButton = UIBarButtonItem(customView: infoButton)
 
 		let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
 		let toolBarItems = [addButton, space, barButton, space, infoBarButton]
 
+//		let toolbarView = UIVisualEffectView(effect: blurEffect)
+//		toolbarView.frame = (navigationController?.toolbar.frame)!
 		navigationController?.navigationBarHidden = true
 		navigationController?.toolbarHidden = false
-		navigationController?.toolbar.tintColor = UIColor.blackColor()
+		navigationController?.toolbar.barStyle = barStyle
+		navigationController?.toolbar.tintColor = tintColor
 		setToolbarItems(toolBarItems, animated: true)
 	}
 
@@ -125,10 +139,7 @@ class MainViewController: UIViewController, LeanCloud {
 
 	func goToAddPage() {
 		xyScrollView.moveContentViewToTop(.Left)
-
-		let hidden = xyScrollView.topViewIndex != 1
-		navigationController?.setToolbarHidden(hidden, animated: true)
-		hideStatusView(hidden)
+		hideOrShowStatusViewAndToolbar()
 
 		if xyScrollView.writeView.firstColor == false {
 			xyScrollView.writeView.labelsGetRandomColors()
@@ -137,7 +148,10 @@ class MainViewController: UIViewController, LeanCloud {
 
 	func goToInfoPage() {
 		xyScrollView.moveContentViewToTop(.Right)
+		hideOrShowStatusViewAndToolbar()
+	}
 
+	func hideOrShowStatusViewAndToolbar() {
 		let hidden = xyScrollView.topViewIndex != 1
 		navigationController?.setToolbarHidden(hidden, animated: true)
 		hideStatusView(hidden)
@@ -167,13 +181,11 @@ extension MainViewController: XYScrollViewDelegate {
 	}
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
-		print(#function)
+
 	}
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
-		let hidden = topViewIndex != 1
-		navigationController?.setToolbarHidden(hidden, animated: true)
-		hideStatusView(hidden)
+		hideOrShowStatusViewAndToolbar()
 
 		if scrollType == .Left {
 			if xyScrollView.writeView.firstColor == false {
@@ -181,15 +193,20 @@ extension MainViewController: XYScrollViewDelegate {
 			}
 		}
 
-		if scrollType == .Up && topViewIndex == 0 {
+		if scrollType == .Down && topViewIndex == 0 {
 			if xyScrollView.writeView.ready {
-				let story = xyScrollView.writeView.newStory()!
-				saveStory(story, completion: { (success, error) in
-					self.xyScrollView.moveContentViewToTop(.Right)
-					self.navigationController?.setToolbarHidden(false, animated: true)
-					self.hideStatusView(false)
-					self.reloadDailyStory()
-				})
+				let story = xyScrollView.writeView.newStory()
+				if story != nil {
+					saveStory(story!, completion: { (success, error) in
+						self.xyScrollView.moveContentViewToTop(.Right)
+						self.hideOrShowStatusViewAndToolbar()
+						self.reloadDailyStory()
+						self.xyScrollView.writeView.clearContent()
+					})
+				}
+
+
+
 			}
 		}
 	}
@@ -201,8 +218,11 @@ extension MainViewController: XYScrollViewDelegate {
 
 extension MainViewController: DetailViewControllerDelegate {
 
-	func detailViewControllerWillDismiss() {
-		delay(seconds: 0.4) {
+
+	func detailViewControllerWillDismiss(topStoryIndex: Int) {
+		let indexPath = NSIndexPath(forRow: topStoryIndex, inSection: 0)
+		xyScrollView.X1_storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: false)
+		delay(seconds: 0.1) {
 			self.hideStatusView(false)
 		}
 	}

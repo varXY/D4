@@ -29,11 +29,7 @@ class SlideOutAnimationController: NSObject, UIViewControllerAnimatedTransitioni
 					//				fromView.center.y -= containerView!.bounds.size.height
 					toView.alpha = 1.0
 					fromView.alpha = 0.0
-//					if let subView = fromView.viewWithTag(999) {
-//						subView.alpha = 0.0
-//						subView.frame.origin.y += 200
-//						subView.transform = CGAffineTransformMakeScale(0.5, 0.5)
-//					}
+
 					//				fromView.transform = CGAffineTransformMakeScale(0.5, 0.5)
 					//				fromView.transform = CGAffineTransformMakeRotation(14.6)
 					}, completion: { (finished) -> Void in

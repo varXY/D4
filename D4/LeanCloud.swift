@@ -37,6 +37,7 @@ extension LeanCloud {
 	}
 
 	func saveStory(story: Story, completion: Completion) {
+		print(#function)
 		let object = AVObject(className: AVKey.classStory)
 		object.setObject(story.sentences, forKey: AVKey.sentences)
 		object.setObject(story.colors, forKey: AVKey.colors)

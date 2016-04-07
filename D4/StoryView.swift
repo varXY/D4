@@ -17,7 +17,9 @@ class StoryView: UIView {
 	init(story: Story) {
 		super.init(frame: ScreenBounds)
 		backgroundColor = UIColor.clearColor()
-
+		layer.cornerRadius = globalRadius
+		clipsToBounds = true
+		
 		var index = 0
 		repeat {
 			let label = UILabel(frame: blockFrame(index))
@@ -30,6 +32,14 @@ class StoryView: UIView {
 			label.drawTextInRect(CGRectMake(10, 10, label.frame.width - 20, label.frame.height - 20))
 			labels.append(label)
 			addSubview(label)
+
+			if index == 0 {
+				label.font = UIFont.boldSystemFontOfSize(19)
+			}
+
+			if index == 4 {
+				label.font = UIFont.italicSystemFontOfSize(19)
+			}
 
 			index += 1
 		} while index < 5

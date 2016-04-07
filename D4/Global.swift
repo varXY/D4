@@ -18,12 +18,20 @@ let StatusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
 let smallBlockHeight: CGFloat = 50
 let TriggerDistance: CGFloat = 50
 
+let globalRadius: CGFloat = 5
+
 // 日期和数字格式转换
 let dateFormatter: NSDateFormatter = {
 	let formatter = NSDateFormatter()
 	formatter.dateFormat = "dd/MM/yy, HH:mm"
 	return formatter
 	}()
+
+let dateFormatter_HH: NSDateFormatter = {
+	let formatter = NSDateFormatter()
+	formatter.dateFormat = "HH"
+	return formatter
+}()
 
 var priceFormatter: NSNumberFormatter = {
 	let pf = NSNumberFormatter()

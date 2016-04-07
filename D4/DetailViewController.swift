@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 protocol DetailViewControllerDelegate: class {
-	func detailViewControllerWillDismiss()
+	func detailViewControllerWillDismiss(topStoryIndex: Int)
 }
 
 class DetailViewController: UIViewController {
@@ -50,14 +50,15 @@ class DetailViewController: UIViewController {
 
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-//		view.backgroundColor = UIColor.clearColor()
-		delegate?.detailViewControllerWillDismiss()
+		delegate?.detailViewControllerWillDismiss(topStoryIndex)
 	}
 }
 
 extension DetailViewController: XYScrollViewDelegate {
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
+		topStoryIndex = topViewIndex
+
 		switch scrollType {
 		case .Left:
 			dismissViewControllerAnimated(true, completion: nil)
