@@ -47,38 +47,40 @@ enum MyColor {
 		case .code(colorCode[0]): colorValue = [255, 255, 255, 1.0]  // 0: 白
 		case .code(colorCode[1]): colorValue = [66, 120, 245, 1.0]     // 10： 深蓝1
 		case .code(colorCode[2]): colorValue = [0, 150, 255, 1.0]    // 20： 2
-		case .code(colorCode[3]): colorValue = [118, 214, 255, 1.0]   //30： 3
+		case .code(colorCode[3]): colorValue = [0, 170, 220, 1.0]   //30： 3
 		case .code(colorCode[4]): colorValue = [0, 253, 255, 1.0]   //40： 浅蓝4
 
 		case .code(colorCode[5]): colorValue = [235, 235, 235, 1.0]  //1： 浅灰
 		case .code(colorCode[6]): colorValue = [0, 122, 170, 1.0]     //11： 深青1
-		case .code(colorCode[7]): colorValue = [0, 213, 255, 1.0]     //21： 2
+		case .code(colorCode[7]): colorValue = [58, 160, 174, 1.0]     //21： 2
 		case .code(colorCode[8]): colorValue = [17, 219, 227, 1.0]   //31： 3
 		case .code(colorCode[9]): colorValue = [115, 252, 214, 1.0]  //41： 浅青4
 
 		case .code(colorCode[10]): colorValue = [214, 214, 214, 1.0] //2： 灰
-		case .code(colorCode[11]): colorValue = [0, 141, 81, 1.0]    //12： 深绿1
-		case .code(colorCode[12]): colorValue = [0, 249, 0, 1.0]    //22： 2
-		case .code(colorCode[13]): colorValue = [0, 250, 146, 1.0]   //32： 3
-		case .code(colorCode[14]): colorValue = [115, 250, 121, 1.0]  //42： 浅绿4
+		case .code(colorCode[11]): colorValue = [128, 180, 46, 1.0]    //12： 深绿1
+		case .code(colorCode[12]): colorValue = [0, 209, 14, 1.0]    //22： 2
+		case .code(colorCode[13]): colorValue = [166, 218, 84, 1.0]   //32： 3
+		case .code(colorCode[14]): colorValue = [100, 250, 128, 1.0]  //42： 浅绿4
 
 		case .code(colorCode[15]): colorValue = [169, 169, 169, 1.0]    //3： 深灰
-		case .code(colorCode[16]): colorValue = [255, 147, 0, 1.0]    //13： 深黄1
-		case .code(colorCode[17]): colorValue = [255, 212, 121, 1.0]   //23： 2
-		case .code(colorCode[18]): colorValue = [255, 251, 0, 1.0]  //33： 3
-		case .code(colorCode[19]): colorValue = [255, 252, 121, 1.0]  //43： 浅黄4
+		case .code(colorCode[16]): colorValue = [254, 94, 4, 1.0]    //13： 深黄1
+		case .code(colorCode[17]): colorValue = [255, 147, 0, 1.0]   //23： 2
+		case .code(colorCode[18]): colorValue = [254, 204, 43, 1.0]  //33： 3
+		case .code(colorCode[19]): colorValue = [255, 251, 0, 1.0]  //43： 浅黄4
 
 		case .code(colorCode[20]): colorValue = [121, 121, 121, 1.0]       //4： 黑
 		case .code(colorCode[21]): colorValue = [255, 38, 0, 1.0]      //14： 深红1
-		case .code(colorCode[22]): colorValue = [255, 47, 146, 1.0]     //24： 2
-		case .code(colorCode[23]): colorValue = [255, 172, 169, 1.0]   //34： 3
-		case .code(colorCode[24]): colorValue = [254, 193, 208, 1.0]   //44： 浅红4
+		case .code(colorCode[22]): colorValue = [252, 101, 103, 1.0]     //24： 2
+		case .code(colorCode[23]): colorValue = [245, 134, 167, 1.0]   //34： 3
+		case .code(colorCode[24]): colorValue = [255, 172, 169, 1.0]   //44： 浅红4
 
 		case .code(colorCode[25]): colorValue = [66, 66, 66, 1.0] //5： 自定义
 		case .code(colorCode[26]): colorValue = [83, 27, 147, 1.0]	 //15： 深紫1
 		case .code(colorCode[27]): colorValue = [158, 93, 215, 1.0]   //25： 2
 		case .code(colorCode[28]): colorValue = [136, 129, 240, 1.0]   //35： 3
 		case .code(colorCode[29]): colorValue = [132, 167, 233, 1.0] //45： 浅紫4
+
+
 
 		default: colorValue = [0, 0, 0, 0]
 		}
@@ -91,6 +93,45 @@ enum MyColor {
 		return [backgroundColor, textColor]
 	}
 }
+
+// 0408 第二版颜色
+//case .code(colorCode[0]): colorValue = [255, 255, 255, 1.0]  // 0: 白
+//case .code(colorCode[1]): colorValue = [66, 120, 245, 1.0]     // 10： 深蓝1
+//case .code(colorCode[2]): colorValue = [0, 150, 255, 1.0]    // 20： 2
+//case .code(colorCode[3]): colorValue = [118, 214, 255, 1.0]   //30： 3
+//case .code(colorCode[4]): colorValue = [0, 253, 255, 1.0]   //40： 浅蓝4
+//
+//case .code(colorCode[5]): colorValue = [235, 235, 235, 1.0]  //1： 浅灰
+//case .code(colorCode[6]): colorValue = [0, 122, 170, 1.0]     //11： 深青1
+//case .code(colorCode[7]): colorValue = [0, 213, 255, 1.0]     //21： 2
+//case .code(colorCode[8]): colorValue = [17, 219, 227, 1.0]   //31： 3
+//case .code(colorCode[9]): colorValue = [115, 252, 214, 1.0]  //41： 浅青4
+//
+//case .code(colorCode[10]): colorValue = [214, 214, 214, 1.0] //2： 灰
+//case .code(colorCode[11]): colorValue = [0, 141, 81, 1.0]    //12： 深绿1
+//case .code(colorCode[12]): colorValue = [0, 249, 0, 1.0]    //22： 2
+//case .code(colorCode[13]): colorValue = [0, 250, 146, 1.0]   //32： 3
+//case .code(colorCode[14]): colorValue = [115, 250, 121, 1.0]  //42： 浅绿4
+//
+//case .code(colorCode[15]): colorValue = [169, 169, 169, 1.0]    //3： 深灰
+//case .code(colorCode[16]): colorValue = [255, 147, 0, 1.0]    //13： 深黄1
+//case .code(colorCode[17]): colorValue = [255, 212, 121, 1.0]   //23： 2
+//case .code(colorCode[18]): colorValue = [255, 251, 0, 1.0]  //33： 3
+//case .code(colorCode[19]): colorValue = [255, 252, 121, 1.0]  //43： 浅黄4
+//
+//case .code(colorCode[20]): colorValue = [121, 121, 121, 1.0]       //4： 黑
+//case .code(colorCode[21]): colorValue = [255, 38, 0, 1.0]      //14： 深红1
+//case .code(colorCode[22]): colorValue = [255, 47, 146, 1.0]     //24： 2
+//case .code(colorCode[23]): colorValue = [255, 172, 169, 1.0]   //34： 3
+//case .code(colorCode[24]): colorValue = [254, 193, 208, 1.0]   //44： 浅红4
+//
+//case .code(colorCode[25]): colorValue = [66, 66, 66, 1.0] //5： 自定义
+//case .code(colorCode[26]): colorValue = [83, 27, 147, 1.0]	 //15： 深紫1
+//case .code(colorCode[27]): colorValue = [158, 93, 215, 1.0]   //25： 2
+//case .code(colorCode[28]): colorValue = [136, 129, 240, 1.0]   //35： 3
+//case .code(colorCode[29]): colorValue = [132, 167, 233, 1.0] //45： 浅紫4
+
+
 
 
 // 第一版颜色：完全依照keyNote的选色版。

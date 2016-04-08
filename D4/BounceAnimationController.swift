@@ -11,31 +11,32 @@ import UIKit
 class BounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
 
 	func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-		return 0.4
+		return 0.3
 	}
 
 	func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
 
 		if let toViewController = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey) {
 			if let toView = transitionContext.viewForKey(UITransitionContextToViewKey) {
+				let duration = transitionDuration(transitionContext)
 
 				toView.frame = transitionContext.finalFrameForViewController(toViewController)
-
 				transitionContext.containerView()!.addSubview(toView)
+
 				toView.alpha = 0.0
 				toView.transform = CGAffineTransformMakeScale(0.7, 0.7)
 
-				UIView.animateWithDuration(transitionDuration(transitionContext), delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+				if let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey) {
+					UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+						fromView.alpha = 0.0
+						toView.alpha = 1.0
+						toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+						}, completion: { (finished) in
+							transitionContext.completeTransition(finished)
+					})
+				}
 
-					toView.center = CGPoint(x: ScreenWidth / 2, y: ScreenHeight / 2)
-					toView.alpha = 1.0
-					toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
 
-					}, completion: { (finished) in
-
-						transitionContext.completeTransition(finished)
-
-				})
 
 			}
 		}

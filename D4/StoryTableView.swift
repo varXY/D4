@@ -20,17 +20,11 @@ protocol StoryTableViewDelegate: class {
 
 class StoryTableView: UITableView {
 
-	var storys: [Story] {
-		didSet {
-			UIView.animateWithDuration(0.3, animations: { 
-				self.contentOffset = CGPoint(x: 0, y: 0)
-				}) { (_) in
-					self.reloadData()
-			}
-		}
-	}
+	var storys: [Story]!
 
 	var touchPoint: CGPoint!
+
+	var headerView: UIView!
 
 	weak var SDelegate: StoryTableViewDelegate?
 
@@ -48,8 +42,7 @@ class StoryTableView: UITableView {
 
 		let headerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
 		headerView.backgroundColor = UIColor.clearColor()
-		self.tableHeaderView = headerView
-
+		tableHeaderView = headerView
 	}
 
 	override func touchesShouldBegin(touches: Set<UITouch>, withEvent event: UIEvent?, inContentView view: UIView) -> Bool {
@@ -57,6 +50,29 @@ class StoryTableView: UITableView {
 		
 		touchPoint = touch.locationInView(self)
 		return true
+	}
+
+	func loading(loading: Bool) {
+		if loading {
+			self.frame.origin.y += 30
+
+		} else {
+			UIView.animateWithDuration(0.3, animations: {
+				self.frame.origin.y -= 30
+				}, completion: { (_) in
+			})
+
+		}
+	}
+
+	func insertNewStory(story: Story) {
+		storys.insert(story, atIndex: 0)
+		let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+		scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: true)
+		
+//		beginUpdates()
+		insertRowsAtIndexPaths([indexPath], withRowAnimation: .Top)
+//		endUpdates()
 	}
 
 	required init?(coder aDecoder: NSCoder) {
@@ -84,14 +100,17 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		let cell = UITableViewCell(style: .Default, reuseIdentifier: "cell")
 		cell.selectedBackgroundView = UIView()
 		cell.selectedBackgroundView?.backgroundColor = UIColor.whiteColor()
-		return cell
-	}
 
-	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
 		let colorCode = storys[indexPath.row].colors[0]
 		cell.backgroundColor = MyColor.code(colorCode).BTColors[0]
 		cell.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
 		cell.textLabel!.text = storys[indexPath.row].sentences[0]
+		
+		return cell
+	}
+
+	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+
 	}
 
 	func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {

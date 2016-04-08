@@ -25,6 +25,7 @@
 		317CC5C11CB1EED2009A368B /* BounceAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317CC5C01CB1EED2009A368B /* BounceAnimationController.swift */; };
 		317CC5C31CB1EED9009A368B /* FadeOutAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317CC5C21CB1EED9009A368B /* FadeOutAnimationController.swift */; };
 		317CC5C51CB1EEE0009A368B /* SildeOutAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317CC5C41CB1EEE0009A368B /* SildeOutAnimationController.swift */; };
+		3189C1971CB74BC90092D363 /* SLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189C1961CB74BC90092D363 /* SLabel.swift */; };
 		3198F12E1CB48315006612B8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3198F12D1CB48315006612B8 /* DetailViewController.swift */; };
 		3198F1301CB48B27006612B8 /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3198F12F1CB48B27006612B8 /* StoryView.swift */; };
 		31B6424C1CB0A75100D901CF /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B6424B1CB0A75100D901CF /* SettingView.swift */; };
@@ -63,6 +64,7 @@
 		317CC5C01CB1EED2009A368B /* BounceAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BounceAnimationController.swift; sourceTree = "<group>"; };
 		317CC5C21CB1EED9009A368B /* FadeOutAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FadeOutAnimationController.swift; sourceTree = "<group>"; };
 		317CC5C41CB1EEE0009A368B /* SildeOutAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SildeOutAnimationController.swift; sourceTree = "<group>"; };
+		3189C1961CB74BC90092D363 /* SLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SLabel.swift; sourceTree = "<group>"; };
 		3198F12D1CB48315006612B8 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		3198F12F1CB48B27006612B8 /* StoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
 		31B6424B1CB0A75100D901CF /* SettingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				31FF3A3A1CAD053E008B2C69 /* WriteView.swift */,
 				317CC5B91CB1E3A3009A368B /* WriteView+Rects.swift */,
 				31B6424B1CB0A75100D901CF /* SettingView.swift */,
+				3189C1961CB74BC90092D363 /* SLabel.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 				31FF3A321CACFB8A008B2C69 /* UIView+.swift in Sources */,
 				31FF3A271CACF28D008B2C69 /* Story.swift in Sources */,
 				317CC5C51CB1EEE0009A368B /* SildeOutAnimationController.swift in Sources */,
+				3189C1971CB74BC90092D363 /* SLabel.swift in Sources */,
 				31FF3A311CACFB8A008B2C69 /* String+.swift in Sources */,
 				31FF3A381CAD03F0008B2C69 /* LeanCloud.swift in Sources */,
 				31FF3A2F1CACFB8A008B2C69 /* UIColor+.swift in Sources */,

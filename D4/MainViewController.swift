@@ -18,6 +18,8 @@ class MainViewController: UIViewController, LeanCloud {
 	var statusBarStyle = UIStatusBarStyle.Default
 	var statusBarHidden = false
 
+	var dailyStoryLoaded = false
+
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
 		return statusBarStyle
 	}
@@ -38,12 +40,12 @@ class MainViewController: UIViewController, LeanCloud {
 
 		setupBars()
 
-		delay(seconds: 2.0, completion: { self.reloadDailyStory() })
-
 	}
 
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
+
+		reloadDailyStory()
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -58,12 +60,52 @@ class MainViewController: UIViewController, LeanCloud {
 
 
 	func reloadDailyStory() {
-		getDailyStory { (storys) in
-			if storys.count != 0 {
-				self.xyScrollView.storys = storys
-			} else {
-				print("Get zero story online")
+		if !dailyStoryLoaded {
+			xyScrollView.X1_storyTableView.loading(true)
+			loadingStory(true)
+			getDailyStory { (storys) in
+				if storys.count != 0 {
+					self.loadingStory(false)
+					self.xyScrollView.X1_storyTableView.loading(false)
+					self.xyScrollView.storys = storys
+					self.xyScrollView.X1_storyTableView.reloadData()
+					self.dailyStoryLoaded = true
+				} else {
+					self.loadingStory(false)
+					print("Get zero story online")
+				}
 			}
+		}
+
+	}
+
+	func loadingStory(loading: Bool) {
+
+		if loading {
+			var images = [UIImage]()
+			for i in 0..<colorCode.count {
+				let image = UIImage.imageWithColor(MyColor.code(colorCode[i]).BTColors[0], rect: CGRectMake(0, 0, ScreenWidth, 50))
+				images.append(image)
+			}
+
+			let loadingImage = UIImage.animatedImageWithImages(images, duration: 1.5)
+			let imageView = UIImageView(image: loadingImage)
+			imageView.frame.origin = CGPoint(x: 0, y: 20)
+			imageView.tag = 30
+
+			view.addSubview(imageView)
+			view.sendSubviewToBack(imageView)
+		} else {
+			if let imageView = view.viewWithTag(30) as? UIImageView {
+				imageView.stopAnimating()
+
+				UIView.animateWithDuration(0.6, animations: {
+					imageView.alpha = 0.0
+					}, completion: { (_) in
+						imageView.removeFromSuperview()
+				})
+			}
+
 		}
 	}
 
@@ -96,7 +138,7 @@ class MainViewController: UIViewController, LeanCloud {
 
 	func setupBars() {
 		let hour = Int(dateFormatter_HH.stringFromDate(NSDate()))
-		let night = (hour > 18 && hour < 24) || (hour >= 0 && hour < 6)
+		let night = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
 		let blurEffect = night ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
 		let tintColor = night ? UIColor.whiteColor() : UIColor.blackColor()
 		let barStyle = night ? UIBarStyle.Black : UIBarStyle.Default
@@ -124,8 +166,6 @@ class MainViewController: UIViewController, LeanCloud {
 		let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
 		let toolBarItems = [addButton, space, barButton, space, infoBarButton]
 
-//		let toolbarView = UIVisualEffectView(effect: blurEffect)
-//		toolbarView.frame = (navigationController?.toolbar.frame)!
 		navigationController?.navigationBarHidden = true
 		navigationController?.toolbarHidden = false
 		navigationController?.toolbar.barStyle = barStyle
@@ -164,14 +204,14 @@ extension MainViewController: XYScrollViewDelegate {
 	func didSelectedStory(storyIndex: Int, touchPoint: CGPoint) {
 
 		let detailVC = DetailViewController()
-		detailVC.storys = xyScrollView.storys
+		detailVC.storys = xyScrollView.X1_storyTableView.storys
 		detailVC.topStoryIndex = storyIndex
 		detailVC.touchPoint = touchPoint
 		detailVC.delegate = self
 		presentViewController(detailVC, animated: true, completion: nil)
 	}
 
-	func writeViewWillInputText(index: Int, oldText: String?, colorCode: Int) {
+	func writeViewWillInputText(index: Int, oldText: String, colorCode: Int) {
 		let inputVC = InputViewController()
 		inputVC.index = index
 		inputVC.oldText = oldText
@@ -200,8 +240,14 @@ extension MainViewController: XYScrollViewDelegate {
 					saveStory(story!, completion: { (success, error) in
 						self.xyScrollView.moveContentViewToTop(.Right)
 						self.hideOrShowStatusViewAndToolbar()
-						self.reloadDailyStory()
+
+//						self.reloadDailyStory()
 						self.xyScrollView.writeView.clearContent()
+
+						delay(seconds: 1.5, completion: { 
+							self.xyScrollView.X1_storyTableView.insertNewStory(story!)
+
+						})
 					})
 				}
 
@@ -222,9 +268,7 @@ extension MainViewController: DetailViewControllerDelegate {
 	func detailViewControllerWillDismiss(topStoryIndex: Int) {
 		let indexPath = NSIndexPath(forRow: topStoryIndex, inSection: 0)
 		xyScrollView.X1_storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: false)
-		delay(seconds: 0.1) {
-			self.hideStatusView(false)
-		}
+		self.hideStatusView(false)
 	}
 }
 

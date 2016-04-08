@@ -16,3 +16,24 @@ extension Array {
 	}
 
 }
+
+extension Array where Element:Equatable {
+	func removeDuplicates() -> [Element] {
+		var result = [Element]()
+
+		for value in self {
+			if result.contains(value) == false {
+				result.append(value)
+			}
+		}
+
+		return result
+	}
+}
+
+func uniq<S: SequenceType, E: Hashable where E==S.Generator.Element>(source: S) -> [E] {
+	var seen: [E:Bool] = [:]
+	return source.filter({ (v) -> Bool in
+		return seen.updateValue(true, forKey: v) == nil
+	})
+}

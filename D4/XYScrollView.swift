@@ -17,7 +17,7 @@ import UIKit
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int)
 	optional func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int)
 	optional func setToolBarHiddenByStoryTableView(hidden: Bool)
-	optional func writeViewWillInputText(index: Int, oldText: String?, colorCode: Int)
+	optional func writeViewWillInputText(index: Int, oldText: String, colorCode: Int)
 	optional func didSelectedStory(storyIndex: Int, touchPoint: CGPoint)
 }
 
@@ -57,14 +57,23 @@ class XYScrollView: UIScrollView {
 				let storyView_0 = StoryView(story: storys[initTopStoryIndex - 1])
 				storyView_0.tag = 110
 				X0_contentView.addSubview(storyView_0)
+			} else {
+				let storyView_0 = StoryView(story: storys[initTopStoryIndex])
+				storyView_0.tag = 110
+				X0_contentView.addSubview(storyView_0)
 			}
 
 			let storyView_1 = StoryView(story: storys[initTopStoryIndex])
+			storyView_1.addShawdow()
 			storyView_1.tag = 110
 			X1_contentView.addSubview(storyView_1)
 
 			if initTopStoryIndex != storys.count - 1 {
 				let storyView_2 = StoryView(story: storys[initTopStoryIndex + 1])
+				storyView_2.tag = 110
+				X2_contentView.addSubview(storyView_2)
+			} else {
+				let storyView_2 = StoryView(story: storys[initTopStoryIndex])
 				storyView_2.tag = 110
 				X2_contentView.addSubview(storyView_2)
 			}
@@ -120,6 +129,7 @@ class XYScrollView: UIScrollView {
 			settingView = SettingView()
 			X2_contentView.addSubview(settingView)
 			X2_contentView.alpha = 0.0
+			X2_contentView.decelerationRate = UIScrollViewDecelerationRateFast
 
 			addSubview(X1_storyTableView)
 			addSubview(X0_contentView)
@@ -173,12 +183,12 @@ class XYScrollView: UIScrollView {
 				case .Left:
 					topViewIndex = 0
 					writeView.firstColor = true
+					X0_contentView.alpha = 1.0
 
-					UIView.animateWithDuration(animateTime, animations: {
+					XXAnimate({ 
 						self.X1_storyTableView.alpha = 0.0
-						self.X0_contentView.alpha = 1.0
 						self.X0_contentView.frame.origin.x += ScreenWidth
-						}, completion: { (_) in
+						}, completion: { 
 							delay(seconds: 0.5, completion: {
 								self.writeView.firstColor = false
 								self.writeView.layer.cornerRadius = globalRadius
@@ -187,10 +197,12 @@ class XYScrollView: UIScrollView {
 
 				case .Right:
 					topViewIndex = 2
-					UIView.animateWithDuration(animateTime, animations: {
+					X2_contentView.alpha = 1.0
+					XXAnimate({ 
 						self.X1_storyTableView.alpha = 0.0
-						self.X2_contentView.alpha = 1.0
 						self.X2_contentView.frame.origin.x -= ScreenWidth
+						}, completion: { 
+
 					})
 					
 				default: break
@@ -201,11 +213,12 @@ class XYScrollView: UIScrollView {
 				switch scrollType {
 				case .Right:
 					topViewIndex = 1
-					UIView.animateWithDuration(animateTime, animations: { 
-						self.X1_storyTableView.alpha = 1.0
+					X1_storyTableView.alpha = 1.0
+					
+					XXAnimate({ 
 						self.X0_contentView.alpha = 0.0
 						self.X0_contentView.frame.origin.x -= ScreenWidth
-						}, completion: { (_) in
+						}, completion: { 
 							self.writeView.layer.cornerRadius = 0
 					})
 
@@ -217,11 +230,15 @@ class XYScrollView: UIScrollView {
 				switch scrollType {
 				case .Left:
 					topViewIndex = 1
-					UIView.animateWithDuration(animateTime, animations: {
-						self.X1_storyTableView.alpha = 1.0
+					X1_storyTableView.alpha = 1.0
+
+					XXAnimate({ 
 						self.X2_contentView.alpha = 0.0
 						self.X2_contentView.frame.origin.x += ScreenWidth
+						}, completion: { 
+
 					})
+
 				default: break
 				}
 			}
@@ -236,19 +253,17 @@ class XYScrollView: UIScrollView {
 
 					changeStoryForContentView(topView, storyIndex: topStoryIndex)
 					bringSubviewToFront(topView)
+					topView.alpha = 1.0
 
-					UIView.animateWithDuration(animateTime, animations: {
-						self.topView.alpha = 1.0
+					YYAnimate({ 
 						self.middleView.alpha = 0.0
 						self.topView.frame.origin = self.middleOrigin
-						}, completion: { (_) in
-//							self.middleView.alpha = 0.0
+						}, completion: { 
 							self.middleView.frame.origin = self.topOrigin
 
 							if self.topStoryIndex > 1 {
 								self.changeStoryForContentView(self.middleView, storyIndex: self.topStoryIndex - 1)
 							}
-
 
 							self.reorderView()
 					})
@@ -263,22 +278,21 @@ class XYScrollView: UIScrollView {
 
 					changeStoryForContentView(bottomView, storyIndex: topStoryIndex)
 					bringSubviewToFront(bottomView)
+					bottomView.alpha = 1.0
 
-					UIView.animateWithDuration(animateTime, animations: {
-						self.bottomView.alpha = 1.0
+					YYAnimate({ 
 						self.middleView.alpha = 0.0
 						self.bottomView.frame.origin = self.middleOrigin
-						}, completion: { (_) in
-//							self.middleView.alpha = 0.0
+						}, completion: { 
 							self.middleView.frame.origin = self.bottomOrigin
 
 							if self.topStoryIndex < self.storys.count - 1 {
 								self.changeStoryForContentView(self.middleView, storyIndex: self.topStoryIndex + 1)
 							}
 
-
 							self.reorderView()
 					})
+
 				}
 
 
@@ -286,6 +300,22 @@ class XYScrollView: UIScrollView {
 				break
 			}
 
+		}
+	}
+
+	func XXAnimate(animations: () -> (), completion: (() -> ())?) {
+		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.4, options: [], animations: {
+			animations()
+			}) { (_) in
+				completion!()
+		}
+	}
+
+	func YYAnimate(animations: () -> (), completion: (() -> ())?) {
+		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.7, options: [], animations: {
+			animations()
+			}) { (_) in
+				completion!()
 		}
 	}
 
@@ -379,12 +409,11 @@ extension XYScrollView: WriteViewDelegate {
 		X0_contentView.scrollEnabled = !selecting
 	}
 
-	func willInputText(index: Int, oldText: String?, colorCode: Int) {
+	func willInputText(index: Int, oldText: String, colorCode: Int) {
 		XYDelegate?.writeViewWillInputText!(index, oldText: oldText, colorCode: colorCode)
 	}
 
 	func canUpLoad(can: Bool) {
-//		X0_contentView.scrollEnabled = can
 	}
 
 }

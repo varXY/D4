@@ -11,7 +11,7 @@ import UIKit
 
 protocol WriteViewDelegate: class {
 	func selectingColor(selecting: Bool)
-	func willInputText(index: Int, oldText: String?, colorCode: Int)
+	func willInputText(index: Int, oldText: String, colorCode: Int)
 	func canUpLoad(can: Bool)
 }
 
@@ -46,7 +46,7 @@ class WriteView: UIView {
 
 		var index = 0
 		repeat {
-			let label = UILabel(frame: blockFrame(index))
+			let label = SLabel(frame: blockFrame(index))
 			label.backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
 			label.textColor = MyColor.code(colorCodes[index]).BTColors[1]
 			label.textAlignment = .Center
@@ -60,10 +60,14 @@ class WriteView: UIView {
 
 			if index == 0 {
 				label.font = UIFont.boldSystemFontOfSize(19)
+				addShadowForButton(label)
 			}
 
 			if index == 4 {
 				label.font = UIFont.italicSystemFontOfSize(19)
+				addShadowForButton(label)
+				bringSubviewToFront(label)
+				bringSubviewToFront(labels[0])
 			}
 
 			if index != 4 {
@@ -81,6 +85,14 @@ class WriteView: UIView {
 		tapGesture.delegate = self
 		addGestureRecognizer(tapGesture)
 
+	}
+
+	func addShadowForButton(label: UILabel) {
+		label.layer.masksToBounds = false
+		label.layer.shadowRadius = 10
+		label.layer.shadowOpacity = 0.5
+		label.layer.shadowColor = UIColor.blackColor().CGColor
+		label.layer.shadowOffset = CGSizeMake(0, 0)
 	}
 
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -125,7 +137,8 @@ class WriteView: UIView {
 	}
 
 	func tapped() {
-		delegate?.willInputText(selectedBlockIndex, oldText: labels[selectedBlockIndex].text, colorCode: colorCodes[selectedBlockIndex])
+		let text = labels[selectedBlockIndex].text == nil ? "" : labels[selectedBlockIndex].text
+		delegate?.willInputText(selectedBlockIndex, oldText: text!, colorCode: colorCodes[selectedBlockIndex])
 	}
 
 
@@ -137,7 +150,6 @@ class WriteView: UIView {
 	func checkText() {
 		let empty = labels.filter( { $0.text == "" })
 		ready = empty.count == 0
-		print(ready)
 	}
 
 	func labelsGetRandomColors() {

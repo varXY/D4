@@ -22,7 +22,7 @@ class StoryView: UIView {
 		
 		var index = 0
 		repeat {
-			let label = UILabel(frame: blockFrame(index))
+			let label = SLabel(frame: blockFrame(index))
 			label.backgroundColor = MyColor.code(story.colors[index]).BTColors[0]
 			label.textColor = MyColor.code(story.colors[index]).BTColors[1]
 			label.text = story.sentences[index]
@@ -39,10 +39,30 @@ class StoryView: UIView {
 
 			if index == 4 {
 				label.font = UIFont.italicSystemFontOfSize(19)
+				bringSubviewToFront(label)
+				bringSubviewToFront(labels[0])
+
+//				addShadowForButton(labels[2])
+//				bringSubviewToFront(labels[2])
 			}
 
 			index += 1
 		} while index < 5
+
+//		addShawdow()
+	}
+
+	func addShawdow() {
+		addShadowForButton(labels[0])
+		addShadowForButton(labels[4])
+	}
+
+	func addShadowForButton(label: UILabel) {
+		label.layer.masksToBounds = false
+		label.layer.shadowRadius = 10
+		label.layer.shadowOpacity = 0.5
+		label.layer.shadowColor = UIColor.blackColor().CGColor
+		label.layer.shadowOffset = CGSizeMake(0, 0)
 	}
 
 	func reloadStory(story: Story) {
