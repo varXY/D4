@@ -1,4 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="Test1.xcdatamodel" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10171" systemVersion="15E65" minimumToolsVersion="Automatic">
+    <entity name="Colors" representedClassName=".Colors" syncable="YES">
+        <attribute name="c0" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="c1" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="c2" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="c3" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="c4" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="dailyStory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DailyStory" inverseName="colors" inverseEntity="DailyStory" syncable="YES"/>
+        <relationship name="myStory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MyStory" inverseName="colors" inverseEntity="MyStory" syncable="YES"/>
+    </entity>
+    <entity name="DailyStory" representedClassName=".DailyStory" syncable="YES">
+        <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="rating" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="colors" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Colors" inverseName="dailyStory" inverseEntity="Colors" syncable="YES"/>
+        <relationship name="sentences" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sentences" inverseName="dailyStory" inverseEntity="Sentences" syncable="YES"/>
+    </entity>
+    <entity name="MyStory" representedClassName=".MyStory" syncable="YES">
+        <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="rating" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="colors" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Colors" inverseName="myStory" inverseEntity="Colors" syncable="YES"/>
+        <relationship name="sentences" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sentences" inverseName="myStory" inverseEntity="Sentences" syncable="YES"/>
+    </entity>
+    <entity name="Sentences" representedClassName=".Sentences" syncable="YES">
+        <attribute name="s0" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="s1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="s2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="s3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="s4" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="dailyStory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DailyStory" inverseName="sentences" inverseEntity="DailyStory" syncable="YES"/>
+        <relationship name="myStory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MyStory" inverseName="sentences" inverseEntity="MyStory" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="MyStory" positionX="-153" positionY="11" width="126" height="118"/>
+        <element name="Sentences" positionX="79" positionY="36" width="128" height="148"/>
+        <element name="Colors" positionX="34" positionY="-108" width="128" height="148"/>
+        <element name="DailyStory" positionX="-9" positionY="45" width="128" height="120"/>
+    </elements>
 </model>

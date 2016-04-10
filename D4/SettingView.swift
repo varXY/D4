@@ -15,7 +15,7 @@ class SettingView: UIView {
 
 	init() {
 		super.init(frame: CGRectMake(0, 0, ScreenWidth, ScreenHeight))
-		backgroundColor = UIColor.purpleColor()
+		backgroundColor = UIColor.lightGrayColor()
 		layer.cornerRadius = globalRadius
 		clipsToBounds = true
 		exclusiveTouch = true

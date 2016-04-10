@@ -29,10 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		window?.rootViewController = navi
 		window?.makeKeyAndVisible()
 
-//		let statusView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
-//		statusView.backgroundColor = UIColor.whiteColor()
-//		window?.rootViewController!.view.addSubview(statusView)
-
 		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
 		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
 
@@ -50,7 +46,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	func applicationWillEnterForeground(application: UIApplication) {
-		// Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+		guard let navi = window?.rootViewController as? UINavigationController else { return }
+		guard let mainVC = navi.topViewController as? MainViewController else { return }
+		mainVC.changeBarStyleBaseOnTime()
 	}
 
 	func applicationDidBecomeActive(application: UIApplication) {

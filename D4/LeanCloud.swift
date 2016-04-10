@@ -17,14 +17,15 @@ struct AVKey {
 	static let sentences = "Sentences"
 	static let colors = "Colors"
 	static let rating = "Rating"
-	static let auther = "Auther"
+	static let author = "Author"
+	static let date = "createdAt"
 
-	static let classAuthor = "Author"
+	static let classAuthor = "C_Author"
 }
 
 protocol LeanCloud: UserDefaults {
 	func createAndSaveAuthor()
-	func saveStory(story: Story, completion: Completion)
+	func uploadStory(story: Story, completion: Completion)
 	func getDailyStory(gotStorys: GotStorys)
 }
 
@@ -36,12 +37,12 @@ extension LeanCloud {
 		}
 	}
 
-	func saveStory(story: Story, completion: Completion) {
+	func uploadStory(story: Story, completion: Completion) {
 		let object = AVObject(className: AVKey.classStory)
 		object.setObject(story.sentences, forKey: AVKey.sentences)
 		object.setObject(story.colors, forKey: AVKey.colors)
 		object.setObject(story.rating, forKey: AVKey.rating)
-		object.setObject(story.auther, forKey: AVKey.auther)
+		object.setObject(story.author, forKey: AVKey.author)
 
 		object.saveInBackgroundWithBlock { (success, error) in
 			completion(success, error)
@@ -52,7 +53,8 @@ extension LeanCloud {
 		var storys = [Story]()
 
 		let query = AVQuery(className: AVKey.classStory)
-//		query.addAscendingOrder(AVKey.rating)
+		query.orderByAscending(AVKey.date)
+//		query.addAscendingOrder(AVKey.)
 		query.findObjectsInBackgroundWithBlock { (results, error) in
 			if let objects = results as? [AVObject] {
 

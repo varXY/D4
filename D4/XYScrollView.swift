@@ -64,7 +64,6 @@ class XYScrollView: UIScrollView {
 			}
 
 			let storyView_1 = StoryView(story: storys[initTopStoryIndex])
-			storyView_1.addShawdow()
 			storyView_1.tag = 110
 			X1_contentView.addSubview(storyView_1)
 
@@ -384,8 +383,6 @@ extension XYScrollView: UIScrollViewDelegate {
 	}
 
 	func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-
-
 
 	}
 

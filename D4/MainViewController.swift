@@ -7,18 +7,21 @@
 //
 
 import UIKit
-import AVOSCloud
 
-
-class MainViewController: UIViewController, LeanCloud {
+class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 
 	var xyScrollView: XYScrollView!
 	var statusView: UIVisualEffectView!
+	var segmentedControl: UISegmentedControl!
 
 	var statusBarStyle = UIStatusBarStyle.Default
 	var statusBarHidden = false
 
 	var dailyStoryLoaded = false
+
+	var dailyStorys: [Story]!
+
+	var inputVC: InputViewController!
 
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
 		return statusBarStyle
@@ -39,13 +42,15 @@ class MainViewController: UIViewController, LeanCloud {
 		xyScrollView.X1_storyTableView.scrollsToTop = true
 
 		setupBars()
+		reloadDailyStory()
 
 	}
 
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 
-		reloadDailyStory()
+		inputVC = InputViewController()
+
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -65,16 +70,26 @@ class MainViewController: UIViewController, LeanCloud {
 			loadingStory(true)
 			getDailyStory { (storys) in
 				if storys.count != 0 {
+					self.dailyStorys = storys
 					self.loadingStory(false)
 					self.xyScrollView.X1_storyTableView.loading(false)
 					self.xyScrollView.storys = storys
 					self.xyScrollView.X1_storyTableView.reloadData()
 					self.dailyStoryLoaded = true
+
+					self.save100DailyStorys(storys, completion: { (success) in
+						print("save 100 story to coreData:", success)
+					})
+
 				} else {
 					self.loadingStory(false)
 					print("Get zero story online")
 				}
 			}
+			
+		} else {
+			xyScrollView.storys = dailyStorys
+			xyScrollView.X1_storyTableView.reloadData()
 		}
 
 	}
@@ -110,7 +125,10 @@ class MainViewController: UIViewController, LeanCloud {
 	}
 
 	func loadSelfStory() {
-		
+		getMyStorys { (storys) in
+			self.xyScrollView.storys = storys
+			self.xyScrollView.X1_storyTableView.reloadData()
+		}
 	}
 
 	func hideStatusView(hide: Bool) {
@@ -136,7 +154,7 @@ class MainViewController: UIViewController, LeanCloud {
 
 	}
 
-	func setupBars() {
+	func changeBarStyleBaseOnTime() {
 		let hour = Int(dateFormatter_HH.stringFromDate(NSDate()))
 		let night = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
 		let blurEffect = night ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
@@ -145,14 +163,29 @@ class MainViewController: UIViewController, LeanCloud {
 
 		statusBarStyle = night ? UIStatusBarStyle.LightContent : UIStatusBarStyle.Default
 		setNeedsStatusBarAppearanceUpdate()
-		
-		statusView = UIVisualEffectView(effect: blurEffect)
+
+		statusView.effect = blurEffect
+
+		navigationController?.toolbar.barStyle = barStyle
+		navigationController?.toolbar.tintColor = tintColor
+	}
+
+	func setupBars() {
+		let effect = UIBlurEffect(style: .Dark)
+		statusView = UIVisualEffectView(effect: effect)
 		statusView.frame = CGRectMake(0, 0, ScreenWidth, 20)
+
+		statusView.layer.masksToBounds = false
+		statusView.layer.shadowRadius = 0
+		statusView.layer.shadowOpacity = 1.0
+		statusView.layer.shadowColor = UIColor.grayColor().CGColor
+		statusView.layer.shadowOffset = CGSizeMake(0, 0.3)
+
 		view.addSubview(statusView)
 
-		let segmentedControl = UISegmentedControl(items: ["每日100", "我的故事"])
+		segmentedControl = UISegmentedControl(items: ["每日100", "我的故事"])
 		segmentedControl.selectedSegmentIndex = 0
-		segmentedControl.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 140, height: 29))
+		segmentedControl.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 160, height: 29))
 		segmentedControl.addTarget(self, action: #selector(segmentedControlSelected(_:)), forControlEvents: .ValueChanged)
 
 		let barButton = UIBarButtonItem(customView: segmentedControl)
@@ -168,9 +201,11 @@ class MainViewController: UIViewController, LeanCloud {
 
 		navigationController?.navigationBarHidden = true
 		navigationController?.toolbarHidden = false
-		navigationController?.toolbar.barStyle = barStyle
-		navigationController?.toolbar.tintColor = tintColor
+//		navigationController?.toolbar.clipsToBounds = true
+
 		setToolbarItems(toolBarItems, animated: true)
+
+		changeBarStyleBaseOnTime()
 	}
 
 	func segmentedControlSelected(segmentedControl: UISegmentedControl) {
@@ -212,7 +247,6 @@ extension MainViewController: XYScrollViewDelegate {
 	}
 
 	func writeViewWillInputText(index: Int, oldText: String, colorCode: Int) {
-		let inputVC = InputViewController()
 		inputVC.index = index
 		inputVC.oldText = oldText
 		inputVC.colorCode = colorCode
@@ -227,7 +261,7 @@ extension MainViewController: XYScrollViewDelegate {
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		hideOrShowStatusViewAndToolbar()
 
-		if scrollType == .Left {
+		if scrollType == .Left && xyScrollView.topViewIndex != 1 {
 			if xyScrollView.writeView.firstColor == false {
 				xyScrollView.writeView.labelsGetRandomColors()
 			}
@@ -237,18 +271,30 @@ extension MainViewController: XYScrollViewDelegate {
 			if xyScrollView.writeView.ready {
 				let story = xyScrollView.writeView.newStory()
 				if story != nil {
-					saveStory(story!, completion: { (success, error) in
+
 						self.xyScrollView.moveContentViewToTop(.Right)
 						self.hideOrShowStatusViewAndToolbar()
 
-//						self.reloadDailyStory()
-						self.xyScrollView.writeView.clearContent()
+						self.segmentedControl.selectedSegmentIndex = 1
+						self.loadSelfStory()
 
-						delay(seconds: 1.5, completion: { 
+						delay(seconds: 1.5, completion: {
 							self.xyScrollView.X1_storyTableView.insertNewStory(story!)
 
 						})
-					})
+
+						delay(seconds: 2.0, completion: { 
+							self.saveMyStory(story!, completion: { (success) in
+								self.uploadStory(story!, completion: { (success, error) in
+									if success == true {
+										print(success)
+										self.xyScrollView.writeView.clearContent()
+									}
+								})
+								print(success, " to save my story")
+							})
+						})
+
 				}
 
 
@@ -258,7 +304,7 @@ extension MainViewController: XYScrollViewDelegate {
 	}
 
 	func setToolBarHiddenByStoryTableView(hidden: Bool) {
-		navigationController?.setToolbarHidden(hidden, animated: true)
+//		navigationController?.setToolbarHidden(hidden, animated: true)
 	}
 }
 

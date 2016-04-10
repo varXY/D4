@@ -32,9 +32,16 @@ extension WriteView {
 	}
 
 	func activateBlockFrame(index: Int) -> CGRect {
-		var rect = blockFrame(index)
-		rect.size.width -= 100
-		return rect
+
+		let smallBlockheight_1: CGFloat = 70
+		let bigBlockHeight_1 = (ScreenHeight - smallBlockheight_1 * 2) / 3
+
+		let addend = index == 0 ? 0 : smallBlockheight_1
+		let factor = index == 0 ? 0 : CGFloat(index - 1)
+		let y = addend + bigBlockHeight_1 * factor
+		let height = (index == 0 || index == 4) ? smallBlockheight_1 : bigBlockHeight_1
+		return CGRectMake(0, y, ScreenWidth - 100, height)
+
 	}
 
 	func dotFrame(index: Int) -> CGRect {

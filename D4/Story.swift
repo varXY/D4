@@ -16,14 +16,22 @@ struct Story {
 	let sentences: [String]
 	let colors: [Int]
 	let rating: Int
-	let auther: String
+	let author: String
+
+	init(date: NSDate, sentences: [String], colors: [Int], rating: Int, author: String) {
+		self.date = date
+		self.sentences = sentences
+		self.colors = colors
+		self.rating = rating
+		self.author = author
+	}
 
 	init(object: AVObject) {
 		date = object.createdAt
 		sentences = object.objectForKey(AVKey.sentences) as! [String]
 		colors = object.objectForKey(AVKey.colors) as! [Int]
 		rating = object.objectForKey(AVKey.rating) as! Int
-		auther = object.objectForKey(AVKey.auther) as! String
+		author = object.objectForKey(AVKey.author) as! String
 	}
 
 	init(sentences: [String], colors: [Int]) {
@@ -31,7 +39,7 @@ struct Story {
 		self.sentences = sentences
 		self.colors = colors
 		rating = 0
-		auther = "56fe08e479bc4400523bc0c3"
+		author = "56fe08e479bc4400523bc0c3"
 	}
 
 }

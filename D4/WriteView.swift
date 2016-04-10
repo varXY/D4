@@ -17,7 +17,7 @@ protocol WriteViewDelegate: class {
 
 class WriteView: UIView {
 
-	var startLocation: CGPoint!
+//	var startLocation: CGPoint!
 	var touchMoved = false
 	var selectingColor = false
 
@@ -28,6 +28,8 @@ class WriteView: UIView {
 	var selectedDotIndex: Int!
 
 	var selectedBlockIndex: Int!
+
+	var startPosition: Int!
 
 	var labels = [UILabel]()
 	var dots = [UIView]()
@@ -60,19 +62,15 @@ class WriteView: UIView {
 
 			if index == 0 {
 				label.font = UIFont.boldSystemFontOfSize(19)
-				addShadowForButton(label)
 			}
 
 			if index == 4 {
 				label.font = UIFont.italicSystemFontOfSize(19)
-				addShadowForButton(label)
-				bringSubviewToFront(label)
-				bringSubviewToFront(labels[0])
 			}
 
-			if index != 4 {
+			if index < 4 {
 				let dot = UIView(frame: dotFrame(index))
-				dot.backgroundColor = UIColor(white: 0.5, alpha: 0.5)
+				dot.backgroundColor = UIColor(white: 0.8, alpha: 0.8)
 				dot.layer.cornerRadius = dotLength / 2
 				addSubview(dot)
 				dots.append(dot)
@@ -81,25 +79,18 @@ class WriteView: UIView {
 			index += 1
 		} while index < 5
 
-		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapped))
-		tapGesture.delegate = self
-		addGestureRecognizer(tapGesture)
+//		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapped))
+//		tapGesture.delegate = self
+//		addGestureRecognizer(tapGesture)
 
-	}
-
-	func addShadowForButton(label: UILabel) {
-		label.layer.masksToBounds = false
-		label.layer.shadowRadius = 10
-		label.layer.shadowOpacity = 0.5
-		label.layer.shadowColor = UIColor.blackColor().CGColor
-		label.layer.shadowOffset = CGSizeMake(0, 0)
 	}
 
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
 		guard let touch = touches.first else { return }
-		startLocation = touch.locationInView(self)
-		locationToDotIndex(startLocation)
+		let location = touch.locationInView(self)
+		locationToDotIndex(location)
 		if selectedDotIndex != nil {
+			startPosition = locationToColorCode(location)
 			selectingColor = true
 			delegate?.selectingColor(selectingColor)
 		}
@@ -112,35 +103,64 @@ class WriteView: UIView {
 		let currentLocation = touch.locationInView(self)
 
 		let currentPosition = locationToColorCode(currentLocation)
-		var startPosition = locationToColorCode(startLocation)
 
-		if selectingColor && currentPosition != startPosition {
-			changeLabelBackgoundColorAtDotIndex(selectedDotIndex, colorCode: currentPosition)
-			startPosition = currentPosition
+		if selectingColor {
+			bringSubviewToFront(dots[selectedDotIndex])
+			dots[selectedDotIndex].backgroundColor = UIColor(white: 1.0, alpha: 1.0)
+			dots[selectedDotIndex].center = currentLocation
+
+			if currentPosition != startPosition {
+				startPosition = currentPosition
+				changeLabelBackgoundColorAtDotIndex(selectedDotIndex, colorCode: currentPosition)
+				touchMoved = true
+			}
+
 		}
 
 
 	}
 
 	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+//		guard let touch = touches!.first else { return }
+//		let currentLocation = touch.locationInView(self)
+
 		if selectingColor {
+			dots[selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
+			dots[selectedDotIndex].frame.origin = dotFrame(selectedDotIndex).origin
 			selectingColor = false
 			delegate?.selectingColor(selectingColor)
 		}
+
+//		if !touchMoved {
+//			locationToBlockIndex(currentLocation)
+//			let text = labels[selectedBlockIndex].text == nil ? "" : labels[selectedBlockIndex].text
+//			delegate?.willInputText(selectedBlockIndex, oldText: text!, colorCode: colorCodes[selectedBlockIndex])
+//		} else {
+//			touchMoved = false
+//		}
 	}
 
 	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		guard let touch = touches.first else { return }
+		let currentLocation = touch.locationInView(self)
+
 		if selectingColor {
+			dots[selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
+			dots[selectedDotIndex].frame.origin = dotFrame(selectedDotIndex).origin
 			selectingColor = false
 			delegate?.selectingColor(selectingColor)
 		}
-	}
 
-	func tapped() {
-		let text = labels[selectedBlockIndex].text == nil ? "" : labels[selectedBlockIndex].text
-		delegate?.willInputText(selectedBlockIndex, oldText: text!, colorCode: colorCodes[selectedBlockIndex])
+		if !touchMoved {
+			locationToBlockIndex(currentLocation)
+			if selectedBlockIndex != nil {
+				let text = labels[selectedBlockIndex].text == nil ? "" : labels[selectedBlockIndex].text
+				delegate?.willInputText(selectedBlockIndex, oldText: text!, colorCode: colorCodes[selectedBlockIndex])
+			}
+		} else {
+			touchMoved = false
+		}
 	}
-
 
 	func changeLabelText(index: Int, text: String) {
 		labels[index].text = text
@@ -233,10 +253,13 @@ class WriteView: UIView {
 extension WriteView: UIGestureRecognizerDelegate {
 
 	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+
 		let location = touch.locationInView(self)
 		locationToBlockIndex(location)
 		return selectedBlockIndex != nil
 	}
+
+	
 }
 
 //extension WriteView: ColorSelectingDotDelegate {

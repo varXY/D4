@@ -18,7 +18,7 @@ protocol StoryTableViewDelegate: class {
 	func didSelectedStory(storyIndex: Int, touchPoint: CGPoint)
 }
 
-class StoryTableView: UITableView {
+class StoryTableView: UITableView, CoreDataAndStory {
 
 	var storys: [Story]!
 
@@ -43,6 +43,16 @@ class StoryTableView: UITableView {
 		let headerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
 		headerView.backgroundColor = UIColor.clearColor()
 		tableHeaderView = headerView
+
+		let footerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 44))
+		footerView.backgroundColor = UIColor.clearColor()
+		tableFooterView = footerView
+
+		load100DailyStorys { (storys) in
+			if storys.count != 0 {
+				self.storys = storys
+			}
+		}
 	}
 
 	override func touchesShouldBegin(touches: Set<UITouch>, withEvent event: UIEvent?, inContentView view: UIView) -> Bool {
@@ -54,11 +64,11 @@ class StoryTableView: UITableView {
 
 	func loading(loading: Bool) {
 		if loading {
-			self.frame.origin.y += 30
+			self.frame.origin.y += 50
 
 		} else {
 			UIView.animateWithDuration(0.3, animations: {
-				self.frame.origin.y -= 30
+				self.frame.origin.y -= 50
 				}, completion: { (_) in
 			})
 
