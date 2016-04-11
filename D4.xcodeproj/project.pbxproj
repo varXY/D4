@@ -19,7 +19,6 @@
 		3179194B1CABB2CD00DB9A0A /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3179194A1CABB2CD00DB9A0A /* CoreTelephony.framework */; };
 		3179194D1CABB2D500DB9A0A /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3179194C1CABB2D500DB9A0A /* CoreLocation.framework */; };
 		317BC7F11CB08C86000A36FB /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317BC7F01CB08C86000A36FB /* UserDefaults.swift */; };
-		317CC5BA1CB1E3A3009A368B /* WriteView+Rects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317CC5B91CB1E3A3009A368B /* WriteView+Rects.swift */; };
 		317CC5BC1CB1ECFF009A368B /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317CC5BB1CB1ECFF009A368B /* InputViewController.swift */; };
 		317CC5BF1CB1EECB009A368B /* DimmingPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317CC5BE1CB1EECB009A368B /* DimmingPresentationController.swift */; };
 		317CC5C11CB1EED2009A368B /* BounceAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317CC5C01CB1EED2009A368B /* BounceAnimationController.swift */; };
@@ -30,6 +29,7 @@
 		3198F1301CB48B27006612B8 /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3198F12F1CB48B27006612B8 /* StoryView.swift */; };
 		31B6424C1CB0A75100D901CF /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B6424B1CB0A75100D901CF /* SettingView.swift */; };
 		31B642501CB0DAE900D901CF /* XYScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B6424F1CB0DAE900D901CF /* XYScrollView.swift */; };
+		31DB3EAB1CBB692A000BF3E1 /* PointerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DB3EAA1CBB692A000BF3E1 /* PointerView.swift */; };
 		31F2A4DE1CB9C6B7001725A0 /* CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F2A4DD1CB9C6B7001725A0 /* CoreData.swift */; };
 		31F2A4E71CB9CE4F001725A0 /* Sentences+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F2A4DF1CB9CE4F001725A0 /* Sentences+CoreDataProperties.swift */; };
 		31F2A4E81CB9CE4F001725A0 /* Sentences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F2A4E01CB9CE4F001725A0 /* Sentences.swift */; };
@@ -67,7 +67,6 @@
 		3179194A1CABB2CD00DB9A0A /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		3179194C1CABB2D500DB9A0A /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		317BC7F01CB08C86000A36FB /* UserDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
-		317CC5B91CB1E3A3009A368B /* WriteView+Rects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "WriteView+Rects.swift"; sourceTree = "<group>"; };
 		317CC5BB1CB1ECFF009A368B /* InputViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputViewController.swift; sourceTree = "<group>"; };
 		317CC5BE1CB1EECB009A368B /* DimmingPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DimmingPresentationController.swift; sourceTree = "<group>"; };
 		317CC5C01CB1EED2009A368B /* BounceAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BounceAnimationController.swift; sourceTree = "<group>"; };
@@ -78,6 +77,7 @@
 		3198F12F1CB48B27006612B8 /* StoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
 		31B6424B1CB0A75100D901CF /* SettingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		31B6424F1CB0DAE900D901CF /* XYScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XYScrollView.swift; sourceTree = "<group>"; };
+		31DB3EAA1CBB692A000BF3E1 /* PointerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointerView.swift; sourceTree = "<group>"; };
 		31F2A4DD1CB9C6B7001725A0 /* CoreData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreData.swift; sourceTree = "<group>"; };
 		31F2A4DF1CB9CE4F001725A0 /* Sentences+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Sentences+CoreDataProperties.swift"; path = "../Sentences+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		31F2A4E01CB9CE4F001725A0 /* Sentences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Sentences.swift; path = ../Sentences.swift; sourceTree = "<group>"; };
@@ -186,7 +186,6 @@
 		31F2A4EF1CB9CE92001725A0 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
-				31F2A4DD1CB9C6B7001725A0 /* CoreData.swift */,
 				31F2A4DF1CB9CE4F001725A0 /* Sentences+CoreDataProperties.swift */,
 				31F2A4E01CB9CE4F001725A0 /* Sentences.swift */,
 				31F2A4E11CB9CE4F001725A0 /* Colors+CoreDataProperties.swift */,
@@ -215,6 +214,7 @@
 				31FF3A351CACFBCE008B2C69 /* MyColor.swift */,
 				31FF3A371CAD03F0008B2C69 /* LeanCloud.swift */,
 				317BC7F01CB08C86000A36FB /* UserDefaults.swift */,
+				31F2A4DD1CB9C6B7001725A0 /* CoreData.swift */,
 				31F2A4EF1CB9CE92001725A0 /* CoreData */,
 			);
 			name = Model;
@@ -240,9 +240,9 @@
 				311EC7831CAE39280021FFB7 /* StoryTableView.swift */,
 				3198F12F1CB48B27006612B8 /* StoryView.swift */,
 				31FF3A3A1CAD053E008B2C69 /* WriteView.swift */,
-				317CC5B91CB1E3A3009A368B /* WriteView+Rects.swift */,
 				31B6424B1CB0A75100D901CF /* SettingView.swift */,
 				3189C1961CB74BC90092D363 /* SLabel.swift */,
+				31DB3EAA1CBB692A000BF3E1 /* PointerView.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -322,7 +322,6 @@
 				31F2A4E71CB9CE4F001725A0 /* Sentences+CoreDataProperties.swift in Sources */,
 				3198F12E1CB48315006612B8 /* DetailViewController.swift in Sources */,
 				31F2A4EB1CB9CE4F001725A0 /* MyStory+CoreDataProperties.swift in Sources */,
-				317CC5BA1CB1E3A3009A368B /* WriteView+Rects.swift in Sources */,
 				31F2A4DE1CB9C6B7001725A0 /* CoreData.swift in Sources */,
 				317919301CABB25900DB9A0A /* AppDelegate.swift in Sources */,
 				31FF3A361CACFBCE008B2C69 /* MyColor.swift in Sources */,
@@ -346,6 +345,7 @@
 				31FF3A311CACFB8A008B2C69 /* String+.swift in Sources */,
 				31F2A4EA1CB9CE4F001725A0 /* Colors.swift in Sources */,
 				31FF3A381CAD03F0008B2C69 /* LeanCloud.swift in Sources */,
+				31DB3EAB1CBB692A000BF3E1 /* PointerView.swift in Sources */,
 				31FF3A2F1CACFB8A008B2C69 /* UIColor+.swift in Sources */,
 				3198F1301CB48B27006612B8 /* StoryView.swift in Sources */,
 				31F2A4EE1CB9CE4F001725A0 /* DailyStory.swift in Sources */,

@@ -32,9 +32,7 @@ protocol LeanCloud: UserDefaults {
 extension LeanCloud {
 
 	func createAndSaveAuthor() {
-		if author() == nil {
 
-		}
 	}
 
 	func uploadStory(story: Story, completion: Completion) {

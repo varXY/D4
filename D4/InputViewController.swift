@@ -105,7 +105,9 @@ class InputViewController: UIViewController {
 		let alertTexts = [
 			"写那么多干嘛",
 			"要相信简洁的力量",
-			"浓缩的是精华"
+			"浓缩的是精华",
+			"话太多",
+			"少说两句"
 		]
 		let index = random() % alertTexts.count
 		return alertTexts[index]

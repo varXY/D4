@@ -39,6 +39,7 @@ class StoryView: UIView {
 
 			if index == 4 {
 				label.font = UIFont.italicSystemFontOfSize(19)
+				label.numberOfLines = 1
 			}
 
 			index += 1

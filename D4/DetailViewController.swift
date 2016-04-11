@@ -16,11 +16,11 @@ protocol DetailViewControllerDelegate: class {
 class DetailViewController: UIViewController {
 
 	var xyScrollView: XYScrollView!
+	var pointerView: PointerView!
 
 	var storys: [Story]!
 	var topStoryIndex: Int!
 	var cellRectHeight: Int!
-	var touchPoint: CGPoint!
 
 	weak var delegate: DetailViewControllerDelegate?
 
@@ -34,8 +34,9 @@ class DetailViewController: UIViewController {
 		modalPresentationStyle = .Custom
 		transitioningDelegate = self
 
-		view.backgroundColor = UIColor.blackColor()
-		view.center = touchPoint
+		pointerView = PointerView(VC: self)
+		view = pointerView
+
 		xyScrollView = XYScrollView(VC: self)
 		xyScrollView.storys = storys
 		xyScrollView.initTopStoryIndex = topStoryIndex
@@ -55,6 +56,10 @@ class DetailViewController: UIViewController {
 }
 
 extension DetailViewController: XYScrollViewDelegate {
+
+	func scrollTypeDidChange(type: XYScrollType) {
+		pointerView.changePointerDirection(type)
+	}
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		topStoryIndex = topViewIndex

@@ -11,7 +11,7 @@ import UIKit
 class BounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
 
 	func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-		return 0.3
+		return 0.4
 	}
 
 	func animateTransition(transitionContext: UIViewControllerContextTransitioning) {

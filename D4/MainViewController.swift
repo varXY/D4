@@ -8,9 +8,10 @@
 
 import UIKit
 
-class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
+class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDefaults {
 
 	var xyScrollView: XYScrollView!
+	var pointerView: PointerView!
 	var statusView: UIVisualEffectView!
 	var segmentedControl: UISegmentedControl!
 
@@ -33,24 +34,25 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = UIColor.blackColor()
 		automaticallyAdjustsScrollViewInsets = false
+
+		pointerView = PointerView(VC: self)
+		view = pointerView
 
 		xyScrollView = XYScrollView(VC: self)
 		xyScrollView.XYDelegate = self
 		view.addSubview(xyScrollView)
 		xyScrollView.X1_storyTableView.scrollsToTop = true
 
+		dailyStorys = xyScrollView.X1_storyTableView.storys
+
 		setupBars()
-		reloadDailyStory()
 
 	}
 
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-
-		inputVC = InputViewController()
-
+		testLoadStory()
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -63,33 +65,70 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 		hideStatusView(true)
 	}
 
-
-	func reloadDailyStory() {
+	func testLoadStory() {
 		if !dailyStoryLoaded {
 			xyScrollView.X1_storyTableView.loading(true)
 			loadingStory(true)
 			getDailyStory { (storys) in
+				self.xyScrollView.X1_storyTableView.loading(false)
+				self.loadingStory(false)
+
 				if storys.count != 0 {
 					self.dailyStorys = storys
-					self.loadingStory(false)
-					self.xyScrollView.X1_storyTableView.loading(false)
+
 					self.xyScrollView.storys = storys
 					self.xyScrollView.X1_storyTableView.reloadData()
+
 					self.dailyStoryLoaded = true
+					self.updateLastLoadDate(NSDate())
 
 					self.save100DailyStorys(storys, completion: { (success) in
 						print("save 100 story to coreData:", success)
 					})
 
 				} else {
-					self.loadingStory(false)
+					print("Get zero story online")
+				}
+			}
+
+		}
+	}
+
+
+	func reloadDailyStory() {
+
+		let lastDate = lastLoadDate()
+		dailyStoryLoaded = dateFormatter_dd.stringFromDate(lastDate) == dateFormatter_dd.stringFromDate(NSDate())
+		print(dateFormatter_dd.stringFromDate(lastDate))
+		print(dateFormatter_dd.stringFromDate(NSDate()))
+
+		if !dailyStoryLoaded {
+			xyScrollView.X1_storyTableView.loading(true)
+			loadingStory(true)
+			getDailyStory { (storys) in
+				self.xyScrollView.X1_storyTableView.loading(false)
+				self.loadingStory(false)
+
+				if storys.count != 0 {
+					self.dailyStorys = storys
+
+					self.xyScrollView.storys = storys
+					self.xyScrollView.X1_storyTableView.reloadData()
+
+					self.dailyStoryLoaded = true
+					self.updateLastLoadDate(NSDate())
+
+					self.save100DailyStorys(storys, completion: { (success) in
+						print("save 100 story to coreData:", success)
+					})
+
+				} else {
 					print("Get zero story online")
 				}
 			}
 			
 		} else {
-			xyScrollView.storys = dailyStorys
-			xyScrollView.X1_storyTableView.reloadData()
+			dailyStorys = xyScrollView.X1_storyTableView.storys
 		}
 
 	}
@@ -124,34 +163,16 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 		}
 	}
 
+	func loadSavedDailyStory() {
+		xyScrollView.storys = dailyStorys
+		xyScrollView.X1_storyTableView.reloadData()
+	}
+
 	func loadSelfStory() {
 		getMyStorys { (storys) in
 			self.xyScrollView.storys = storys
 			self.xyScrollView.X1_storyTableView.reloadData()
 		}
-	}
-
-	func hideStatusView(hide: Bool) {
-		statusBarHidden = hide
-		if hide { setNeedsStatusBarAppearanceUpdate() }
-
-		if (hide && statusView.frame.origin.y == 0) || (!hide && statusView.frame.origin.y == -20) {
-
-			let distance: CGFloat = hide ? -20 : 20
-
-			UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
-
-				self.statusView.frame.origin.y += distance
-
-				}, completion: { (finished) in
-
-					if !hide { self.setNeedsStatusBarAppearanceUpdate() }
-					
-			})
-
-		}
-
-
 	}
 
 	func changeBarStyleBaseOnTime() {
@@ -168,6 +189,9 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 
 		navigationController?.toolbar.barStyle = barStyle
 		navigationController?.toolbar.tintColor = tintColor
+
+		guard let button = navigationController?.toolbarItems?[0] else { return }
+		button.tintColor = night ? UIColor.whiteColor() : UIColor.blackColor()
 	}
 
 	func setupBars() {
@@ -175,11 +199,11 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 		statusView = UIVisualEffectView(effect: effect)
 		statusView.frame = CGRectMake(0, 0, ScreenWidth, 20)
 
-		statusView.layer.masksToBounds = false
-		statusView.layer.shadowRadius = 0
-		statusView.layer.shadowOpacity = 1.0
-		statusView.layer.shadowColor = UIColor.grayColor().CGColor
-		statusView.layer.shadowOffset = CGSizeMake(0, 0.3)
+//		statusView.layer.masksToBounds = false
+//		statusView.layer.shadowRadius = 0.0
+//		statusView.layer.shadowOpacity = 0.5
+//		statusView.layer.shadowColor = UIColor.grayColor().CGColor
+//		statusView.layer.shadowOffset = CGSizeMake(0, 0.5)
 
 		view.addSubview(statusView)
 
@@ -201,7 +225,13 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 
 		navigationController?.navigationBarHidden = true
 		navigationController?.toolbarHidden = false
-//		navigationController?.toolbar.clipsToBounds = true
+		navigationController?.toolbar.clipsToBounds = true
+		
+//		navigationController?.toolbar.layer.masksToBounds = false
+//		navigationController?.toolbar.layer.shadowRadius = 0.0
+//		navigationController?.toolbar.layer.shadowOpacity = 0.5
+//		navigationController?.toolbar.layer.shadowColor = UIColor.grayColor().CGColor
+//		navigationController?.toolbar.layer.shadowOffset = CGSizeMake(0, 0.5)
 
 		setToolbarItems(toolBarItems, animated: true)
 
@@ -209,10 +239,11 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 	}
 
 	func segmentedControlSelected(segmentedControl: UISegmentedControl) {
-		segmentedControl.selectedSegmentIndex == 0 ? reloadDailyStory() : loadSelfStory()
+		segmentedControl.selectedSegmentIndex == 0 ? loadSavedDailyStory() : loadSelfStory()
 	}
 
 	func goToAddPage() {
+		xyScrollView.scrolledType = .NotScrollYet
 		xyScrollView.moveContentViewToTop(.Left)
 		hideOrShowStatusViewAndToolbar()
 
@@ -222,6 +253,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 	}
 
 	func goToInfoPage() {
+		xyScrollView.scrolledType = .NotScrollYet
 		xyScrollView.moveContentViewToTop(.Right)
 		hideOrShowStatusViewAndToolbar()
 	}
@@ -232,21 +264,47 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory {
 		hideStatusView(hidden)
 	}
 
+	func hideStatusView(hide: Bool) {
+		statusBarHidden = hide
+		if hide { setNeedsStatusBarAppearanceUpdate() }
+
+		if (hide && statusView.frame.origin.y == 0) || (!hide && statusView.frame.origin.y == -20) {
+
+			let distance: CGFloat = hide ? -20 : 20
+
+			UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+
+				self.statusView.frame.origin.y += distance
+
+				}, completion: { (finished) in
+
+					if !hide { self.setNeedsStatusBarAppearanceUpdate() }
+					
+			})
+			
+		}
+
+	}
+
 }
 
 extension MainViewController: XYScrollViewDelegate {
 
-	func didSelectedStory(storyIndex: Int, touchPoint: CGPoint) {
+	func scrollTypeDidChange(type: XYScrollType) {
+		pointerView.changePointerDirection(type)
+	}
+
+	func didSelectedStory(storyIndex: Int) {
 
 		let detailVC = DetailViewController()
 		detailVC.storys = xyScrollView.X1_storyTableView.storys
 		detailVC.topStoryIndex = storyIndex
-		detailVC.touchPoint = touchPoint
 		detailVC.delegate = self
 		presentViewController(detailVC, animated: true, completion: nil)
 	}
 
 	func writeViewWillInputText(index: Int, oldText: String, colorCode: Int) {
+		inputVC = InputViewController()
 		inputVC.index = index
 		inputVC.oldText = oldText
 		inputVC.colorCode = colorCode
@@ -261,6 +319,9 @@ extension MainViewController: XYScrollViewDelegate {
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		hideOrShowStatusViewAndToolbar()
 
+		let add = topViewIndex != 1
+		pointerView.addOrRemoveUpAndDownPointer(add)
+
 		if scrollType == .Left && xyScrollView.topViewIndex != 1 {
 			if xyScrollView.writeView.firstColor == false {
 				xyScrollView.writeView.labelsGetRandomColors()
@@ -268,37 +329,41 @@ extension MainViewController: XYScrollViewDelegate {
 		}
 
 		if scrollType == .Down && topViewIndex == 0 {
-			if xyScrollView.writeView.ready {
-				let story = xyScrollView.writeView.newStory()
-				if story != nil {
+			delay(seconds: 0.7, completion: {
+				self.goBackSaveUploadStory()
+			})
+		}
+	}
 
-						self.xyScrollView.moveContentViewToTop(.Right)
-						self.hideOrShowStatusViewAndToolbar()
+	func goBackSaveUploadStory() {
+		if xyScrollView.writeView.ready {
+			let story = xyScrollView.writeView.newStory()
+			if story != nil {
 
-						self.segmentedControl.selectedSegmentIndex = 1
-						self.loadSelfStory()
+				self.xyScrollView.moveContentViewToTop(.Right)
+				self.pointerView.addOrRemoveUpAndDownPointer(false)
+				self.hideOrShowStatusViewAndToolbar()
 
-						delay(seconds: 1.5, completion: {
-							self.xyScrollView.X1_storyTableView.insertNewStory(story!)
+				self.segmentedControl.selectedSegmentIndex = 1
+				self.loadSelfStory()
 
+				delay(seconds: 1.0, completion: {
+					self.xyScrollView.X1_storyTableView.insertNewStory(story!)
+
+				})
+
+				delay(seconds: 1.5, completion: {
+					self.saveMyStory(story!, completion: { (success) in
+						self.uploadStory(story!, completion: { (success, error) in
+							if success == true {
+								self.saveLastStory(story!)
+								print(success)
+								self.xyScrollView.writeView.clearContent()
+							}
 						})
-
-						delay(seconds: 2.0, completion: { 
-							self.saveMyStory(story!, completion: { (success) in
-								self.uploadStory(story!, completion: { (success, error) in
-									if success == true {
-										print(success)
-										self.xyScrollView.writeView.clearContent()
-									}
-								})
-								print(success, " to save my story")
-							})
-						})
-
-				}
-
-
-
+						print(success, " to save my story")
+					})
+				})
 			}
 		}
 	}

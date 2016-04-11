@@ -15,14 +15,12 @@ enum StoryTableViewScrollType {
 
 protocol StoryTableViewDelegate: class {
 	func showOrHideToolbar(show: Bool)
-	func didSelectedStory(storyIndex: Int, touchPoint: CGPoint)
+	func didSelectedStory(storyIndex: Int)
 }
 
 class StoryTableView: UITableView, CoreDataAndStory {
 
 	var storys: [Story]!
-
-	var touchPoint: CGPoint!
 
 	var headerView: UIView!
 
@@ -55,13 +53,6 @@ class StoryTableView: UITableView, CoreDataAndStory {
 		}
 	}
 
-	override func touchesShouldBegin(touches: Set<UITouch>, withEvent event: UIEvent?, inContentView view: UIView) -> Bool {
-		guard let touch = touches.first else { return false }
-		
-		touchPoint = touch.locationInView(self)
-		return true
-	}
-
 	func loading(loading: Bool) {
 		if loading {
 			self.frame.origin.y += 50
@@ -79,10 +70,7 @@ class StoryTableView: UITableView, CoreDataAndStory {
 		storys.insert(story, atIndex: 0)
 		let indexPath = NSIndexPath(forRow: 0, inSection: 0)
 		scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: true)
-		
-//		beginUpdates()
 		insertRowsAtIndexPaths([indexPath], withRowAnimation: .Top)
-//		endUpdates()
 	}
 
 	required init?(coder aDecoder: NSCoder) {
@@ -149,7 +137,7 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 	}
 
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		SDelegate?.didSelectedStory(indexPath.row, touchPoint: touchPoint)
+		SDelegate?.didSelectedStory(indexPath.row)
 		delay(seconds: 0.5) { 
 			tableView.deselectRowAtIndexPath(indexPath, animated: true)
 		}

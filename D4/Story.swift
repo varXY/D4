@@ -10,7 +10,7 @@ import Foundation
 import AVOSCloud
 
 
-struct Story {
+struct Story: UserDefaults {
 
 	let date: NSDate
 	let sentences: [String]
@@ -39,7 +39,14 @@ struct Story {
 		self.sentences = sentences
 		self.colors = colors
 		rating = 0
-		author = "56fe08e479bc4400523bc0c3"
+	
+		let userDefaults = NSUserDefaults.standardUserDefaults()
+		if let storedAuthor = userDefaults.stringForKey(UDKey.Author) {
+			author = storedAuthor
+		} else {
+			author = sentences[0] + dateFormatter_MMddyy.stringFromDate(date)
+			saveAuthor(author)
+		}
 	}
 
 }

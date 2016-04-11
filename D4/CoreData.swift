@@ -64,14 +64,14 @@ extension CoreDataAndStory {
 
 		let fetchRequest = NSFetchRequest(entityName: "MyStory")
 		fetchRequest.entity = NSEntityDescription.entityForName("MyStory", inManagedObjectContext: managedContext)
-		
+		var storys = [Story]()
+
 		do {
 			let fetchResults = try managedContext.executeFetchRequest(fetchRequest)
 			if let myStorys = fetchResults as? [MyStory] {
 				
 				if myStorys.count != 0 {
 					var i = myStorys.count - 1
-					var storys = [Story]()
 					repeat {
 						let sentences: [String] = [
 							myStorys[i].sentences!.s0!,
@@ -95,11 +95,11 @@ extension CoreDataAndStory {
 						i -= 1
 					} while i > -1
 
-					completion(storys)
-
 				} else {
 					print("no story yet")
 				}
+
+				completion(storys)
 
 			}
 
@@ -157,7 +157,6 @@ extension CoreDataAndStory {
 
 			do {
 				try managedContext.save()
-				print(i)
 			} catch {
 				print("can't save", i)
 			}

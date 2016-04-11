@@ -18,7 +18,8 @@ import UIKit
 	optional func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int)
 	optional func setToolBarHiddenByStoryTableView(hidden: Bool)
 	optional func writeViewWillInputText(index: Int, oldText: String, colorCode: Int)
-	optional func didSelectedStory(storyIndex: Int, touchPoint: CGPoint)
+	optional func didSelectedStory(storyIndex: Int)
+	func scrollTypeDidChange(type: XYScrollType)
 }
 
 class XYScrollView: UIScrollView {
@@ -87,11 +88,15 @@ class XYScrollView: UIScrollView {
 	var doneReorder = true
 	var topViewIndex = 1
 
-	var scrolledType: XYScrollType = .NotScrollYet
+	var scrolledType: XYScrollType = .NotScrollYet {
+		didSet {
+			XYDelegate?.scrollTypeDidChange(scrolledType)
+		}
+	}
 
 	weak var XYDelegate: XYScrollViewDelegate?
 
-	var animateTime: Double = 0.5
+	var animateTime: Double = 0.4
 
 	init(VC: UIViewController) {
 		super.init(frame: VC.view.bounds)
@@ -303,7 +308,7 @@ class XYScrollView: UIScrollView {
 	}
 
 	func XXAnimate(animations: () -> (), completion: (() -> ())?) {
-		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.4, options: [], animations: {
+		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 			animations()
 			}) { (_) in
 				completion!()
@@ -311,7 +316,7 @@ class XYScrollView: UIScrollView {
 	}
 
 	func YYAnimate(animations: () -> (), completion: (() -> ())?) {
-		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.7, options: [], animations: {
+		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 			animations()
 			}) { (_) in
 				completion!()
@@ -346,21 +351,23 @@ extension XYScrollView: UIScrollViewDelegate {
 
 	func scrollViewDidScroll(scrollView: UIScrollView) {
 
-		if self.contentOffset.x < -TriggerDistance {
-			scrolledType = .Left
-		} else if self.contentOffset.x > TriggerDistance {
-			scrolledType = .Right
-		} else {
-			scrolledType = .NotScrollYet
-		}
+
 
 		if scrollView != self {
 			if scrollView.contentOffset.y > TriggerDistance {
-				scrolledType = .Down
+				if scrolledType != .Down { scrolledType = .Down }
 			} else if scrollView.contentOffset.y < -TriggerDistance {
-				scrolledType = .Up
+				if scrolledType != .Up { scrolledType = .Up }
 			} else {
-				scrolledType = .NotScrollYet
+				if scrolledType != .NotScrollYet { scrolledType = .NotScrollYet }
+			}
+		} else {
+			if scrollView.contentOffset.x < -TriggerDistance {
+				if scrolledType != .Left { scrolledType = .Left }
+			} else if scrollView.contentOffset.x > TriggerDistance {
+				if scrolledType != .Right { scrolledType = .Right }
+			} else {
+				if scrolledType != .NotScrollYet { scrolledType = .NotScrollYet }
 			}
 		}
 
@@ -394,8 +401,8 @@ extension XYScrollView: StoryTableViewDelegate {
 		XYDelegate?.setToolBarHiddenByStoryTableView!(show)
 	}
 
-	func didSelectedStory(storyIndex: Int, touchPoint: CGPoint) {
-		XYDelegate?.didSelectedStory!(storyIndex, touchPoint: touchPoint)
+	func didSelectedStory(storyIndex: Int) {
+		XYDelegate?.didSelectedStory!(storyIndex)
 	}
 }
 

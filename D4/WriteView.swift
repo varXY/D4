@@ -17,16 +17,12 @@ protocol WriteViewDelegate: class {
 
 class WriteView: UIView {
 
-//	var startLocation: CGPoint!
 	var touchMoved = false
 	var selectingColor = false
-
 	var firstColor = true
-
 	var ready = false
 
 	var selectedDotIndex: Int!
-
 	var selectedBlockIndex: Int!
 
 	var startPosition: Int!
@@ -34,6 +30,14 @@ class WriteView: UIView {
 	var labels = [UILabel]()
 	var dots = [UIView]()
 	var colorCodes = [Int]()
+
+	let placeHolderTexts = [
+		"标 题",
+		"上 午",
+		"下 午",
+		"晚 上",
+		"睡 前 哲 思"
+	]
 
 	weak var delegate: WriteViewDelegate?
 
@@ -44,7 +48,7 @@ class WriteView: UIView {
 		exclusiveTouch = true
 		clipsToBounds = true
 		
-		colorCodes = fiveRandomColorCode()
+		colorCodes = fiveRandomColorCodes()
 
 		var index = 0
 		repeat {
@@ -52,21 +56,12 @@ class WriteView: UIView {
 			label.backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
 			label.textColor = MyColor.code(colorCodes[index]).BTColors[1]
 			label.textAlignment = .Center
-			label.text = ""
 			label.numberOfLines = 0
 			label.adjustsFontSizeToFitWidth = true
-			label.drawTextInRect(CGRectMake(10, 10, label.frame.width - 20, label.frame.height - 20))
-			label.addBorder(borderColor: UIColor.clearColor(), width: 0.0)
+			label.text = placeHolderTexts[index]
 			labels.append(label)
 			addSubview(label)
-
-			if index == 0 {
-				label.font = UIFont.boldSystemFontOfSize(19)
-			}
-
-			if index == 4 {
-				label.font = UIFont.italicSystemFontOfSize(19)
-			}
+			changeLabelTextFont(index, inputted: false)
 
 			if index < 4 {
 				let dot = UIView(frame: dotFrame(index))
@@ -78,10 +73,6 @@ class WriteView: UIView {
 
 			index += 1
 		} while index < 5
-
-//		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapped))
-//		tapGesture.delegate = self
-//		addGestureRecognizer(tapGesture)
 
 	}
 
@@ -121,8 +112,6 @@ class WriteView: UIView {
 	}
 
 	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-//		guard let touch = touches!.first else { return }
-//		let currentLocation = touch.locationInView(self)
 
 		if selectingColor {
 			dots[selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
@@ -130,14 +119,6 @@ class WriteView: UIView {
 			selectingColor = false
 			delegate?.selectingColor(selectingColor)
 		}
-
-//		if !touchMoved {
-//			locationToBlockIndex(currentLocation)
-//			let text = labels[selectedBlockIndex].text == nil ? "" : labels[selectedBlockIndex].text
-//			delegate?.willInputText(selectedBlockIndex, oldText: text!, colorCode: colorCodes[selectedBlockIndex])
-//		} else {
-//			touchMoved = false
-//		}
 	}
 
 	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -154,7 +135,7 @@ class WriteView: UIView {
 		if !touchMoved {
 			locationToBlockIndex(currentLocation)
 			if selectedBlockIndex != nil {
-				let text = labels[selectedBlockIndex].text == nil ? "" : labels[selectedBlockIndex].text
+				let text = labels[selectedBlockIndex].text == placeHolderTexts[selectedBlockIndex] ? "" : labels[selectedBlockIndex].text
 				delegate?.willInputText(selectedBlockIndex, oldText: text!, colorCode: colorCodes[selectedBlockIndex])
 			}
 		} else {
@@ -163,17 +144,42 @@ class WriteView: UIView {
 	}
 
 	func changeLabelText(index: Int, text: String) {
-		labels[index].text = text
+		let inputted = text != ""
+		let newText = inputted ? text : placeHolderTexts[index]
+		changeLabelTextFont(index, inputted: inputted)
+		labels[index].text = newText
 		checkText()
 	}
 
+	func changeLabelTextFont(index: Int, inputted: Bool) {
+		if inputted {
+			labels[index].font = UIFont.systemFontOfSize(17)
+		} else {
+			labels[index].font = UIFont.boldSystemFontOfSize(35)
+		}
+
+		if index == 0 || index == 4 {
+			labels[index].font = UIFont.systemFontOfSize(19)
+			labels[index].numberOfLines = 1
+		}
+	}
+
 	func checkText() {
-		let empty = labels.filter( { $0.text == "" })
-		ready = empty.count == 0
+		var notReadyCount = 0
+		var i = 0
+		repeat {
+			if labels[i].text == placeHolderTexts[i] {
+				notReadyCount += 1
+			}
+
+			i += 1
+		} while i < labels.count
+
+		ready = notReadyCount == 0
 	}
 
 	func labelsGetRandomColors() {
-		self.colorCodes = fiveRandomColorCode()
+		self.colorCodes = fiveRandomColorCodes()
 		for i in 0..<4 {
 			changeLabelBackgoundColorAtDotIndex(i, colorCode: colorCodes[i])
 		}
@@ -193,8 +199,6 @@ class WriteView: UIView {
 
 	}
 
-
-
 	func newStory() -> Story? {
 		if ready {
 			ready = false
@@ -204,16 +208,15 @@ class WriteView: UIView {
 		} else {
 			return nil
 		}
-
 	}
 
 	func clearContent() {
 		var i = 0
 		repeat {
-			labels[i].text = ""
+			labels[i].text = placeHolderTexts[i]
+			changeLabelTextFont(i, inputted: false)
 			i += 1
 		} while i < labels.count
-
 	}
 
 	func locationToColorCode(location: CGPoint) -> Int {
@@ -250,21 +253,45 @@ class WriteView: UIView {
 	}
 }
 
-extension WriteView: UIGestureRecognizerDelegate {
 
-	func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldReceiveTouch touch: UITouch) -> Bool {
+extension WriteView {
 
-		let location = touch.locationInView(self)
-		locationToBlockIndex(location)
-		return selectedBlockIndex != nil
+	var bigBlockHeight: CGFloat! {
+		return (ScreenHeight - 100) / 3
 	}
 
-	
-}
+	var dotLength: CGFloat! {
+		return 50
+	}
 
-//extension WriteView: ColorSelectingDotDelegate {
-//
-//	func selectingColor(selecting: Bool) {
-//		delegate?.selectingColor(selecting)
-//	}
-//}
+	var bottomSignFrame: CGRect {
+		return CGRectMake(0, ScreenHeight - 20, ScreenWidth, 20)
+	}
+
+	func blockFrame(index: Int) -> CGRect {
+		let addend = index == 0 ? 0 : smallBlockHeight
+		let factor = index == 0 ? 0 : CGFloat(index - 1)
+		let y = addend + bigBlockHeight * factor
+		let height = (index == 0 || index == 4) ? smallBlockHeight : bigBlockHeight
+		return CGRectMake(0, y, ScreenWidth, height)
+	}
+
+	func activateBlockFrame(index: Int) -> CGRect {
+
+		let smallBlockheight_1: CGFloat = 70
+		let bigBlockHeight_1 = (ScreenHeight - smallBlockheight_1 * 2) / 3
+
+		let addend = index == 0 ? 0 : smallBlockheight_1
+		let factor = index == 0 ? 0 : CGFloat(index - 1)
+		let y = addend + bigBlockHeight_1 * factor
+		let height = (index == 0 || index == 4) ? smallBlockheight_1 : bigBlockHeight_1
+		return CGRectMake(0, y, ScreenWidth - 100, height)
+
+	}
+
+	func dotFrame(index: Int) -> CGRect {
+		let x = ScreenWidth - 50
+		let y = bigBlockHeight * CGFloat(index)
+		return CGRectMake(x, y, dotLength, dotLength)
+	}
+}
