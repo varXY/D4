@@ -46,12 +46,27 @@ class DetailViewController: UIViewController {
 
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-
+		showPointerTextBaseOnStoryIndex(topStoryIndex)
 	}
 
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 		delegate?.detailViewControllerWillDismiss(topStoryIndex)
+	}
+
+	func showPointerTextBaseOnStoryIndex(index: Int) {
+		pointerView.showNoMore(nil)
+		
+		if index == 0 {
+			pointerView.showNoMore(true)
+			if storys.count == 1 {
+				pointerView.showNoMore(false)
+			}
+		} else if index == storys.count - 1 {
+			pointerView.showNoMore(false)
+		} else {
+			pointerView.showNoMore(nil)
+		}
 	}
 }
 
@@ -63,6 +78,7 @@ extension DetailViewController: XYScrollViewDelegate {
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		topStoryIndex = topViewIndex
+		showPointerTextBaseOnStoryIndex(topStoryIndex)
 
 		switch scrollType {
 		case .Left:

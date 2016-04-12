@@ -18,6 +18,18 @@ class PointerView: UIView {
 
 	var UDLR_labels: [UILabel]!
 
+	var lastUpDateTime: NSDate! {
+		didSet {
+			let today = stringFromDate(lastUpDateTime, fomatter: FomatterType.MMddyy) == stringFromDate(NSDate(), fomatter: FomatterType.MMddyy)
+			lastUpdateText = today ? "\(stringFromDate(NSDate(), fomatter: FomatterType.HHmm))" : stringFromDate(lastUpDateTime, fomatter: FomatterType.MMdd)
+			delay(seconds: 0.5) { 
+				self.UDLR_labels[0].text = self.lastUpdateText + "更新"
+			}
+
+		}
+	}
+
+	var lastUpdateText = ""
 
 	struct Pointer {
 		let length: CGFloat = 30
@@ -102,10 +114,33 @@ class PointerView: UIView {
 		leftPointer = pointer.imageView(.Left)
 		rightPointer = pointer.imageView(.Right)
 
+		UDLR_labels = [UILabel]()
+		let types = [XYScrollType.Up, XYScrollType.Down, XYScrollType.Left, XYScrollType.Right]
+		let structLabel = Label()
+		var i = 0
+		repeat {
+			let label = structLabel.label(types[i])
+			UDLR_labels.append(label)
+			i += 1
+		} while i < types.count
+
 		switch VC {
 		case is MainViewController:
 			addSubview(leftPointer)
 			addSubview(rightPointer)
+
+			let texts = ["", "去创造新故事吧", "写\n故\n事", "关\n于"]
+			var i = 0
+			repeat {
+				UDLR_labels[i].text = texts[i]
+				addSubview(UDLR_labels[i])
+
+				if i == 1 {
+					UDLR_labels[i].frame.origin.y -= 24
+				}
+
+				i += 1
+			} while i < texts.count
 
 		case is DetailViewController:
 			addSubview(leftPointer)
@@ -113,19 +148,13 @@ class PointerView: UIView {
 			addSubview(upPointer)
 			addSubview(downPointer)
 
-
-			UDLR_labels = [UILabel]()
-			let types = [XYScrollType.Up, XYScrollType.Down, XYScrollType.Left, XYScrollType.Right]
-			let texts = ["上一个", "下一个", "主\n页", "评\n分"]
-			let structLabel = Label()
+			let texts = ["上一个", "下一个", "主\n页", "顶\n踩"]
 			var i = 0
 			repeat {
-				let label = structLabel.label(types[i])
-				label.text = texts[i]
-				UDLR_labels.append(label)
-				addSubview(label)
+				UDLR_labels[i].text = texts[i]
+				addSubview(UDLR_labels[i])
 				i += 1
-			} while i < types.count
+			} while i < texts.count
 
 		default:
 			break
@@ -135,25 +164,21 @@ class PointerView: UIView {
 	func changePointerDirection(type: XYScrollType) {
 		switch type {
 		case .Up:
-			rotation({ 
-				self.upPointer.transform = self.pointer.down_transform
-			})
-
+//			upPointer.alpha = 1.0
+			rotation({ self.upPointer.transform = self.pointer.down_transform })
+//			downPointer.alpha = 0.0
 		case .Down:
-//			rotation({
-				self.downPointer.transform = self.pointer.up_transform
-//			})
-
+//			downPointer.alpha = 1.0
+			rotation({ self.downPointer.transform = self.pointer.up_transform })
+//			upPointer.alpha = 0.0
 		case .Left:
-			rotation({ 
-				self.leftPointer.transform = self.pointer.right_transform
-			})
-
+//			leftPointer.alpha = 1.0
+			rotation({ self.leftPointer.transform = self.pointer.right_transform })
+//			rightPointer.alpha = 0.0
 		case .Right:
-//			rotation({ 
-				self.rightPointer.transform = self.pointer.left_transform
-//			})
-
+//			rightPointer.alpha = 1.0
+			rotation({ self.rightPointer.transform = self.pointer.left_transform })
+//			leftPointer.alpha = 0.0
 		default:
 			let pointers = [upPointer, downPointer, leftPointer, rightPointer]
 			let transforms = [pointer.up_transform, pointer.down_transform, pointer.left_transform, pointer.right_transform]
@@ -161,20 +186,20 @@ class PointerView: UIView {
 			var i = 0
 			repeat {
 				pointers[i].alpha = 0.0
-				if UDLR_labels != nil { UDLR_labels[i].alpha = 0.0 }
+				if UDLR_labels != nil && i < UDLR_labels.count { UDLR_labels[i].alpha = 0.0 }
+
 				i += 1
 			} while i < pointers.count
 
-			delay(seconds: 0.5, completion: { 
+			delay(seconds: 0.4, completion: {
 				i = 0
 				repeat {
-					pointers[i].alpha = 1.0
-					if self.UDLR_labels != nil { self.UDLR_labels[i].alpha = 1.0 }
 					pointers[i].transform = transforms[i]
+					pointers[i].alpha = 1.0
+					if self.UDLR_labels != nil && i < self.UDLR_labels.count { self.UDLR_labels[i].alpha = 1.0 }
 					i += 1
 				} while i < pointers.count
 			})
-
 		}
 	}
 
@@ -184,17 +209,66 @@ class PointerView: UIView {
 			}, completion: nil)
 	}
 
-	func addOrRemoveUpAndDownPointer(add: Bool) {
-		if add {
+	// MARK: - MainViewController
+
+	func addOrRemoveUpAndDownPointerAndLabel(topIndex: Int) {
+		switch topIndex {
+		case 0, 2:
 			addSubview(upPointer)
 			addSubview(downPointer)
 			sendSubviewToBack(upPointer)
 			sendSubviewToBack(downPointer)
-		} else {
+
+			if UDLR_labels[1].frame.origin.y != ScreenHeight - 60 { UDLR_labels[1].frame.origin.y += 24 }
+			let texts = topIndex == 0 ? ["还没想好什么功能", "还没写完"] : ["分享", "请独立开发者吃顿好的"]
+			UDLR_labels[0].text = texts[0]
+			UDLR_labels[1].text = texts[1]
+
+		default:
 			upPointer.removeFromSuperview()
 			downPointer.removeFromSuperview()
+
+
+			UDLR_labels[0].text = lastUpdateText + "更新"
+			UDLR_labels[1].text = "去创造新故事吧"
+			if UDLR_labels[1].frame.origin.y == ScreenHeight - 60 { UDLR_labels[1].frame.origin.y -= 24 }
+		}
+
+	}
+
+	func showTextBaseOnTopIndex(index: Int) {
+		switch index {
+		case 0:
+			UDLR_labels[2].text = "随\n机\n颜\n色"
+			UDLR_labels[3].text = "主\n页"
+		case 1:
+			UDLR_labels[2].text = "写\n故\n事"
+			UDLR_labels[3].text = "关\n于"
+		case 2:
+			UDLR_labels[2].text = "主\n页"
+			UDLR_labels[3].text = "评\n分\n留\n言"
+		default:
+			break
 		}
 	}
+
+	func changeLabelTextForCanSaveStory(can: Bool) {
+		UDLR_labels[1].text = can ? "发布" : "还没写完"
+	}
+
+	// MARK: - DetailViewController
+	func showNoMore(top: Bool?) {
+		if top == true {
+			UDLR_labels[0].text = "没有了"
+		} else if top == false {
+			UDLR_labels[1].text = "没有了"
+		} else {
+			UDLR_labels[0].text = "上一个"
+			UDLR_labels[1].text = "下一个"
+		}
+	}
+
+
 
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")

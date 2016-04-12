@@ -34,6 +34,8 @@ class InputViewController: UIViewController {
 
 	var allowInput = true
 
+	let elementAlpha: CGFloat = 0.6
+
 	weak var delegate: InputTextViewDelegate?
 
 	override func prefersStatusBarHidden() -> Bool {
@@ -51,7 +53,7 @@ class InputViewController: UIViewController {
 		numberLabel = UILabel(frame: CGRectMake(0, 0, ScreenWidth, 60))
 		numberLabel.backgroundColor = UIColor.clearColor()
 		numberLabel.textColor = MyColor.code(colorCode).BTColors[1]
-		numberLabel.alpha = 0.5
+		numberLabel.alpha = elementAlpha
 		numberLabel.textAlignment = .Center
 		numberLabel.font = UIFont.boldSystemFontOfSize(28)
 		numberLabel.text = String(textLimit)
@@ -76,13 +78,14 @@ class InputViewController: UIViewController {
 				dayLabel.text = "的一天"
 				dayLabel.backgroundColor = UIColor.clearColor()
 				dayLabel.textColor = MyColor.code(colorCode).BTColors[1]
-				dayLabel.alpha = 0.5
+				dayLabel.alpha = elementAlpha
 				dayLabel.textAlignment = .Center
 				dayLabel.font = UIFont.boldSystemFontOfSize(28)
 				view.addSubview(dayLabel)
 			}
 
 		}
+
 
 	}
 
@@ -101,6 +104,24 @@ class InputViewController: UIViewController {
 		textView.becomeFirstResponder()
 	}
 
+	func addBackButton() {
+		let backButton = UIButton(type: .System)
+		backButton.frame = CGRectMake(0, ScreenHeight / 2 + 20, ScreenWidth, ScreenHeight / 2 - 20)
+		backButton.setImage(UIImage(named: "Pointer"), forState: .Normal)
+		backButton.transform = CGAffineTransformMakeRotation(CGFloat(180 * M_PI / 180))
+		backButton.addTarget(self, action: #selector(back), forControlEvents: .TouchUpInside)
+		backButton.tintColor = MyColor.code(colorCode).BTColors[1]
+		backButton.exclusiveTouch = true
+		view.addSubview(backButton)
+	}
+
+	func back() {
+		if newLimit >= 0 {
+			delegate?.inputTextViewDidReturn(index, text: textView.text)
+			dismissViewControllerAnimated(true, completion: nil)
+		}
+	}
+
 	func randomAlertText() -> String {
 		let alertTexts = [
 			"写那么多干嘛",
@@ -117,6 +138,7 @@ class InputViewController: UIViewController {
 extension InputViewController: UITextViewDelegate {
 
 	func textViewDidChange(textView: UITextView) {
+		let alertColor = colorCode == 14 ? MyColor.code(34).BTColors[0] : UIColor.redColor()
 
 		if let range = textView.text.rangeOfString("\n") {
 			textView.text.removeRange(range)
@@ -136,15 +158,17 @@ extension InputViewController: UITextViewDelegate {
 				delegate?.inputTextViewDidReturn(index, text: text)
 				dismissViewControllerAnimated(true, completion: nil)
 			} else {
-				UIView.animateWithDuration(0.2, animations: { 
+				UIView.animateWithDuration(0.1, animations: {
 					self.numberLabel.alpha = 0.0
 					}, completion: { (_) in
 						self.numberLabel.text = self.randomAlertText()
+						self.numberLabel.textColor = MyColor.code(self.colorCode).BTColors[1]
 						UIView.animateWithDuration(0.2, animations: { 
-							self.numberLabel.alpha = 0.5
+							self.numberLabel.alpha = self.elementAlpha
 							}, completion: { (_) in
 								delay(seconds: 0.3, completion: { 
 									self.numberLabel.text = String(self.newLimit)
+									self.numberLabel.textColor = alertColor
 								})
 						})
 				})
@@ -154,8 +178,13 @@ extension InputViewController: UITextViewDelegate {
 			let count = textView.text.characters.count
 			newLimit = textLimit - count
 			numberLabel.text = String(newLimit)
-			numberLabel.textColor = newLimit < 0 ? UIColor.redColor() : MyColor.code(colorCode).BTColors[1]
+			numberLabel.textColor = newLimit < 0 ? alertColor : MyColor.code(colorCode).BTColors[1]
 		}
+
+	}
+
+	func textViewDidEndEditing(textView: UITextView) {
+		addBackButton()
 	}
 }
 
@@ -163,7 +192,6 @@ extension InputViewController: UIViewControllerTransitioningDelegate {
 
 	func presentationControllerForPresentedViewController(presented: UIViewController, presentingViewController presenting: UIViewController, sourceViewController source: UIViewController) -> UIPresentationController? {
 		return DimmingPresentationController(presentedViewController: presented, presentingViewController: presenting)
-
 	}
 
 	func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -172,6 +200,5 @@ extension InputViewController: UIViewControllerTransitioningDelegate {
 
 	func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return SlideOutAnimationController()
-
 	}
 }

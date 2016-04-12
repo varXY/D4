@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import AVOSCloud
+import iAd
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -31,6 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
 		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
+
+		UIViewController.prepareInterstitialAds()
 
 		return true
 	}

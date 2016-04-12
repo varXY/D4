@@ -14,6 +14,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	var pointerView: PointerView!
 	var statusView: UIVisualEffectView!
 	var segmentedControl: UISegmentedControl!
+	var addButton = UIBarButtonItem()
 
 	var statusBarStyle = UIStatusBarStyle.Default
 	var statusBarHidden = false
@@ -53,6 +54,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		testLoadStory()
+		hideOrShowStatusViewAndToolbar()
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -62,7 +64,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
-		hideStatusView(true)
+
 	}
 
 	func testLoadStory() {
@@ -81,6 +83,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 					self.dailyStoryLoaded = true
 					self.updateLastLoadDate(NSDate())
+					self.pointerView.lastUpDateTime = NSDate()
 
 					self.save100DailyStorys(storys, completion: { (success) in
 						print("save 100 story to coreData:", success)
@@ -98,9 +101,9 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func reloadDailyStory() {
 
 		let lastDate = lastLoadDate()
-		dailyStoryLoaded = dateFormatter_dd.stringFromDate(lastDate) == dateFormatter_dd.stringFromDate(NSDate())
-		print(dateFormatter_dd.stringFromDate(lastDate))
-		print(dateFormatter_dd.stringFromDate(NSDate()))
+		dailyStoryLoaded = stringFromDate(lastDate, fomatter: .dd) == stringFromDate(NSDate(), fomatter: .dd)
+		print(stringFromDate(lastDate, fomatter: .dd))
+		print(stringFromDate(NSDate(), fomatter: .dd))
 
 		if !dailyStoryLoaded {
 			xyScrollView.X1_storyTableView.loading(true)
@@ -175,25 +178,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		}
 	}
 
-	func changeBarStyleBaseOnTime() {
-		let hour = Int(dateFormatter_HH.stringFromDate(NSDate()))
-		let night = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
-		let blurEffect = night ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
-		let tintColor = night ? UIColor.whiteColor() : UIColor.blackColor()
-		let barStyle = night ? UIBarStyle.Black : UIBarStyle.Default
-
-		statusBarStyle = night ? UIStatusBarStyle.LightContent : UIStatusBarStyle.Default
-		setNeedsStatusBarAppearanceUpdate()
-
-		statusView.effect = blurEffect
-
-		navigationController?.toolbar.barStyle = barStyle
-		navigationController?.toolbar.tintColor = tintColor
-
-		guard let button = navigationController?.toolbarItems?[0] else { return }
-		button.tintColor = night ? UIColor.whiteColor() : UIColor.blackColor()
-	}
-
 	func setupBars() {
 		let effect = UIBlurEffect(style: .Dark)
 		statusView = UIVisualEffectView(effect: effect)
@@ -214,7 +198,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 		let barButton = UIBarButtonItem(customView: segmentedControl)
 
-		let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(goToAddPage))
+		addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(goToAddPage))
 
 		let infoButton = UIButton(type: .InfoLight)
 		infoButton.addTarget(self, action: #selector(goToInfoPage), forControlEvents: .TouchUpInside)
@@ -238,6 +222,24 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		changeBarStyleBaseOnTime()
 	}
 
+	func changeBarStyleBaseOnTime() {
+		let hour = Int(stringFromDate(NSDate(), fomatter: .HH))
+		let night = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
+		let blurEffect = night ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
+		let tintColor = night ? UIColor.whiteColor() : UIColor.blackColor()
+		let barStyle = night ? UIBarStyle.Black : UIBarStyle.Default
+
+		statusBarStyle = night ? UIStatusBarStyle.LightContent : UIStatusBarStyle.Default
+		setNeedsStatusBarAppearanceUpdate()
+
+		statusView.effect = blurEffect
+		addButton.tintColor = tintColor
+
+		navigationController?.toolbar.barStyle = barStyle
+		navigationController?.toolbar.tintColor = tintColor
+
+	}
+
 	func segmentedControlSelected(segmentedControl: UISegmentedControl) {
 		segmentedControl.selectedSegmentIndex == 0 ? loadSavedDailyStory() : loadSelfStory()
 	}
@@ -245,6 +247,9 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func goToAddPage() {
 		xyScrollView.scrolledType = .NotScrollYet
 		xyScrollView.moveContentViewToTop(.Left)
+		pointerView.showTextBaseOnTopIndex(0)
+		pointerView.addOrRemoveUpAndDownPointerAndLabel(0)
+		pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
 		hideOrShowStatusViewAndToolbar()
 
 		if xyScrollView.writeView.firstColor == false {
@@ -255,6 +260,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func goToInfoPage() {
 		xyScrollView.scrolledType = .NotScrollYet
 		xyScrollView.moveContentViewToTop(.Right)
+		pointerView.showTextBaseOnTopIndex(2)
+		pointerView.addOrRemoveUpAndDownPointerAndLabel(2)
 		hideOrShowStatusViewAndToolbar()
 	}
 
@@ -301,6 +308,9 @@ extension MainViewController: XYScrollViewDelegate {
 		detailVC.topStoryIndex = storyIndex
 		detailVC.delegate = self
 		presentViewController(detailVC, animated: true, completion: nil)
+		hideStatusView(true)
+
+//		navigationController?.setToolbarHidden(true, animated: true)
 	}
 
 	func writeViewWillInputText(index: Int, oldText: String, colorCode: Int) {
@@ -318,9 +328,10 @@ extension MainViewController: XYScrollViewDelegate {
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		hideOrShowStatusViewAndToolbar()
-
-		let add = topViewIndex != 1
-		pointerView.addOrRemoveUpAndDownPointer(add)
+		pointerView.showTextBaseOnTopIndex(topViewIndex)
+		
+		pointerView.addOrRemoveUpAndDownPointerAndLabel(topViewIndex)
+		if topViewIndex == 0 { pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready) }
 
 		if scrollType == .Left && xyScrollView.topViewIndex != 1 {
 			if xyScrollView.writeView.firstColor == false {
@@ -340,16 +351,16 @@ extension MainViewController: XYScrollViewDelegate {
 			let story = xyScrollView.writeView.newStory()
 			if story != nil {
 
-				self.xyScrollView.moveContentViewToTop(.Right)
-				self.pointerView.addOrRemoveUpAndDownPointer(false)
-				self.hideOrShowStatusViewAndToolbar()
+				xyScrollView.moveContentViewToTop(.Right)
+				pointerView.showTextBaseOnTopIndex(1)
+				pointerView.addOrRemoveUpAndDownPointerAndLabel(1)
+				hideOrShowStatusViewAndToolbar()
 
-				self.segmentedControl.selectedSegmentIndex = 1
-				self.loadSelfStory()
+				segmentedControl.selectedSegmentIndex = 1
+				loadSelfStory()
 
 				delay(seconds: 1.0, completion: {
 					self.xyScrollView.X1_storyTableView.insertNewStory(story!)
-
 				})
 
 				delay(seconds: 1.5, completion: {
@@ -388,6 +399,7 @@ extension MainViewController: InputTextViewDelegate {
 	func inputTextViewDidReturn(index: Int, text: String) {
 		navigationController?.toolbarHidden = true
 		xyScrollView.writeView.changeLabelText(index, text: text)
+		pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
 	}
 }
 

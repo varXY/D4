@@ -29,7 +29,6 @@ class StoryView: UIView {
 			label.textAlignment = .Center
 			label.numberOfLines = 0
 			label.adjustsFontSizeToFitWidth = true
-			label.drawTextInRect(CGRectMake(10, 10, label.frame.width - 20, label.frame.height - 20))
 			labels.append(label)
 			addSubview(label)
 

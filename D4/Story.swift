@@ -44,7 +44,7 @@ struct Story: UserDefaults {
 		if let storedAuthor = userDefaults.stringForKey(UDKey.Author) {
 			author = storedAuthor
 		} else {
-			author = sentences[0] + dateFormatter_MMddyy.stringFromDate(date)
+			author = sentences[0] + stringFromDate(date, fomatter: FomatterType.MMddyy)
 			saveAuthor(author)
 		}
 	}

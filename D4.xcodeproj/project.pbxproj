@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		311EC7841CAE39280021FFB7 /* StoryTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311EC7831CAE39280021FFB7 /* StoryTableView.swift */; };
+		3140FD471CBC6A5500515666 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3140FD461CBC6A5500515666 /* iAd.framework */; };
 		317919301CABB25900DB9A0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3179192F1CABB25900DB9A0A /* AppDelegate.swift */; };
 		317919321CABB25900DB9A0A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317919311CABB25900DB9A0A /* MainViewController.swift */; };
 		317919381CABB25900DB9A0A /* D4.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 317919361CABB25900DB9A0A /* D4.xcdatamodeld */; };
@@ -54,6 +55,7 @@
 
 /* Begin PBXFileReference section */
 		311EC7831CAE39280021FFB7 /* StoryTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryTableView.swift; sourceTree = "<group>"; };
+		3140FD461CBC6A5500515666 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		3179192C1CABB25900DB9A0A /* D4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = D4.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3179192F1CABB25900DB9A0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		317919311CABB25900DB9A0A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3140FD471CBC6A5500515666 /* iAd.framework in Frameworks */,
 				3179194D1CABB2D500DB9A0A /* CoreLocation.framework in Frameworks */,
 				3179194B1CABB2CD00DB9A0A /* CoreTelephony.framework in Frameworks */,
 				317919491CABB2C300DB9A0A /* MobileCoreServices.framework in Frameworks */,
@@ -146,21 +149,22 @@
 				31FF3A281CACFB5D008B2C69 /* Extension */,
 				31FF3A241CACF0D8008B2C69 /* Supporting File */,
 				3179194F1CABB3D100DB9A0A /* Resources */,
-				3179194E1CABB35B00DB9A0A /* FrameWorks */,
+				3179194E1CABB35B00DB9A0A /* Framework */,
 			);
 			path = D4;
 			sourceTree = "<group>";
 		};
-		3179194E1CABB35B00DB9A0A /* FrameWorks */ = {
+		3179194E1CABB35B00DB9A0A /* Framework */ = {
 			isa = PBXGroup;
 			children = (
+				3140FD461CBC6A5500515666 /* iAd.framework */,
 				3179194C1CABB2D500DB9A0A /* CoreLocation.framework */,
 				3179194A1CABB2CD00DB9A0A /* CoreTelephony.framework */,
 				317919481CABB2C300DB9A0A /* MobileCoreServices.framework */,
 				317919461CABB2BB00DB9A0A /* SystemConfiguration.framework */,
 				317919441CABB27E00DB9A0A /* AVOSCloud.framework */,
 			);
-			name = FrameWorks;
+			name = Framework;
 			sourceTree = "<group>";
 		};
 		3179194F1CABB3D100DB9A0A /* Resources */ = {

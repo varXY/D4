@@ -84,6 +84,14 @@ class WriteView: UIView {
 			startPosition = locationToColorCode(location)
 			selectingColor = true
 			delegate?.selectingColor(selectingColor)
+
+			bringSubviewToFront(dots[selectedDotIndex])
+			dots[selectedDotIndex].backgroundColor = UIColor(white: 1.0, alpha: 1.0)
+			UIView.animateWithDuration(0.25, animations: {
+				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.8, 1.8)
+				}, completion: { (_) in
+			})
+
 		}
 
 	}
@@ -96,8 +104,7 @@ class WriteView: UIView {
 		let currentPosition = locationToColorCode(currentLocation)
 
 		if selectingColor {
-			bringSubviewToFront(dots[selectedDotIndex])
-			dots[selectedDotIndex].backgroundColor = UIColor(white: 1.0, alpha: 1.0)
+
 			dots[selectedDotIndex].center = currentLocation
 
 			if currentPosition != startPosition {
@@ -114,8 +121,12 @@ class WriteView: UIView {
 	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
 
 		if selectingColor {
-			dots[selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
-			dots[selectedDotIndex].frame.origin = dotFrame(selectedDotIndex).origin
+			UIView.animateWithDuration(0.2, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.0, 1.0)
+				self.dots[self.selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
+				self.dots[self.selectedDotIndex].frame.origin = self.dotFrame(self.selectedDotIndex).origin
+				}, completion: nil)
+
 			selectingColor = false
 			delegate?.selectingColor(selectingColor)
 		}
@@ -126,8 +137,11 @@ class WriteView: UIView {
 		let currentLocation = touch.locationInView(self)
 
 		if selectingColor {
-			dots[selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
-			dots[selectedDotIndex].frame.origin = dotFrame(selectedDotIndex).origin
+			UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.0, 1.0)
+				self.dots[self.selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
+				self.dots[self.selectedDotIndex].frame.origin = self.dotFrame(self.selectedDotIndex).origin
+				}, completion: nil)
 			selectingColor = false
 			delegate?.selectingColor(selectingColor)
 		}

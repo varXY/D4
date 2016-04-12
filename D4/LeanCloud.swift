@@ -48,8 +48,8 @@ extension LeanCloud {
 	}
 
 	func getDailyStory(gotStorys: GotStorys) {
+		UIApplication.sharedApplication().networkActivityIndicatorVisible = true
 		var storys = [Story]()
-
 		let query = AVQuery(className: AVKey.classStory)
 		query.orderByAscending(AVKey.date)
 //		query.addAscendingOrder(AVKey.)
@@ -63,12 +63,14 @@ extension LeanCloud {
 					index += 1
 				} while index < objects.count
 
+				UIApplication.sharedApplication().networkActivityIndicatorVisible = false
 				gotStorys(storys)
 
 			}
 
 			if error != nil {
 				print(error)
+				gotStorys([Story]())
 			}
 
 

@@ -59,9 +59,9 @@ enum MyColor {
 		case .code(colorCode[9]): colorValue = [115, 252, 214, 1.0]; black = true  //41： 浅青4
 
 		case .code(colorCode[10]): colorValue = [214, 214, 214, 1.0]; black = true //2： 灰
-		case .code(colorCode[11]): colorValue = [128, 180, 46, 1.0]    //12： 深绿1
+		case .code(colorCode[11]): colorValue = [33, 108, 12, 1.0]    //12： 深绿1
 		case .code(colorCode[12]): colorValue = [0, 209, 14, 1.0]    //22： 2
-		case .code(colorCode[13]): colorValue = [166, 218, 84, 1.0]   //32： 3
+		case .code(colorCode[13]): colorValue = [103, 227, 56, 1.0]   //32： 3
 		case .code(colorCode[14]): colorValue = [100, 250, 128, 1.0]; black = true  //42： 浅绿4
 
 		case .code(colorCode[15]): colorValue = [169, 169, 169, 1.0]    //3： 深灰
@@ -95,6 +95,11 @@ enum MyColor {
 		return [backgroundColor, textColor]
 	}
 }
+
+// 0412 第三版
+
+//case .code(colorCode[11]): colorValue = [128, 180, 46, 1.0]    //12： 深绿1
+//case .code(colorCode[13]): colorValue = [166, 218, 84, 1.0]   //32： 3
 
 // 0408 第二版颜色
 //case .code(colorCode[0]): colorValue = [255, 255, 255, 1.0]  // 0: 白
