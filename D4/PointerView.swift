@@ -20,9 +20,9 @@ class PointerView: UIView {
 
 	var lastUpDateTime: NSDate! {
 		didSet {
-			let today = stringFromDate(lastUpDateTime, fomatter: FomatterType.MMddyy) == stringFromDate(NSDate(), fomatter: FomatterType.MMddyy)
-			lastUpdateText = today ? "\(stringFromDate(NSDate(), fomatter: FomatterType.HHmm))" : stringFromDate(lastUpDateTime, fomatter: FomatterType.MMdd)
-			delay(seconds: 0.5) { 
+			let today = lastUpDateTime.string(.MMddyy) == NSDate().string(.MMddyy)
+			lastUpdateText = today ? "\(NSDate().string(.HHmm))" : lastUpDateTime.string(.MMdd)
+			delay(seconds: 1.0) {
 				self.UDLR_labels[0].text = self.lastUpdateText + "更新"
 			}
 

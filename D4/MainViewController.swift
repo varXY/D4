@@ -21,9 +21,11 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	var dailyStoryLoaded = false
 
+	var forceTouchWay = false
+
 	var dailyStorys: [Story]!
 
-	var inputVC: InputViewController!
+	var blurEffect: UIBlurEffect!
 
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
 		return statusBarStyle
@@ -36,7 +38,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		automaticallyAdjustsScrollViewInsets = false
-
+		modalPresentationStyle = .OverFullScreen
 		pointerView = PointerView(VC: self)
 		view = pointerView
 
@@ -48,6 +50,10 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		dailyStorys = xyScrollView.X1_storyTableView.storys
 
 		setupBars()
+
+		if traitCollection.forceTouchCapability == .Available {
+			registerForPreviewingWithDelegate(self, sourceView: xyScrollView.X1_storyTableView)
+		}
 
 	}
 
@@ -86,6 +92,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 					self.pointerView.lastUpDateTime = NSDate()
 
 					self.save100DailyStorys(storys, completion: { (success) in
+						self.removeAllLikedStoryIndexes()
 						print("save 100 story to coreData:", success)
 					})
 
@@ -101,9 +108,9 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func reloadDailyStory() {
 
 		let lastDate = lastLoadDate()
-		dailyStoryLoaded = stringFromDate(lastDate, fomatter: .dd) == stringFromDate(NSDate(), fomatter: .dd)
-		print(stringFromDate(lastDate, fomatter: .dd))
-		print(stringFromDate(NSDate(), fomatter: .dd))
+		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
+		print(lastDate.string(.dd))
+		print(NSDate().string(.dd))
 
 		if !dailyStoryLoaded {
 			xyScrollView.X1_storyTableView.loading(true)
@@ -122,6 +129,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 					self.updateLastLoadDate(NSDate())
 
 					self.save100DailyStorys(storys, completion: { (success) in
+						self.removeAllLikedStoryIndexes()
 						print("save 100 story to coreData:", success)
 					})
 
@@ -183,12 +191,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		statusView = UIVisualEffectView(effect: effect)
 		statusView.frame = CGRectMake(0, 0, ScreenWidth, 20)
 
-//		statusView.layer.masksToBounds = false
-//		statusView.layer.shadowRadius = 0.0
-//		statusView.layer.shadowOpacity = 0.5
-//		statusView.layer.shadowColor = UIColor.grayColor().CGColor
-//		statusView.layer.shadowOffset = CGSizeMake(0, 0.5)
-
 		view.addSubview(statusView)
 
 		segmentedControl = UISegmentedControl(items: ["每日100", "我的故事"])
@@ -210,22 +212,44 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		navigationController?.navigationBarHidden = true
 		navigationController?.toolbarHidden = false
 		navigationController?.toolbar.clipsToBounds = true
-		
-//		navigationController?.toolbar.layer.masksToBounds = false
-//		navigationController?.toolbar.layer.shadowRadius = 0.0
-//		navigationController?.toolbar.layer.shadowOpacity = 0.5
-//		navigationController?.toolbar.layer.shadowColor = UIColor.grayColor().CGColor
-//		navigationController?.toolbar.layer.shadowOffset = CGSizeMake(0, 0.5)
 
 		setToolbarItems(toolBarItems, animated: true)
 
+		addShandowForBar()
 		changeBarStyleBaseOnTime()
 	}
 
+	func addShandowForBar() {
+
+		func addShandow(view: UIView) {
+			view.layer.masksToBounds = false
+			view.layer.shadowRadius = 5.0
+			view.layer.shadowOpacity = 0.7
+			view.layer.shadowColor = UIColor.blackColor().CGColor
+			view.layer.shadowOffset = CGSizeMake(0, 0)
+		}
+		// 加阴影
+//		addShandow(statusView)
+//		addShandow((navigationController?.toolbar)!)
+
+		// 加边框
+		statusView.addBorder(borderColor: UIColor.whiteColor(), width: 0.2)
+		navigationController?.toolbar.addBorder(borderColor: UIColor.whiteColor(), width: 0.2)
+
+		// 变不透明
+//		let image = UIImage.imageWithColor(MyColor.code(1).BTColors[0], rect: statusView.bounds)
+//		let imageView = UIImageView(image: image)
+//		statusView.addSubview(imageView)
+//
+//		let image_1 = UIImage.imageWithColor(MyColor.code(1).BTColors[0], rect: (navigationController?.toolbar.bounds)!)
+//		navigationController?.toolbar.setBackgroundImage(image_1, forToolbarPosition: UIBarPosition.Any, barMetrics: UIBarMetrics.Default)
+
+	}
+
 	func changeBarStyleBaseOnTime() {
-		let hour = Int(stringFromDate(NSDate(), fomatter: .HH))
+		let hour = Int(NSDate().string(.HH))
 		let night = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
-		let blurEffect = night ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
+		blurEffect = night ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
 		let tintColor = night ? UIColor.whiteColor() : UIColor.blackColor()
 		let barStyle = night ? UIBarStyle.Black : UIBarStyle.Default
 
@@ -237,7 +261,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 		navigationController?.toolbar.barStyle = barStyle
 		navigationController?.toolbar.tintColor = tintColor
-
 	}
 
 	func segmentedControlSelected(segmentedControl: UISegmentedControl) {
@@ -304,17 +327,33 @@ extension MainViewController: XYScrollViewDelegate {
 	func didSelectedStory(storyIndex: Int) {
 
 		let detailVC = DetailViewController()
+		detailVC.modalPresentationStyle = .Custom
+		detailVC.transitioningDelegate = detailVC
 		detailVC.storys = xyScrollView.X1_storyTableView.storys
 		detailVC.topStoryIndex = storyIndex
+		detailVC.blurEffect = blurEffect
 		detailVC.delegate = self
-		presentViewController(detailVC, animated: true, completion: nil)
-		hideStatusView(true)
+		presentViewController(detailVC, animated: true) { 
+			self.navigationController?.setToolbarHidden(true, animated: true)
+			self.hideStatusView(true)
+			self.forceTouchWay = false
+		}
 
-//		navigationController?.setToolbarHidden(true, animated: true)
+		UIView.animateWithDuration(0.3, animations: { 
+			self.view.alpha = 0.3
+			self.view.transform = CGAffineTransformMakeScale(0.95, 0.95)
+			}) { (_) in
+				delay(seconds: 0.5, completion: {
+					self.view.alpha = 1.0
+					self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
+				})
+		}
 	}
 
 	func writeViewWillInputText(index: Int, oldText: String, colorCode: Int) {
-		inputVC = InputViewController()
+		let inputVC = InputViewController()
+		inputVC.modalPresentationStyle = .Custom
+		inputVC.transitioningDelegate = inputVC
 		inputVC.index = index
 		inputVC.oldText = oldText
 		inputVC.colorCode = colorCode
@@ -386,11 +425,22 @@ extension MainViewController: XYScrollViewDelegate {
 
 extension MainViewController: DetailViewControllerDelegate {
 
+	func ratingChanged(index: Int, rating: Int) {
+		xyScrollView.X1_storyTableView.storys[index].rating = rating
+	}
 
 	func detailViewControllerWillDismiss(topStoryIndex: Int) {
-		let indexPath = NSIndexPath(forRow: topStoryIndex, inSection: 0)
-		xyScrollView.X1_storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: false)
-		self.hideStatusView(false)
+		view.transform = CGAffineTransformMakeScale(0.95, 0.95)
+		UIView.animateWithDuration(0.3, animations: {
+			self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
+			}) { (_) in
+				self.hideOrShowStatusViewAndToolbar()
+		}
+
+		if !forceTouchWay {
+			let indexPath = NSIndexPath(forRow: topStoryIndex, inSection: 0)
+			xyScrollView.X1_storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: false)
+		}
 	}
 }
 
@@ -400,6 +450,30 @@ extension MainViewController: InputTextViewDelegate {
 		navigationController?.toolbarHidden = true
 		xyScrollView.writeView.changeLabelText(index, text: text)
 		pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
+	}
+}
+
+extension MainViewController: UIViewControllerPreviewingDelegate {
+
+	func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+		guard let indexPath = xyScrollView.X1_storyTableView.indexPathForRowAtPoint(location), cell = xyScrollView.X1_storyTableView.cellForRowAtIndexPath(indexPath) else { return nil }
+
+		let detailVC = DetailViewController()
+		detailVC.storys = xyScrollView.X1_storyTableView.storys
+		detailVC.topStoryIndex = indexPath.row
+		detailVC.delegate = self
+		detailVC.preferredContentSize = CGSize(width: 0.0, height: 0.0)
+		previewingContext.sourceRect = cell.frame
+		forceTouchWay = true
+		return detailVC
+	}
+
+	func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController viewControllerToCommit: UIViewController) {
+		viewControllerToCommit.modalPresentationStyle = .Custom
+		presentViewController(viewControllerToCommit, animated: false, completion: nil)
+		forceTouchWay = false
+		hideStatusView(true)
+		navigationController?.setToolbarHidden(true, animated: true)
 	}
 }
 

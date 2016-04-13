@@ -12,6 +12,7 @@ struct UDKey {
 	static let Author = "UDAuthor"
 	static let LastWriteDate = "LastWriteDate"
 	static let LastLoadDate = "LastLoadDate"
+	static let LikedStoryIndexes = "LikedStoryIndexes"
 }
 
 protocol UserDefaults {
@@ -28,6 +29,10 @@ protocol UserDefaults {
 
 	func saveLastStory(story: Story)
 	func getLastStory() -> Story
+
+	func saveLikedStoryIndex(index: Int)
+	func likedStoryIndexes() -> [Int]
+	func removeAllLikedStoryIndexes()
 }
 
 extension UserDefaults {
@@ -89,6 +94,28 @@ extension UserDefaults {
 
 		let story = Story(date: date, sentences: sentences, colors: colors, rating: rating, author: author)
 		return story
+	}
+
+
+	func saveLikedStoryIndex(index: Int) {
+		if let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] {
+			let newLikes = likes + [index]
+			userDefaults.setObject(newLikes, forKey: UDKey.LikedStoryIndexes)
+			userDefaults.synchronize()
+		}
+	}
+
+	func likedStoryIndexes() -> [Int] {
+		if let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] {
+			return likes
+		} else {
+			return [Int]()
+		}
+	}
+
+	func removeAllLikedStoryIndexes() {
+		userDefaults.setObject([Int](), forKey: UDKey.LikedStoryIndexes)
+		userDefaults.synchronize()
 	}
 
 

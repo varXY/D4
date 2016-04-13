@@ -10,7 +10,7 @@ import UIKit
 
 class DimmingPresentationController: UIPresentationController {
 
-	lazy var dimmingView = UIView()
+//	lazy var dimmingView = UIView()
 
 	override func presentationTransitionWillBegin() {
 		super.presentationTransitionWillBegin()

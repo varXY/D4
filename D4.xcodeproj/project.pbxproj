@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		311EC7841CAE39280021FFB7 /* StoryTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311EC7831CAE39280021FFB7 /* StoryTableView.swift */; };
+		312391871CBE0AF600D4DBC2 /* RateViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312391861CBE0AF600D4DBC2 /* RateViews.swift */; };
 		3140FD471CBC6A5500515666 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3140FD461CBC6A5500515666 /* iAd.framework */; };
+		3177CF651CBDBA23006C6C43 /* NSdate+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3177CF641CBDBA23006C6C43 /* NSdate+.swift */; };
 		317919301CABB25900DB9A0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3179192F1CABB25900DB9A0A /* AppDelegate.swift */; };
 		317919321CABB25900DB9A0A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317919311CABB25900DB9A0A /* MainViewController.swift */; };
 		317919381CABB25900DB9A0A /* D4.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 317919361CABB25900DB9A0A /* D4.xcdatamodeld */; };
@@ -55,7 +57,9 @@
 
 /* Begin PBXFileReference section */
 		311EC7831CAE39280021FFB7 /* StoryTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryTableView.swift; sourceTree = "<group>"; };
+		312391861CBE0AF600D4DBC2 /* RateViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RateViews.swift; sourceTree = "<group>"; };
 		3140FD461CBC6A5500515666 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		3177CF641CBDBA23006C6C43 /* NSdate+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSdate+.swift"; sourceTree = "<group>"; };
 		3179192C1CABB25900DB9A0A /* D4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = D4.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3179192F1CABB25900DB9A0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		317919311CABB25900DB9A0A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -233,6 +237,7 @@
 				31FF3A2C1CACFB8A008B2C69 /* UIView+.swift */,
 				31FF3A2D1CACFB8A008B2C69 /* UIImageView+.swift */,
 				31FF3A2E1CACFB8A008B2C69 /* Array+.swift */,
+				3177CF641CBDBA23006C6C43 /* NSdate+.swift */,
 			);
 			name = Extension;
 			sourceTree = "<group>";
@@ -247,6 +252,7 @@
 				31B6424B1CB0A75100D901CF /* SettingView.swift */,
 				3189C1961CB74BC90092D363 /* SLabel.swift */,
 				31DB3EAA1CBB692A000BF3E1 /* PointerView.swift */,
+				312391861CBE0AF600D4DBC2 /* RateViews.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -329,6 +335,7 @@
 				31F2A4DE1CB9C6B7001725A0 /* CoreData.swift in Sources */,
 				317919301CABB25900DB9A0A /* AppDelegate.swift in Sources */,
 				31FF3A361CACFBCE008B2C69 /* MyColor.swift in Sources */,
+				3177CF651CBDBA23006C6C43 /* NSdate+.swift in Sources */,
 				317BC7F11CB08C86000A36FB /* UserDefaults.swift in Sources */,
 				311EC7841CAE39280021FFB7 /* StoryTableView.swift in Sources */,
 				317CC5BF1CB1EECB009A368B /* DimmingPresentationController.swift in Sources */,
@@ -356,6 +363,7 @@
 				31B6424C1CB0A75100D901CF /* SettingView.swift in Sources */,
 				31F2A4EC1CB9CE4F001725A0 /* MyStory.swift in Sources */,
 				31FF3A3B1CAD053E008B2C69 /* WriteView.swift in Sources */,
+				312391871CBE0AF600D4DBC2 /* RateViews.swift in Sources */,
 				31FF3A341CACFB8A008B2C69 /* Array+.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -22,22 +22,6 @@ let globalRadius: CGFloat = 5
 
 // 日期和数字格式转换
 
-enum FomatterType: String {
-	case MMddyy = "MM/dd/yy"
-	case HH = "HH"
-	case dd = "dd"
-	case MMddyyHHmm = "MM/dd/yy, HH:mm"
-	case HHmm = "HH:mm"
-	case MMdd = "MM/dd"
-}
-
-func stringFromDate(date: NSDate, fomatter: FomatterType) -> String {
-	let dateFomatter = NSDateFormatter()
-	dateFomatter.dateFormat = fomatter.rawValue
-	let stringDate = dateFomatter.stringFromDate(date)
-	return stringDate
-}
-
 var priceFormatter: NSNumberFormatter = {
 	let pf = NSNumberFormatter()
 	pf.formatterBehavior = .Behavior10_4

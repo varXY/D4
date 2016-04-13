@@ -34,6 +34,13 @@ class BounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning
 						}, completion: { (finished) in
 							transitionContext.completeTransition(finished)
 					})
+				} else {
+					UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+						toView.alpha = 1.0
+						toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+						}, completion: { (finished) in
+							transitionContext.completeTransition(finished)
+					})
 				}
 
 

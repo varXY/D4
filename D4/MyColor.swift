@@ -61,13 +61,13 @@ enum MyColor {
 		case .code(colorCode[10]): colorValue = [214, 214, 214, 1.0]; black = true //2： 灰
 		case .code(colorCode[11]): colorValue = [33, 108, 12, 1.0]    //12： 深绿1
 		case .code(colorCode[12]): colorValue = [0, 209, 14, 1.0]    //22： 2
-		case .code(colorCode[13]): colorValue = [103, 227, 56, 1.0]   //32： 3
+		case .code(colorCode[13]): colorValue = [103, 227, 56, 1.0]; black = true   //32： 3
 		case .code(colorCode[14]): colorValue = [100, 250, 128, 1.0]; black = true  //42： 浅绿4
 
 		case .code(colorCode[15]): colorValue = [169, 169, 169, 1.0]    //3： 深灰
 		case .code(colorCode[16]): colorValue = [254, 94, 4, 1.0]    //13： 深黄1
 		case .code(colorCode[17]): colorValue = [255, 147, 0, 1.0]   //23： 2
-		case .code(colorCode[18]): colorValue = [254, 204, 43, 1.0]  //33： 3
+		case .code(colorCode[18]): colorValue = [254, 204, 43, 1.0]; black = true  //33： 3
 		case .code(colorCode[19]): colorValue = [255, 251, 0, 1.0]; black = true  //43： 浅黄4
 
 		case .code(colorCode[20]): colorValue = [121, 121, 121, 1.0]       //4： 黑

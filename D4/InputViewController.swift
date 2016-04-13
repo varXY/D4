@@ -45,7 +45,6 @@ class InputViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
-		modalPresentationStyle = .Custom
 		transitioningDelegate = self
 
 		view.backgroundColor = MyColor.code(colorCode).BTColors[0]
@@ -199,6 +198,6 @@ extension InputViewController: UIViewControllerTransitioningDelegate {
 	}
 
 	func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		return SlideOutAnimationController()
+		return FadeOutAnimationController()
 	}
 }

@@ -45,9 +45,6 @@ class StoryTableView: UITableView, CoreDataAndStory {
 
 		footerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 44))
 		footerView.backgroundColor = UIColor.clearColor()
-//		adView = ADBannerView(adType: .Banner)
-//		adView.delegate = self
-//		footerView.addSubview(adView)
 		tableFooterView = footerView
 
 		load100DailyStorys { (storys) in
@@ -56,6 +53,7 @@ class StoryTableView: UITableView, CoreDataAndStory {
 			}
 		}
 	}
+
 
 	func loading(loading: Bool) {
 		if loading {
@@ -108,6 +106,9 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = UITableViewCell(style: .Default, reuseIdentifier: "cell")
+		cell.textLabel?.font = UIFont.systemFontOfSize(17)
+//		cell.layoutMargins = UIEdgeInsetsZero
+//		cell.preservesSuperviewLayoutMargins = false
 
 		if storys.count != 0 {
 			cell.selectedBackgroundView = UIView()
@@ -136,7 +137,6 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		} else {
 			return false
 		}
-
 	}
 
 	func tableView(tableView: UITableView, didUnhighlightRowAtIndexPath indexPath: NSIndexPath) {
@@ -167,6 +167,8 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		return indexPath
 	}
 }
+
+
 
 //extension StoryTableView: ADBannerViewDelegate {
 //

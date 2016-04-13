@@ -15,8 +15,10 @@ struct Story: UserDefaults {
 	let date: NSDate
 	let sentences: [String]
 	let colors: [Int]
-	let rating: Int
+	var rating: Int
 	let author: String
+
+	var ID = "No"
 
 	init(date: NSDate, sentences: [String], colors: [Int], rating: Int, author: String) {
 		self.date = date
@@ -32,6 +34,8 @@ struct Story: UserDefaults {
 		colors = object.objectForKey(AVKey.colors) as! [Int]
 		rating = object.objectForKey(AVKey.rating) as! Int
 		author = object.objectForKey(AVKey.author) as! String
+
+		ID = object.objectId
 	}
 
 	init(sentences: [String], colors: [Int]) {
@@ -44,7 +48,7 @@ struct Story: UserDefaults {
 		if let storedAuthor = userDefaults.stringForKey(UDKey.Author) {
 			author = storedAuthor
 		} else {
-			author = sentences[0] + stringFromDate(date, fomatter: FomatterType.MMddyy)
+			author = sentences[0] + date.string(.MMddyy)
 			saveAuthor(author)
 		}
 	}

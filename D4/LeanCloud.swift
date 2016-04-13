@@ -27,6 +27,7 @@ protocol LeanCloud: UserDefaults {
 	func createAndSaveAuthor()
 	func uploadStory(story: Story, completion: Completion)
 	func getDailyStory(gotStorys: GotStorys)
+	func updateRating(ID: String, rating: Int)
 }
 
 extension LeanCloud {
@@ -73,9 +74,16 @@ extension LeanCloud {
 				gotStorys([Story]())
 			}
 
-
 		}
 
+	}
+
+	func updateRating(ID: String, rating: Int) {
+		let story = AVObject(outDataWithClassName: AVKey.classStory, objectId: ID)
+		story.setObject(rating, forKey: AVKey.rating)
+		story.saveInBackgroundWithBlock { (success, error) in
+			if success { print(success) }
+		}
 	}
 }
 
