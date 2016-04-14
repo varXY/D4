@@ -11,7 +11,7 @@ import UIKit
 class BounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
 
 	func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-		return 0.4
+		return 0.45
 	}
 
 	func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
@@ -35,12 +35,19 @@ class BounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning
 							transitionContext.completeTransition(finished)
 					})
 				} else {
-					UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+					UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 						toView.alpha = 1.0
 						toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
 						}, completion: { (finished) in
 							transitionContext.completeTransition(finished)
 					})
+
+//					UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+//						toView.alpha = 1.0
+//						toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+//						}, completion: { (finished) in
+//							transitionContext.completeTransition(finished)
+//					})
 				}
 
 

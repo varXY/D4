@@ -22,7 +22,7 @@ class PointerView: UIView {
 		didSet {
 			let today = lastUpDateTime.string(.MMddyy) == NSDate().string(.MMddyy)
 			lastUpdateText = today ? "\(NSDate().string(.HHmm))" : lastUpDateTime.string(.MMdd)
-			delay(seconds: 1.0) {
+			delay(seconds: 1.5) {
 				self.UDLR_labels[0].text = self.lastUpdateText + "更新"
 			}
 
@@ -148,7 +148,9 @@ class PointerView: UIView {
 			addSubview(upPointer)
 			addSubview(downPointer)
 
-			let texts = ["上一个", "下一个", "主\n页", "顶\n踩"]
+			guard let detailVC = VC as? DetailViewController else { return }
+			let rightText = detailVC.netOrLocalStory == 0 ? "顶\n踩" : "保\n存\n到\n相\n册"
+			let texts = ["上一个", "下一个", "主\n页", rightText]
 			var i = 0
 			repeat {
 				UDLR_labels[i].text = texts[i]
@@ -204,9 +206,13 @@ class PointerView: UIView {
 	}
 
 	func rotation(animate: () -> ()) {
-		UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 			animate()
 			}, completion: nil)
+
+//		UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+//			animate()
+//			}, completion: nil)
 	}
 
 	// MARK: - MainViewController
@@ -220,7 +226,7 @@ class PointerView: UIView {
 			sendSubviewToBack(downPointer)
 
 			if UDLR_labels[1].frame.origin.y != ScreenHeight - 60 { UDLR_labels[1].frame.origin.y += 24 }
-			let texts = topIndex == 0 ? ["还没想好什么功能", "还没写完"] : ["分享", "请独立开发者吃顿好的"]
+			let texts = topIndex == 0 ? ["还没想好什么功能", "写完上划发布"] : ["分享", "请独立开发者吃顿好的"]
 			UDLR_labels[0].text = texts[0]
 			UDLR_labels[1].text = texts[1]
 
@@ -253,7 +259,7 @@ class PointerView: UIView {
 	}
 
 	func changeLabelTextForCanSaveStory(can: Bool) {
-		UDLR_labels[1].text = can ? "发布" : "还没写完"
+		UDLR_labels[1].text = can ? "发布" : "写完上划发布"
 	}
 
 	// MARK: - DetailViewController

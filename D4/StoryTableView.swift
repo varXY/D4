@@ -23,8 +23,9 @@ class StoryTableView: UITableView, CoreDataAndStory {
 	var storys: [Story]!
 
 	var footerView: UIView!
-//	var adView: ADBannerView!
 
+	var netOrLocalStory = 0
+	
 	weak var SDelegate: StoryTableViewDelegate?
 
 	init(frame: CGRect, storys: [Story]) {
@@ -121,7 +122,7 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		} else {
 			cell.backgroundColor = UIColor.clearColor()
 			cell.textLabel?.textColor = UIColor.whiteColor()
-			cell.textLabel?.text = "没有故事 右滑添加"
+			cell.textLabel?.text = netOrLocalStory == 0 ? "网络问题 无法加载" : "没有故事 右滑添加"
 			cell.textLabel?.textAlignment = .Center
 		}
 
@@ -142,14 +143,15 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 	func tableView(tableView: UITableView, didUnhighlightRowAtIndexPath indexPath: NSIndexPath) {
 		let cell = tableView.cellForRowAtIndexPath(indexPath)
 		let colorCode = storys[indexPath.row].colors[0]
-		delay(seconds: 0.5) {
-			cell?.textLabel?.alpha = 0.0
-			cell!.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
-
-			UIView.animateWithDuration(0.3, animations: {
-				cell?.textLabel?.alpha = 1.0
-			})
-		}
+		cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
+//		delay(seconds: 0.5) {
+//			cell?.textLabel?.alpha = 0.0
+//			cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
+//
+//			UIView.animateWithDuration(0.3, animations: {
+//				cell?.textLabel?.alpha = 1.0
+//			})
+//		}
 	}
 
 	func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {

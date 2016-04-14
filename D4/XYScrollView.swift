@@ -259,10 +259,13 @@ class XYScrollView: UIScrollView {
 					bringSubviewToFront(topView)
 					topView.alpha = 1.0
 
-					YYAnimate({ 
+					UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 						self.middleView.alpha = 0.0
 						self.topView.frame.origin = self.middleOrigin
-						}, completion: { 
+						}, completion: { (_) in
+//							self.addSubview(self.middleView)
+//							self.addSubview(self.topView)
+
 							self.middleView.frame.origin = self.topOrigin
 
 							if self.topStoryIndex > 1 {
@@ -271,6 +274,19 @@ class XYScrollView: UIScrollView {
 
 							self.reorderView()
 					})
+
+//					YYAnimate({ 
+//						self.middleView.alpha = 0.0
+//						self.topView.frame.origin = self.middleOrigin
+//						}, completion: { 
+//							self.middleView.frame.origin = self.topOrigin
+//
+//							if self.topStoryIndex > 1 {
+//								self.changeStoryForContentView(self.middleView, storyIndex: self.topStoryIndex - 1)
+//							}
+//
+//							self.reorderView()
+//					})
 
 				}
 
@@ -308,15 +324,22 @@ class XYScrollView: UIScrollView {
 	}
 
 	func XXAnimate(animations: () -> (), completion: (() -> ())?) {
-		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+
+		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 			animations()
-			}) { (_) in
-				completion!()
+		}) { (_) in
+			completion!()
 		}
+
+//		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
+//			animations()
+//			}) { (_) in
+//				completion!()
+//		}
 	}
 
 	func YYAnimate(animations: () -> (), completion: (() -> ())?) {
-		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 			animations()
 			}) { (_) in
 				completion!()

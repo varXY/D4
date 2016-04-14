@@ -60,7 +60,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		testLoadStory()
-		hideOrShowStatusViewAndToolbar()
+//		hideOrShowStatusViewAndToolbar()
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -176,12 +176,14 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	func loadSavedDailyStory() {
 		xyScrollView.storys = dailyStorys
+		xyScrollView.X1_storyTableView.netOrLocalStory = 0
 		xyScrollView.X1_storyTableView.reloadData()
 	}
 
 	func loadSelfStory() {
 		getMyStorys { (storys) in
 			self.xyScrollView.storys = storys
+			self.xyScrollView.X1_storyTableView.netOrLocalStory = 1
 			self.xyScrollView.X1_storyTableView.reloadData()
 		}
 	}
@@ -233,8 +235,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 //		addShandow((navigationController?.toolbar)!)
 
 		// 加边框
-		statusView.addBorder(borderColor: UIColor.whiteColor(), width: 0.2)
-		navigationController?.toolbar.addBorder(borderColor: UIColor.whiteColor(), width: 0.2)
+//		statusView.addBorder(borderColor: UIColor.whiteColor(), width: 0.2)
+//		navigationController?.toolbar.addBorder(borderColor: UIColor.whiteColor(), width: 0.2)
 
 		// 变不透明
 //		let image = UIImage.imageWithColor(MyColor.code(1).BTColors[0], rect: statusView.bounds)
@@ -302,16 +304,17 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 			let distance: CGFloat = hide ? -20 : 20
 
-			UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
-
+			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 				self.statusView.frame.origin.y += distance
-
-				}, completion: { (finished) in
-
-					if !hide { self.setNeedsStatusBarAppearanceUpdate() }
-					
+				}, completion: { (_) in
+					if !hide { self.statusBarHidden = hide; self.setNeedsStatusBarAppearanceUpdate() }
 			})
-			
+//			UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
+//				self.statusView.frame.origin.y += distance
+//				}, completion: { (_) in
+//					if !hide { self.setNeedsStatusBarAppearanceUpdate() }
+//			})
+
 		}
 
 	}
@@ -325,29 +328,34 @@ extension MainViewController: XYScrollViewDelegate {
 	}
 
 	func didSelectedStory(storyIndex: Int) {
+		forceTouchWay = false
+
 
 		let detailVC = DetailViewController()
-		detailVC.modalPresentationStyle = .Custom
-		detailVC.transitioningDelegate = detailVC
-		detailVC.storys = xyScrollView.X1_storyTableView.storys
 		detailVC.topStoryIndex = storyIndex
-		detailVC.blurEffect = blurEffect
-		detailVC.delegate = self
+		setUpDetailVC(detailVC)
 		presentViewController(detailVC, animated: true) { 
 			self.navigationController?.setToolbarHidden(true, animated: true)
 			self.hideStatusView(true)
-			self.forceTouchWay = false
 		}
 
-		UIView.animateWithDuration(0.3, animations: { 
+		UIView.animateWithDuration(0.3, animations: {
 			self.view.alpha = 0.3
 			self.view.transform = CGAffineTransformMakeScale(0.95, 0.95)
 			}) { (_) in
-				delay(seconds: 0.5, completion: {
-					self.view.alpha = 1.0
-					self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
-				})
+				self.view.alpha = 0.0
+				self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
+//				self.statusView.frame.origin.y -= 20
 		}
+	}
+
+	func setUpDetailVC(detailVC: DetailViewController) {
+		detailVC.modalPresentationStyle = .Custom
+		detailVC.transitioningDelegate = detailVC
+		detailVC.storys = xyScrollView.X1_storyTableView.storys
+		detailVC.blurEffect = blurEffect
+		detailVC.netOrLocalStory = xyScrollView.X1_storyTableView.netOrLocalStory
+		detailVC.delegate = self
 	}
 
 	func writeViewWillInputText(index: Int, oldText: String, colorCode: Int) {
@@ -430,14 +438,17 @@ extension MainViewController: DetailViewControllerDelegate {
 	}
 
 	func detailViewControllerWillDismiss(topStoryIndex: Int) {
-		view.transform = CGAffineTransformMakeScale(0.95, 0.95)
-		UIView.animateWithDuration(0.3, animations: {
-			self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
-			}) { (_) in
-				self.hideOrShowStatusViewAndToolbar()
-		}
+		view.alpha = 1.0
 
 		if !forceTouchWay {
+			view.transform = CGAffineTransformMakeScale(0.95, 0.95)
+			UIView.animateWithDuration(0.3, animations: {
+				self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
+			}) { (_) in
+				self.hideStatusView(false)
+				self.navigationController?.setToolbarHidden(false, animated: true)
+			}
+
 			let indexPath = NSIndexPath(forRow: topStoryIndex, inSection: 0)
 			xyScrollView.X1_storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: false)
 		}
@@ -459,9 +470,8 @@ extension MainViewController: UIViewControllerPreviewingDelegate {
 		guard let indexPath = xyScrollView.X1_storyTableView.indexPathForRowAtPoint(location), cell = xyScrollView.X1_storyTableView.cellForRowAtIndexPath(indexPath) else { return nil }
 
 		let detailVC = DetailViewController()
-		detailVC.storys = xyScrollView.X1_storyTableView.storys
 		detailVC.topStoryIndex = indexPath.row
-		detailVC.delegate = self
+		setUpDetailVC(detailVC)
 		detailVC.preferredContentSize = CGSize(width: 0.0, height: 0.0)
 		previewingContext.sourceRect = cell.frame
 		forceTouchWay = true
@@ -469,11 +479,11 @@ extension MainViewController: UIViewControllerPreviewingDelegate {
 	}
 
 	func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController viewControllerToCommit: UIViewController) {
-		viewControllerToCommit.modalPresentationStyle = .Custom
+		statusView.frame.origin.y -= 20
+		print(statusView.frame.origin.y)
+		navigationController?.setToolbarHidden(true, animated: true)
 		presentViewController(viewControllerToCommit, animated: false, completion: nil)
 		forceTouchWay = false
-		hideStatusView(true)
-		navigationController?.setToolbarHidden(true, animated: true)
 	}
 }
 

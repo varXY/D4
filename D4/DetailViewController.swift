@@ -16,6 +16,21 @@ protocol DetailViewControllerDelegate: class {
 
 class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
+	lazy var previewActions: [UIPreviewActionItem] = {
+		func previewActionForTitle(title: String, style: UIPreviewActionStyle = .Default) -> UIPreviewAction {
+			return UIPreviewAction(title: title, style: style) { previewAction, viewController in
+				guard let detailViewController = viewController as? DetailViewController else { return }
+				let like = previewAction.title == "顶"
+				detailViewController.likeItOrNot(like)
+			}
+		}
+
+		let action0 = previewActionForTitle("顶")
+		let action1 = previewActionForTitle("踩")
+
+		return [action0, action1]
+	}()
+
 	var xyScrollView: XYScrollView!
 	var pointerView: PointerView!
 	var rateViews: RateViews!
@@ -26,9 +41,14 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	var blurEffect: UIBlurEffect!
 
+	var netOrLocalStory = 0
 	var rateViewShowed = false
 
 	weak var delegate: DetailViewControllerDelegate?
+
+	override func previewActionItems() -> [UIPreviewActionItem] {
+		return !likedStoryIndexes().contains(topStoryIndex) ? previewActions : []
+	}
 
 	override func prefersStatusBarHidden() -> Bool {
 		return true
@@ -47,9 +67,8 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 		xyScrollView.XYDelegate = self
 		view.addSubview(xyScrollView)
 
-		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapGestureReceived))
+		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showOrHideRateViews))
 		view.addGestureRecognizer(tapGesture)
-
 	}
 
 	override func viewWillAppear(animated: Bool) {
@@ -59,8 +78,9 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		rateViews = RateViews(VC: self, effect: blurEffect)
+		rateViews = RateViews(VC: self)
 		rateViews.likedIndexes = likedStoryIndexes()
+
 	}
 
 	override func viewWillDisappear(animated: Bool) {
@@ -85,19 +105,23 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	func rateButtonTapped(sender: UIButton) {
 		let like = sender.tag == 100
-		storys[topStoryIndex].rating += like ? 1 : -1
-		updateRating(storys[topStoryIndex].ID, rating: storys[topStoryIndex].rating)
-		delegate?.ratingChanged(topStoryIndex, rating: storys[topStoryIndex].rating)
+		likeItOrNot(like)
 		
 		rateViews.ratingLabel.text = "\(storys[topStoryIndex].rating)"
 		rateViews.hideAfterTapped()
 		rateViewShowed = false
+	}
+
+	func likeItOrNot(like: Bool) {
+		storys[topStoryIndex].rating += like ? 1 : -1
+		updateRating(storys[topStoryIndex].ID, rating: storys[topStoryIndex].rating)
+		delegate?.ratingChanged(topStoryIndex, rating: storys[topStoryIndex].rating)
 
 		saveLikedStoryIndex(topStoryIndex)
 		rateViews.likedIndexes = likedStoryIndexes()
 	}
 
-	func tapGestureReceived() {
+	func showOrHideRateViews() {
 		rateViewShowed = !rateViewShowed
 		rateViews.show(rateViewShowed, rating: storys[topStoryIndex].rating, storyIndex: topStoryIndex)
 	}
@@ -110,7 +134,7 @@ extension DetailViewController: XYScrollViewDelegate {
 	}
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
-		if rateViewShowed {
+		if rateViewShowed && (scrollType == .Up || scrollType == .Down) {
 			rateViewShowed = false
 			rateViews.show(rateViewShowed, rating: storys[topStoryIndex].rating, storyIndex: topStoryIndex)
 		}
@@ -124,7 +148,7 @@ extension DetailViewController: XYScrollViewDelegate {
 		case .Left:
 			dismissViewControllerAnimated(true, completion: nil)
 		case .Right:
-			tapGestureReceived()
+			showOrHideRateViews()
 		default:
 			break
 		}

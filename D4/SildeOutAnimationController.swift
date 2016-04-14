@@ -17,15 +17,17 @@ class SlideOutAnimationController: NSObject, UIViewControllerAnimatedTransitioni
 	func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
 
 		if let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey) {
-			let duration = transitionDuration(transitionContext)
+//			let duration = transitionDuration(transitionContext)
 
-//			if let toView = transitionContext.viewForKey(UITransitionContextToViewKey) {
-//				toView.alpha = 1.0
-//				UIApplication.sharedApplication().keyWindow?.addSubview(toView)
-//			}
-			
 			fromView.backgroundColor = UIColor.clearColor()
-			UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+//			UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+//				fromView.alpha = 0.0
+//				fromView.frame.origin.x += ScreenWidth
+//				}, completion: { (finished) in
+//					transitionContext.completeTransition(finished)
+//			})
+
+			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 				fromView.alpha = 0.0
 				fromView.frame.origin.x += ScreenWidth
 				}, completion: { (finished) in
