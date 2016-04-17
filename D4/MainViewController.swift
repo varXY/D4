@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import StoreKit
 
-class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDefaults {
+class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDefaults, MailSending {
 
 	var xyScrollView: XYScrollView!
 	var pointerView: PointerView!
@@ -25,7 +26,9 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	var dailyStorys: [Story]!
 
-	var blurEffect: UIBlurEffect!
+	var nightStyle = false
+
+	var oldTopIndex = 0
 
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
 		return statusBarStyle
@@ -35,10 +38,12 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		return statusBarHidden
 	}
 
+	// MARK: - LoadAndAppear
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		automaticallyAdjustsScrollViewInsets = false
-		modalPresentationStyle = .OverFullScreen
+
 		pointerView = PointerView(VC: self)
 		view = pointerView
 
@@ -60,7 +65,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		testLoadStory()
-//		hideOrShowStatusViewAndToolbar()
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -72,6 +76,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		super.viewWillDisappear(animated)
 
 	}
+
+	// MARK: -
 
 	func testLoadStory() {
 		if !dailyStoryLoaded {
@@ -192,14 +198,12 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		let effect = UIBlurEffect(style: .Dark)
 		statusView = UIVisualEffectView(effect: effect)
 		statusView.frame = CGRectMake(0, 0, ScreenWidth, 20)
-
 		view.addSubview(statusView)
 
-		segmentedControl = UISegmentedControl(items: ["每日100", "我的故事"])
+		segmentedControl = UISegmentedControl(items: ["今日100", "我的故事"])
 		segmentedControl.selectedSegmentIndex = 0
 		segmentedControl.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 160, height: 29))
 		segmentedControl.addTarget(self, action: #selector(segmentedControlSelected(_:)), forControlEvents: .ValueChanged)
-
 		let barButton = UIBarButtonItem(customView: segmentedControl)
 
 		addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(goToAddPage))
@@ -214,7 +218,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		navigationController?.navigationBarHidden = true
 		navigationController?.toolbarHidden = false
 		navigationController?.toolbar.clipsToBounds = true
-
 		setToolbarItems(toolBarItems, animated: true)
 
 		addShandowForBar()
@@ -250,12 +253,14 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	func changeBarStyleBaseOnTime() {
 		let hour = Int(NSDate().string(.HH))
-		let night = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
-		blurEffect = night ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
-		let tintColor = night ? UIColor.whiteColor() : UIColor.blackColor()
-		let barStyle = night ? UIBarStyle.Black : UIBarStyle.Default
+		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
+//		nightStyle = true
+		xyScrollView.writeView.nightStyle = nightStyle
+		let blurEffect = nightStyle ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
+		let tintColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
+		let barStyle = nightStyle ? UIBarStyle.Black : UIBarStyle.Default
 
-		statusBarStyle = night ? UIStatusBarStyle.LightContent : UIStatusBarStyle.Default
+		statusBarStyle = nightStyle ? UIStatusBarStyle.LightContent : UIStatusBarStyle.Default
 		setNeedsStatusBarAppearanceUpdate()
 
 		statusView.effect = blurEffect
@@ -275,7 +280,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		pointerView.showTextBaseOnTopIndex(0)
 		pointerView.addOrRemoveUpAndDownPointerAndLabel(0)
 		pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
-		hideOrShowStatusViewAndToolbar()
+		hideOrShowStatusViewAndToolbar(nil)
 
 		if xyScrollView.writeView.firstColor == false {
 			xyScrollView.writeView.labelsGetRandomColors()
@@ -287,13 +292,19 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		xyScrollView.moveContentViewToTop(.Right)
 		pointerView.showTextBaseOnTopIndex(2)
 		pointerView.addOrRemoveUpAndDownPointerAndLabel(2)
-		hideOrShowStatusViewAndToolbar()
+		hideOrShowStatusViewAndToolbar(nil)
 	}
 
-	func hideOrShowStatusViewAndToolbar() {
-		let hidden = xyScrollView.topViewIndex != 1
-		navigationController?.setToolbarHidden(hidden, animated: true)
-		hideStatusView(hidden)
+	func hideOrShowStatusViewAndToolbar(presentedVC: Bool?) {
+		if presentedVC != nil {
+			navigationController?.setToolbarHidden(presentedVC!, animated: true)
+			hideStatusView(presentedVC!)
+		} else {
+			let hidden = xyScrollView.topViewIndex != 1
+			navigationController?.setToolbarHidden(hidden, animated: true)
+			hideStatusView(hidden)
+		}
+
 	}
 
 	func hideStatusView(hide: Bool) {
@@ -309,6 +320,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 				}, completion: { (_) in
 					if !hide { self.statusBarHidden = hide; self.setNeedsStatusBarAppearanceUpdate() }
 			})
+
 //			UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
 //				self.statusView.frame.origin.y += distance
 //				}, completion: { (_) in
@@ -320,6 +332,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	}
 
 }
+
+// MARK: - XYScrollViewDelegate
 
 extension MainViewController: XYScrollViewDelegate {
 
@@ -335,16 +349,15 @@ extension MainViewController: XYScrollViewDelegate {
 		detailVC.topStoryIndex = storyIndex
 		setUpDetailVC(detailVC)
 		presentViewController(detailVC, animated: true) { 
-			self.navigationController?.setToolbarHidden(true, animated: true)
-			self.hideStatusView(true)
+			self.hideOrShowStatusViewAndToolbar(true)
 		}
 
 		UIView.animateWithDuration(0.3, animations: {
-			self.view.alpha = 0.3
-			self.view.transform = CGAffineTransformMakeScale(0.95, 0.95)
+			self.view.alpha = 0.0
+//			self.view.transform = CGAffineTransformMakeScale(0.95, 0.95)
 			}) { (_) in
-				self.view.alpha = 0.0
-				self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
+//				self.view.alpha = 0.0
+//				self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
 //				self.statusView.frame.origin.y -= 20
 		}
 	}
@@ -353,7 +366,7 @@ extension MainViewController: XYScrollViewDelegate {
 		detailVC.modalPresentationStyle = .Custom
 		detailVC.transitioningDelegate = detailVC
 		detailVC.storys = xyScrollView.X1_storyTableView.storys
-		detailVC.blurEffect = blurEffect
+		detailVC.nightStyle = nightStyle
 		detailVC.netOrLocalStory = xyScrollView.X1_storyTableView.netOrLocalStory
 		detailVC.delegate = self
 	}
@@ -370,27 +383,56 @@ extension MainViewController: XYScrollViewDelegate {
 	}
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
-
+		oldTopIndex = topViewIndex
 	}
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
-		hideOrShowStatusViewAndToolbar()
+		hideOrShowStatusViewAndToolbar(nil)
 		pointerView.showTextBaseOnTopIndex(topViewIndex)
-		
 		pointerView.addOrRemoveUpAndDownPointerAndLabel(topViewIndex)
-		if topViewIndex == 0 { pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready) }
 
-		if scrollType == .Left && xyScrollView.topViewIndex != 1 {
-			if xyScrollView.writeView.firstColor == false {
-				xyScrollView.writeView.labelsGetRandomColors()
+		if oldTopIndex == topViewIndex {
+			switch topViewIndex {
+			case 0:
+				pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
+
+				switch scrollType {
+				case .Down:
+					delay(seconds: 0.7) { self.goBackSaveUploadStory() }
+
+				case .Left:
+					xyScrollView.writeView.labelsGetRandomColors()
+
+				default:
+					break
+				}
+
+			case 2:
+				switch scrollType {
+				case .Up:
+					sendSupportEmail()
+
+				case .Left:
+					if !xyScrollView.writeView.firstColor {
+						xyScrollView.writeView.labelsGetRandomColors()
+					}
+
+				case .Right:
+					UIApplication.sharedApplication().openURL(NSURL(string: "http://www.jianshu.com/users/83ddcf71e52c")!)
+
+				case .Down:
+					connectToStore()
+
+				default:
+					break
+				}
+				
+			default:
+				break
 			}
 		}
 
-		if scrollType == .Down && topViewIndex == 0 {
-			delay(seconds: 0.7, completion: {
-				self.goBackSaveUploadStory()
-			})
-		}
+
 	}
 
 	func goBackSaveUploadStory() {
@@ -401,7 +443,7 @@ extension MainViewController: XYScrollViewDelegate {
 				xyScrollView.moveContentViewToTop(.Right)
 				pointerView.showTextBaseOnTopIndex(1)
 				pointerView.addOrRemoveUpAndDownPointerAndLabel(1)
-				hideOrShowStatusViewAndToolbar()
+				hideOrShowStatusViewAndToolbar(nil)
 
 				segmentedControl.selectedSegmentIndex = 1
 				loadSelfStory()
@@ -426,10 +468,9 @@ extension MainViewController: XYScrollViewDelegate {
 		}
 	}
 
-	func setToolBarHiddenByStoryTableView(hidden: Bool) {
-//		navigationController?.setToolbarHidden(hidden, animated: true)
-	}
 }
+
+// MARK: - DetailViewControllerDelegate
 
 extension MainViewController: DetailViewControllerDelegate {
 
@@ -445,8 +486,7 @@ extension MainViewController: DetailViewControllerDelegate {
 			UIView.animateWithDuration(0.3, animations: {
 				self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
 			}) { (_) in
-				self.hideStatusView(false)
-				self.navigationController?.setToolbarHidden(false, animated: true)
+				self.hideOrShowStatusViewAndToolbar(false)
 			}
 
 			let indexPath = NSIndexPath(forRow: topStoryIndex, inSection: 0)
@@ -455,7 +495,9 @@ extension MainViewController: DetailViewControllerDelegate {
 	}
 }
 
-extension MainViewController: InputTextViewDelegate {
+// MARK: - InputViewControllerDelegate
+
+extension MainViewController: InputViewControllerDelegate {
 
 	func inputTextViewDidReturn(index: Int, text: String) {
 		navigationController?.toolbarHidden = true
@@ -463,6 +505,8 @@ extension MainViewController: InputTextViewDelegate {
 		pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
 	}
 }
+
+// MARK: - 3D Touch
 
 extension MainViewController: UIViewControllerPreviewingDelegate {
 
@@ -480,11 +524,56 @@ extension MainViewController: UIViewControllerPreviewingDelegate {
 
 	func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController viewControllerToCommit: UIViewController) {
 		statusView.frame.origin.y -= 20
-		print(statusView.frame.origin.y)
 		navigationController?.setToolbarHidden(true, animated: true)
 		presentViewController(viewControllerToCommit, animated: false, completion: nil)
 		forceTouchWay = false
 	}
 }
 
+
+// MARK: - Purchese
+
+extension MainViewController {
+
+	func connectToStore() {
+
+		let indicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+		indicator.startAnimating()
+		indicator.frame = self.view.bounds
+		indicator.frame.size.height += 64
+		indicator.frame.origin.y -= 64
+		UIView.animateWithDuration(0.3, animations: { indicator.backgroundColor = UIColor(red: 45/255, green: 47/255, blue: 56/255, alpha: 0.45) })
+		view.addSubview(indicator)
+		view.userInteractionEnabled = false
+
+		SupportProducts.store.requestProductsWithCompletionHandler({ (success, products) -> () in
+			indicator.removeFromSuperview()
+			self.view.userInteractionEnabled = true
+			if success {
+				self.purchaseProduct(products[0])
+
+			} else {
+				let title = NSLocalizedString("连接失败", comment: "SettingVC")
+				let message = NSLocalizedString("请检查你的网络连接后重试", comment: "SettingVC")
+				let ok = NSLocalizedString("确定", comment: "SettingVC")
+				let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+				let action = UIAlertAction(title: ok, style: .Default, handler: nil)
+				alertController.addAction(action)
+				self.presentViewController(alertController, animated: true, completion: nil)
+			}
+		})
+	}
+
+	func purchaseProduct(product: SKProduct) {
+		SupportProducts.store.purchaseProduct(product)
+		let hudView = HudView.hudInView(self.view, animated: true)
+		hudView.text = "谢谢!"
+		hudView.textColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
+		hudView.hudBackgroundColor = nightStyle ? UIColor(white: 0.3, alpha: 0.7) : UIColor(white: 1.0, alpha: 0.7)
+	}
+
+	func productPurchased(notification: NSNotification) {
+		_ = notification.object as! String
+	}
+}
 

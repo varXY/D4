@@ -31,12 +31,19 @@ class WriteView: UIView {
 	var dots = [UIView]()
 	var colorCodes = [Int]()
 
+	var nightStyle = false {
+		didSet {
+			let color = nightStyle ? UIColor(white: 0.3, alpha: 0.7) : MyColor.code(0).BTColors[0]
+			dots.forEach({ $0.backgroundColor = color })
+		}
+	}
+
 	let placeHolderTexts = [
 		"标 题",
 		"上 午",
 		"下 午",
 		"晚 上",
-		"睡 前 哲 思"
+		"总 结"
 	]
 
 	weak var delegate: WriteViewDelegate?
@@ -65,8 +72,9 @@ class WriteView: UIView {
 
 			if index < 4 {
 				let dot = UIView(frame: dotFrame(index))
-				dot.backgroundColor = UIColor(white: 0.8, alpha: 0.8)
-				dot.layer.cornerRadius = dotLength / 2
+				dot.backgroundColor = UIColor.whiteColor()
+				dot.alpha = 0.6
+				dot.layer.cornerRadius = dot.frame.width / 2
 				addSubview(dot)
 				dots.append(dot)
 			}
@@ -86,7 +94,7 @@ class WriteView: UIView {
 			delegate?.selectingColor(selectingColor)
 
 			bringSubviewToFront(dots[selectedDotIndex])
-			dots[selectedDotIndex].backgroundColor = UIColor(white: 1.0, alpha: 1.0)
+			dots[selectedDotIndex].alpha = 1.0
 			UIView.animateWithDuration(0.25, animations: {
 				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.8, 1.8)
 				}, completion: { (_) in
@@ -123,7 +131,7 @@ class WriteView: UIView {
 		if selectingColor {
 			UIView.animateWithDuration(0.2, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.0, 1.0)
-				self.dots[self.selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
+				self.dots[self.selectedDotIndex].alpha = 0.6
 				self.dots[self.selectedDotIndex].frame.origin = self.dotFrame(self.selectedDotIndex).origin
 				}, completion: nil)
 
@@ -139,7 +147,7 @@ class WriteView: UIView {
 		if selectingColor {
 			UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.0, 1.0)
-				self.dots[self.selectedDotIndex].backgroundColor = UIColor(white: 0.8, alpha: 0.8)
+				self.dots[self.selectedDotIndex].alpha = 0.6
 				self.dots[self.selectedDotIndex].frame.origin = self.dotFrame(self.selectedDotIndex).origin
 				}, completion: nil)
 			selectingColor = false
@@ -225,12 +233,11 @@ class WriteView: UIView {
 	}
 
 	func clearContent() {
-		var i = 0
-		repeat {
-			labels[i].text = placeHolderTexts[i]
-			changeLabelTextFont(i, inputted: false)
-			i += 1
-		} while i < labels.count
+		labels.forEach({
+			let index = labels.indexOf($0)!
+			$0.text = placeHolderTexts[index]
+			changeLabelTextFont(index, inputted: false)
+		})
 	}
 
 	func locationToColorCode(location: CGPoint) -> Int {
@@ -254,7 +261,7 @@ class WriteView: UIView {
 		selectedDotIndex = nil
 		var i = 0
 		repeat {
-			if dots[i].frame.contains(location) {
+			if activateDotFrame(i).contains(location) {
 				selectedDotIndex = i
 			}
 			i += 1
@@ -304,6 +311,13 @@ extension WriteView {
 	}
 
 	func dotFrame(index: Int) -> CGRect {
+		let activate = activateDotFrame(index)
+		let x = activate.origin.x + 5
+		let y = activate.origin.y + 5
+		return CGRectMake(x, y, activate.width - 10, activate.height - 10)
+	}
+
+	func activateDotFrame(index: Int) -> CGRect {
 		let x = ScreenWidth - 50
 		let y = bigBlockHeight * CGFloat(index)
 		return CGRectMake(x, y, dotLength, dotLength)

@@ -7,21 +7,16 @@
 //
 
 import UIKit
-import iAd
 
 class SettingView: UIView {
 
 	init() {
 		super.init(frame: CGRectMake(0, 0, ScreenWidth, ScreenHeight))
-		backgroundColor = UIColor.lightGrayColor()
+		backgroundColor = MyColor.code(1).BTColors[0]
 		layer.cornerRadius = globalRadius
 		clipsToBounds = true
 		exclusiveTouch = true
 
-		let adView = ADBannerView(adType: .Banner)
-		adView.frame = CGRect(x: 0, y: ScreenHeight - 50, width: ScreenWidth, height: 50)
-		adView.delegate = self
-		addSubview(adView)
 	}
 
 
@@ -31,17 +26,3 @@ class SettingView: UIView {
 	}
 }
 
-extension SettingView: ADBannerViewDelegate {
-
-	func bannerViewWillLoadAd(banner: ADBannerView!) {
-		banner.alpha = 1.0
-	}
-
-	func bannerViewDidLoadAd(banner: ADBannerView!) {
-		banner.alpha = 1.0
-	}
-
-	func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
-		banner.alpha = 0.0
-	}
-}

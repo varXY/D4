@@ -26,7 +26,7 @@ class StoryView: UIView {
 			label.backgroundColor = MyColor.code(story.colors[index]).BTColors[0]
 			label.textColor = MyColor.code(story.colors[index]).BTColors[1]
 			label.text = story.sentences[index]
-			label.font = UIFont.systemFontOfSize(16)
+			label.font = UIFont.systemFontOfSize(17)
 			label.textAlignment = .Center
 			label.numberOfLines = 0
 			label.adjustsFontSizeToFitWidth = true

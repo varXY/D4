@@ -13,13 +13,14 @@ struct UDKey {
 	static let LastWriteDate = "LastWriteDate"
 	static let LastLoadDate = "LastLoadDate"
 	static let LikedStoryIndexes = "LikedStoryIndexes"
+	static let LastStoryID = "LastStoryID"
 }
 
 protocol UserDefaults {
 	var userDefaults: NSUserDefaults { get }
 
 	func saveAuthor(author: String)
-	func getAuthor() -> String?
+	func getAuthor() -> String
 
 	func updateLastWriteDate(date: NSDate)
 	func lastWriteDate() -> NSDate
@@ -33,6 +34,9 @@ protocol UserDefaults {
 	func saveLikedStoryIndex(index: Int)
 	func likedStoryIndexes() -> [Int]
 	func removeAllLikedStoryIndexes()
+
+	func saveLastStoryID(ID: String)
+	func getLastStoryID() -> String
 }
 
 extension UserDefaults {
@@ -41,9 +45,21 @@ extension UserDefaults {
 		return NSUserDefaults.standardUserDefaults()
 	}
 
-	func getAuthor() -> String? {
-		guard let author = userDefaults.stringForKey(UDKey.Author) else { return nil }
+
+	func saveAuthor(author: String) {
+		userDefaults.setObject(author, forKey: UDKey.Author)
+		userDefaults.synchronize()
+	}
+
+	func getAuthor() -> String {
+		guard let author = userDefaults.stringForKey(UDKey.Author) else { return "" }
 		return author
+	}
+
+
+	func updateLastWriteDate(date: NSDate) {
+		userDefaults.setObject(date, forKey: UDKey.LastWriteDate)
+		userDefaults.synchronize()
 	}
 
 	func lastWriteDate() -> NSDate {
@@ -54,27 +70,18 @@ extension UserDefaults {
 		return date
 	}
 
+
+	func updateLastLoadDate(date: NSDate) {
+		userDefaults.setObject(date, forKey: UDKey.LastLoadDate)
+		userDefaults.synchronize()
+	}
+
 	func lastLoadDate() -> NSDate {
 		guard let date = userDefaults.objectForKey(UDKey.LastLoadDate) as? NSDate else { return NSDate().earlierDate(NSDate()) }
 		return date
 	}
 
 
-
-	func saveAuthor(author: String) {
-		userDefaults.setObject(author, forKey: UDKey.Author)
-		userDefaults.synchronize()
-	}
-
-	func updateLastWriteDate(date: NSDate) {
-		userDefaults.setObject(date, forKey: UDKey.LastWriteDate)
-		userDefaults.synchronize()
-	}
-
-	func updateLastLoadDate(date: NSDate) {
-		userDefaults.setObject(date, forKey: UDKey.LastLoadDate)
-		userDefaults.synchronize()
-	}
 
 	func saveLastStory(story: Story) {
 		userDefaults.setObject(story.date, forKey: AVKey.date)
@@ -98,19 +105,15 @@ extension UserDefaults {
 
 
 	func saveLikedStoryIndex(index: Int) {
-		if let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] {
-			let newLikes = likes + [index]
-			userDefaults.setObject(newLikes, forKey: UDKey.LikedStoryIndexes)
-			userDefaults.synchronize()
-		}
+		guard let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] else { return }
+		let newLikes = likes + [index]
+		userDefaults.setObject(newLikes, forKey: UDKey.LikedStoryIndexes)
+		userDefaults.synchronize()
 	}
 
 	func likedStoryIndexes() -> [Int] {
-		if let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] {
-			return likes
-		} else {
-			return [Int]()
-		}
+		guard let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] else { return [Int]() }
+		return likes
 	}
 
 	func removeAllLikedStoryIndexes() {
@@ -118,6 +121,17 @@ extension UserDefaults {
 		userDefaults.synchronize()
 	}
 
+
+
+	func saveLastStoryID(ID: String) {
+		userDefaults.setObject(ID, forKey: UDKey.LastStoryID)
+		userDefaults.synchronize()
+	}
+
+	func getLastStoryID() -> String {
+		guard let ID = userDefaults.stringForKey(UDKey.LastStoryID) else { return "" }
+		return ID
+	}
 
 }
 

@@ -18,11 +18,7 @@ let colorCode = [0, 10, 20, 30, 40,
 
 func fiveRandomColorCodes() -> [Int] {
 	let indexes = getRandomNumbers(4, lessThan: colorCode.count)
-	var colorCodes = [Int]()
-	for i in indexes {
-		colorCodes.append(colorCode[i])
-	}
-	
+	var colorCodes = indexes.map({ colorCode[$0] })
 	colorCodes.append(colorCodes[0])
 	return colorCodes
 }
@@ -45,7 +41,6 @@ enum MyColor {
 		var black = false
 
 		switch  self {
-
 		case .code(colorCode[0]): colorValue = [255, 255, 255, 1.0]; black = true  // 0: 白
 		case .code(colorCode[1]): colorValue = [66, 120, 245, 1.0]     // 10： 深蓝1
 		case .code(colorCode[2]): colorValue = [0, 150, 255, 1.0]    // 20： 2
@@ -55,7 +50,7 @@ enum MyColor {
 		case .code(colorCode[5]): colorValue = [235, 235, 235, 1.0]; black = true  //1： 浅灰
 		case .code(colorCode[6]): colorValue = [0, 122, 170, 1.0]     //11： 深青1
 		case .code(colorCode[7]): colorValue = [58, 160, 174, 1.0]     //21： 2
-		case .code(colorCode[8]): colorValue = [17, 219, 227, 1.0]   //31： 3
+		case .code(colorCode[8]): colorValue = [17, 219, 227, 1.0]; black = true   //31： 3
 		case .code(colorCode[9]): colorValue = [115, 252, 214, 1.0]; black = true  //41： 浅青4
 
 		case .code(colorCode[10]): colorValue = [214, 214, 214, 1.0]; black = true //2： 灰
@@ -82,14 +77,10 @@ enum MyColor {
 		case .code(colorCode[28]): colorValue = [136, 129, 240, 1.0]   //35： 3
 		case .code(colorCode[29]): colorValue = [132, 167, 233, 1.0]; black = true //45： 浅紫4
 
-
-
 		default: colorValue = [0, 0, 0, 0]
 		}
 
 		let backgroundColor = UIColor.colorWithValues(colorValue)
-
-//		let black = colorValue[0] + colorValue[1] + colorValue[2] > 500
 		let textColor = black ? UIColor.blackColor() : UIColor.whiteColor()
 
 		return [backgroundColor, textColor]

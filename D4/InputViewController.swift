@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-protocol InputTextViewDelegate: class {
+protocol InputViewControllerDelegate: class {
 	func inputTextViewDidReturn(index: Int, text: String)
 }
 
@@ -36,7 +36,7 @@ class InputViewController: UIViewController {
 
 	let elementAlpha: CGFloat = 0.6
 
-	weak var delegate: InputTextViewDelegate?
+	weak var delegate: InputViewControllerDelegate?
 
 	override func prefersStatusBarHidden() -> Bool {
 		return true

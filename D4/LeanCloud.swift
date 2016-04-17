@@ -24,17 +24,12 @@ struct AVKey {
 }
 
 protocol LeanCloud: UserDefaults {
-	func createAndSaveAuthor()
 	func uploadStory(story: Story, completion: Completion)
 	func getDailyStory(gotStorys: GotStorys)
-	func updateRating(ID: String, rating: Int)
+	func updateRating(ID: String, rating: Int, done: (Bool) -> ())
 }
 
 extension LeanCloud {
-
-	func createAndSaveAuthor() {
-
-	}
 
 	func uploadStory(story: Story, completion: Completion) {
 		let object = AVObject(className: AVKey.classStory)
@@ -44,6 +39,7 @@ extension LeanCloud {
 		object.setObject(story.author, forKey: AVKey.author)
 
 		object.saveInBackgroundWithBlock { (success, error) in
+			self.saveLastStoryID(object.objectId)
 			completion(success, error)
 		}
 	}
@@ -51,22 +47,34 @@ extension LeanCloud {
 	func getDailyStory(gotStorys: GotStorys) {
 		UIApplication.sharedApplication().networkActivityIndicatorVisible = true
 		var storys = [Story]()
+
+		let today = NSDate()
+		let stringToday = today.string(.MMddyy)
+		let trueToday = NSDate.getDateWithString(stringToday)
+
 		let query = AVQuery(className: AVKey.classStory)
-		query.orderByAscending(AVKey.date)
-//		query.addAscendingOrder(AVKey.)
+		query.orderByDescending(AVKey.date)
+		query.limit = 50
+		query.whereKey("createdAt", greaterThan: trueToday)
 		query.findObjectsInBackgroundWithBlock { (results, error) in
 			if let objects = results as? [AVObject] {
+				if results.count != 0 {
+					storys = objects.map({ Story(object: $0) })
 
-				var index = 0
-				repeat {
-					let story = Story(object: objects[index])
-					storys.insert(story, atIndex: 0)
-					index += 1
-				} while index < objects.count
+					if let story = self.getSelfLastOneStory() {
+						storys.append(story)
+					}
 
-				UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-				gotStorys(storys)
+					self.get49bestStorysOfyesterday({ (bestStorys) in
+						UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+						print(bestStorys.count)
+						storys += bestStorys
+						gotStorys(storys)
+					})
 
+				} else {
+					gotStorys([Story]())
+				}
 			}
 
 			if error != nil {
@@ -78,11 +86,55 @@ extension LeanCloud {
 
 	}
 
-	func updateRating(ID: String, rating: Int) {
+	func getSelfLastOneStory() -> Story? {
+		let ID = getLastStoryID()
+		let query = AVQuery(className: AVKey.classStory)
+
+		guard let object = query.getObjectWithId(ID) else { return nil }
+		return Story(object: object)
+
+	}
+
+	func get49bestStorysOfyesterday(gotStorys: GotStorys) {
+		var storys = [Story]()
+
+		let yesterday = NSDate(timeIntervalSinceNow: -86400)
+		let stringYesterday = yesterday.string(.MMddyy)
+		let trueyesterday = NSDate.getDateWithString(stringYesterday)
+
+		let today = NSDate()
+		let stringToday = today.string(.MMddyy)
+		let trueToday = NSDate.getDateWithString(stringToday)
+
+		let query = AVQuery(className: AVKey.classStory)
+		query.whereKey("createdAt", lessThan: trueToday)
+		query.whereKey("createdAt", greaterThan: trueyesterday)
+		query.addDescendingOrder(AVKey.rating)
+		query.limit = 49
+		query.findObjectsInBackgroundWithBlock { (results, error) in
+			if let objects = results as? [AVObject] {
+				if results.count != 0 {
+					storys = objects.map({ Story(object: $0) })
+				}
+
+				gotStorys(storys)
+			} else {
+				gotStorys([Story]())
+			}
+
+			if error != nil {
+				print(error)
+			}
+			
+		}
+
+	}
+
+	func updateRating(ID: String, rating: Int, done: (Bool) -> ()) {
 		let story = AVObject(outDataWithClassName: AVKey.classStory, objectId: ID)
 		story.setObject(rating, forKey: AVKey.rating)
 		story.saveInBackgroundWithBlock { (success, error) in
-			if success { print(success) }
+			done(success)
 		}
 	}
 }

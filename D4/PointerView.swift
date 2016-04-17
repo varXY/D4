@@ -17,6 +17,7 @@ class PointerView: UIView {
 	var rightPointer: UIImageView!
 
 	var UDLR_labels: [UILabel]!
+	var blankViews: [UIView]!
 
 	var lastUpDateTime: NSDate! {
 		didSet {
@@ -114,49 +115,57 @@ class PointerView: UIView {
 		leftPointer = pointer.imageView(.Left)
 		rightPointer = pointer.imageView(.Right)
 
+		addSubview(leftPointer)
+		addSubview(rightPointer)
+
 		UDLR_labels = [UILabel]()
 		let types = [XYScrollType.Up, XYScrollType.Down, XYScrollType.Left, XYScrollType.Right]
 		let structLabel = Label()
 		var i = 0
 		repeat {
 			let label = structLabel.label(types[i])
+			label.font = UIFont.systemFontOfSize(14)
 			UDLR_labels.append(label)
 			i += 1
 		} while i < types.count
 
 		switch VC {
 		case is MainViewController:
-			addSubview(leftPointer)
-			addSubview(rightPointer)
 
-			let texts = ["", "去创造新故事吧", "写\n故\n事", "关\n于"]
-			var i = 0
-			repeat {
-				UDLR_labels[i].text = texts[i]
-				addSubview(UDLR_labels[i])
+			blankViews = [UIView]()
+			let topBlankView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
+			let bottomBlankView = UIView(frame: CGRectMake(0, ScreenHeight - 44, ScreenWidth, 44))
+			blankViews.append(topBlankView)
+			blankViews.append(bottomBlankView)
+			blankViews.forEach({
+				$0.backgroundColor = UIColor.lightGrayColor()
+				addSubview($0)
+			})
 
-				if i == 1 {
-					UDLR_labels[i].frame.origin.y -= 24
+			// 去创造新故事吧?
+			let texts = ["", "", "写\n故\n事", "关\n于"]
+			UDLR_labels.forEach({ (label) in
+				let index = UDLR_labels.indexOf(label)!
+				label.text = texts[index]
+				addSubview(label)
+
+				if index == 1 {
+					label.frame.origin.y -= 24
 				}
-
-				i += 1
-			} while i < texts.count
+			})
 
 		case is DetailViewController:
-			addSubview(leftPointer)
-			addSubview(rightPointer)
 			addSubview(upPointer)
 			addSubview(downPointer)
 
 			guard let detailVC = VC as? DetailViewController else { return }
-			let rightText = detailVC.netOrLocalStory == 0 ? "顶\n踩" : "保\n存\n到\n相\n册"
+			let rightText = detailVC.netOrLocalStory == 0 ? "顶\n踩" : "复\n制\n文\n字"
 			let texts = ["上一个", "下一个", "主\n页", rightText]
-			var i = 0
-			repeat {
-				UDLR_labels[i].text = texts[i]
-				addSubview(UDLR_labels[i])
-				i += 1
-			} while i < texts.count
+			UDLR_labels.forEach({ (label) in
+				let index = UDLR_labels.indexOf(label)!
+				label.text = texts[index]
+				addSubview(label)
+			})
 
 		default:
 			break
@@ -165,43 +174,33 @@ class PointerView: UIView {
 
 	func changePointerDirection(type: XYScrollType) {
 		switch type {
-		case .Up:
-//			upPointer.alpha = 1.0
-			rotation({ self.upPointer.transform = self.pointer.down_transform })
-//			downPointer.alpha = 0.0
-		case .Down:
-//			downPointer.alpha = 1.0
-			rotation({ self.downPointer.transform = self.pointer.up_transform })
-//			upPointer.alpha = 0.0
-		case .Left:
-//			leftPointer.alpha = 1.0
-			rotation({ self.leftPointer.transform = self.pointer.right_transform })
-//			rightPointer.alpha = 0.0
-		case .Right:
-//			rightPointer.alpha = 1.0
-			rotation({ self.rightPointer.transform = self.pointer.left_transform })
-//			leftPointer.alpha = 0.0
+		case .Up: rotation({ self.upPointer.transform = self.pointer.down_transform })
+		case .Down: rotation({ self.downPointer.transform = self.pointer.up_transform })
+		case .Left: rotation({ self.leftPointer.transform = self.pointer.right_transform })
+		case .Right: rotation({ self.rightPointer.transform = self.pointer.left_transform })
 		default:
 			let pointers = [upPointer, downPointer, leftPointer, rightPointer]
 			let transforms = [pointer.up_transform, pointer.down_transform, pointer.left_transform, pointer.right_transform]
 
-			var i = 0
-			repeat {
-				pointers[i].alpha = 0.0
+			pointers.forEach({ (pointer) in
+				pointer.alpha = 0.0
+				let i = pointers.indexOf({ (imageView) -> Bool in
+					return imageView == pointer
+				})!
 				if UDLR_labels != nil && i < UDLR_labels.count { UDLR_labels[i].alpha = 0.0 }
-
-				i += 1
-			} while i < pointers.count
+			})
 
 			delay(seconds: 0.4, completion: {
-				i = 0
-				repeat {
+				pointers.forEach({ (pointer) in
+					pointer.alpha = 1.0
+					let i = pointers.indexOf({ (imageView) -> Bool in
+						return imageView == pointer
+					})!
 					pointers[i].transform = transforms[i]
-					pointers[i].alpha = 1.0
 					if self.UDLR_labels != nil && i < self.UDLR_labels.count { self.UDLR_labels[i].alpha = 1.0 }
-					i += 1
-				} while i < pointers.count
+				})
 			})
+
 		}
 	}
 
@@ -209,10 +208,6 @@ class PointerView: UIView {
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 			animate()
 			}, completion: nil)
-
-//		UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
-//			animate()
-//			}, completion: nil)
 	}
 
 	// MARK: - MainViewController
@@ -220,23 +215,26 @@ class PointerView: UIView {
 	func addOrRemoveUpAndDownPointerAndLabel(topIndex: Int) {
 		switch topIndex {
 		case 0, 2:
+			blankViews.forEach({ $0.removeFromSuperview() })
+
 			addSubview(upPointer)
 			addSubview(downPointer)
 			sendSubviewToBack(upPointer)
 			sendSubviewToBack(downPointer)
 
 			if UDLR_labels[1].frame.origin.y != ScreenHeight - 60 { UDLR_labels[1].frame.origin.y += 24 }
-			let texts = topIndex == 0 ? ["还没想好什么功能", "写完上划发布"] : ["分享", "请独立开发者吃顿好的"]
+			let texts = topIndex == 0 ? ["还没想好什么功能", "写完上划发布"] : ["联系开发者", "￥12 请独立开发者吃顿好的"]
 			UDLR_labels[0].text = texts[0]
 			UDLR_labels[1].text = texts[1]
 
 		default:
+			blankViews.forEach({ addSubview($0); sendSubviewToBack($0) })
+
 			upPointer.removeFromSuperview()
 			downPointer.removeFromSuperview()
 
-
 			UDLR_labels[0].text = lastUpdateText + "更新"
-			UDLR_labels[1].text = "去创造新故事吧"
+			UDLR_labels[1].text = "" // 去创造新故事吧
 			if UDLR_labels[1].frame.origin.y == ScreenHeight - 60 { UDLR_labels[1].frame.origin.y -= 24 }
 		}
 
@@ -252,7 +250,7 @@ class PointerView: UIView {
 			UDLR_labels[3].text = "关\n于"
 		case 2:
 			UDLR_labels[2].text = "主\n页"
-			UDLR_labels[3].text = "评\n分\n留\n言"
+			UDLR_labels[3].text = "博\n客"
 		default:
 			break
 		}

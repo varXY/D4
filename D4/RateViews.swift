@@ -22,12 +22,14 @@ struct RateViews {
 
 	
 	init(VC: DetailViewController) {
-		ratingView = UIVisualEffectView(effect: VC.blurEffect)
+		let effect = VC.nightStyle ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
+		
+		ratingView = UIVisualEffectView(effect: effect)
 		ratingView.frame = CGRectMake(ScreenWidth, 50, width + 20, 50)
 		ratingView.layer.cornerRadius = globalRadius
 		ratingView.clipsToBounds = true
 
-		let textColor = VC.blurEffect == UIBlurEffect(style: .Dark) ? UIColor.whiteColor() : UIColor.blackColor()
+		let textColor = VC.nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
 
 		ratingLabel = UILabel(frame: CGRectMake(0, 0, width, 50))
 		ratingLabel.textAlignment = .Center
@@ -35,7 +37,7 @@ struct RateViews {
 		ratingView.addSubview(ratingLabel)
 
 
-		buttonsView = UIVisualEffectView(effect: VC.blurEffect)
+		buttonsView = UIVisualEffectView(effect: effect)
 		buttonsView.frame = CGRectMake(ScreenWidth, ScreenHeight - 150, width + 20, 100)
 		buttonsView.layer.cornerRadius = globalRadius
 		buttonsView.clipsToBounds = true
@@ -94,12 +96,14 @@ struct RateViews {
 
 	}
 
-	func hideAfterTapped() {
+	func hideAfterTapped(done: () -> ()) {
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 			self.buttonsView.frame.origin.x += self.width
 			}) { (_) in
-				UIView.animateWithDuration(0.3, animations: {
+				UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 					self.ratingView.frame.origin.x += self.width
+					}, completion: { (_) in
+						done()
 				})
 		}
 	}

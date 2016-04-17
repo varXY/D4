@@ -20,7 +20,7 @@ let TriggerDistance: CGFloat = 60
 
 let globalRadius: CGFloat = 5
 
-// 日期和数字格式转换
+// 数字格式转换
 
 var priceFormatter: NSNumberFormatter = {
 	let pf = NSNumberFormatter()
@@ -51,7 +51,7 @@ func getRandomNumbers(amount: Int, lessThan: Int) -> [Int] {
 
 
 // 延迟执行
-func delay(seconds seconds: Double, completion:()->()) {
+func delay(seconds seconds: Double, completion: () -> ()) {
 	let popTime = dispatch_time(DISPATCH_TIME_NOW, Int64( Double(NSEC_PER_SEC) * seconds ))
 
 	dispatch_after(popTime, dispatch_get_main_queue()) {
@@ -59,6 +59,8 @@ func delay(seconds seconds: Double, completion:()->()) {
 	}
 
 }
+
+
 
 // 百度坐标转换成高德坐标
 func baiduToGaoDe(location: (Double, Double)) -> (Double, Double) {

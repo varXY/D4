@@ -26,4 +26,11 @@ extension NSDate {
 		let stringDate = dateFomatter.stringFromDate(self)
 		return stringDate
 	}
+
+	class func getDateWithString(string: String) -> NSDate {
+		let dateFomatter = NSDateFormatter()
+		dateFomatter.dateFormat = Fomatter.MMddyyHHmm.rawValue
+		let date = dateFomatter.dateFromString(string + ", 00:00")!
+		return date
+	}
 }

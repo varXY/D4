@@ -7,14 +7,13 @@
 //
 
 import UIKit
-import iAd
+//import iAd
 
 enum StoryTableViewScrollType {
 	case Up, Down
 }
 
 protocol StoryTableViewDelegate: class {
-	func showOrHideToolbar(show: Bool)
 	func didSelectedStory(storyIndex: Int)
 }
 
@@ -22,6 +21,7 @@ class StoryTableView: UITableView, CoreDataAndStory {
 
 	var storys: [Story]!
 
+	var headerView: UIView!
 	var footerView: UIView!
 
 	var netOrLocalStory = 0
@@ -40,7 +40,7 @@ class StoryTableView: UITableView, CoreDataAndStory {
 		delegate = self
 		exclusiveTouch = true
 
-		let headerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
+		headerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
 		headerView.backgroundColor = UIColor.clearColor()
 		tableHeaderView = headerView
 
@@ -108,8 +108,6 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = UITableViewCell(style: .Default, reuseIdentifier: "cell")
 		cell.textLabel?.font = UIFont.systemFontOfSize(17)
-//		cell.layoutMargins = UIEdgeInsetsZero
-//		cell.preservesSuperviewLayoutMargins = false
 
 		if storys.count != 0 {
 			cell.selectedBackgroundView = UIView()

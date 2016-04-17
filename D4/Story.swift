@@ -48,7 +48,8 @@ struct Story: UserDefaults {
 		if let storedAuthor = userDefaults.stringForKey(UDKey.Author) {
 			author = storedAuthor
 		} else {
-			author = sentences[0] + date.string(.MMddyy)
+			let deviceID = UIDevice.currentDevice().identifierForVendor?.UUIDString
+			author = sentences[0] + date.string(.MMddyy) + "&" + deviceID!
 			saveAuthor(author)
 		}
 	}

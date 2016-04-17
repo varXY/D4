@@ -39,7 +39,7 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 	var topStoryIndex: Int!
 	var cellRectHeight: Int!
 
-	var blurEffect: UIBlurEffect!
+	var nightStyle = false
 
 	var netOrLocalStory = 0
 	var rateViewShowed = false
@@ -104,21 +104,38 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 	}
 
 	func rateButtonTapped(sender: UIButton) {
+		view.userInteractionEnabled = false
+
 		let like = sender.tag == 100
+		let amount = like ? 1 : -1
+		let newRating = storys[topStoryIndex].rating + amount
 		likeItOrNot(like)
-		
-		rateViews.ratingLabel.text = "\(storys[topStoryIndex].rating)"
-		rateViews.hideAfterTapped()
-		rateViewShowed = false
+
+		self.rateViews.ratingLabel.text = "\(newRating)"
+		self.rateViews.hideAfterTapped({ self.view.userInteractionEnabled = true })
+		self.rateViewShowed = false
 	}
 
 	func likeItOrNot(like: Bool) {
-		storys[topStoryIndex].rating += like ? 1 : -1
-		updateRating(storys[topStoryIndex].ID, rating: storys[topStoryIndex].rating)
-		delegate?.ratingChanged(topStoryIndex, rating: storys[topStoryIndex].rating)
+		let amount = like ? 1 : -1
+		let newRating = storys[topStoryIndex].rating + amount
 
-		saveLikedStoryIndex(topStoryIndex)
-		rateViews.likedIndexes = likedStoryIndexes()
+		updateRating(storys[topStoryIndex].ID, rating: newRating, done: { (success) in
+			if success {
+				self.storys[self.topStoryIndex].rating = newRating
+				self.delegate?.ratingChanged(self.topStoryIndex, rating: self.storys[self.topStoryIndex].rating)
+				self.saveLikedStoryIndex(self.topStoryIndex)
+				self.rateViews.likedIndexes = self.likedStoryIndexes()
+
+				print("success update rating")
+			} else {
+				let hudView = HudView.hudInView(self.view, animated: true)
+				hudView.text = "联网失败\n操作失效"
+				hudView.textColor = self.nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
+				hudView.hudBackgroundColor = self.nightStyle ? UIColor(white: 0.3, alpha: 0.7) : UIColor(white: 1.0, alpha: 0.7)
+			}
+		})
+
 	}
 
 	func showOrHideRateViews() {
@@ -147,12 +164,25 @@ extension DetailViewController: XYScrollViewDelegate {
 		switch scrollType {
 		case .Left:
 			dismissViewControllerAnimated(true, completion: nil)
+
 		case .Right:
-			showOrHideRateViews()
+			netOrLocalStory == 0 ? showOrHideRateViews() : copyTextOfStory()
+
 		default:
 			break
 		}
 	}
+
+	func copyTextOfStory() {
+		let text = storys[topStoryIndex].sentences.reduce("", combine: { $0 + $1 + "\n\n" })
+		UIPasteboard.generalPasteboard().string = text
+
+		let hudView = HudView.hudInView(view, animated: true)
+		hudView.text = "已复制"
+		hudView.textColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
+		hudView.hudBackgroundColor = nightStyle ? UIColor(white: 0.3, alpha: 0.7) : UIColor(white: 1.0, alpha: 0.7)
+	}
+
 
 }
 
@@ -165,6 +195,5 @@ extension DetailViewController: UIViewControllerTransitioningDelegate {
 
 	func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return SlideOutAnimationController()
-		
 	}
 }

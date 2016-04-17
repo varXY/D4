@@ -16,7 +16,6 @@ import UIKit
 @objc protocol XYScrollViewDelegate: class {
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int)
 	optional func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int)
-	optional func setToolBarHiddenByStoryTableView(hidden: Bool)
 	optional func writeViewWillInputText(index: Int, oldText: String, colorCode: Int)
 	optional func didSelectedStory(storyIndex: Int)
 	func scrollTypeDidChange(type: XYScrollType)
@@ -403,9 +402,7 @@ extension XYScrollView: UIScrollViewDelegate {
 		
 		moveContentViewToTop(scrolledType)
 
-		if !inMainVC {
-			topViewIndex = topStoryIndex
-		}
+		if !inMainVC { topViewIndex = topStoryIndex }
 
 		XYDelegate?.xyScrollViewDidScroll(scrolledType, topViewIndex: topViewIndex)
 
@@ -419,10 +416,6 @@ extension XYScrollView: UIScrollViewDelegate {
 }
 
 extension XYScrollView: StoryTableViewDelegate {
-
-	func showOrHideToolbar(show: Bool) {
-		XYDelegate?.setToolBarHiddenByStoryTableView!(show)
-	}
 
 	func didSelectedStory(storyIndex: Int) {
 		XYDelegate?.didSelectedStory!(storyIndex)
