@@ -126,13 +126,10 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 				self.delegate?.ratingChanged(self.topStoryIndex, rating: self.storys[self.topStoryIndex].rating)
 				self.saveLikedStoryIndex(self.topStoryIndex)
 				self.rateViews.likedIndexes = self.likedStoryIndexes()
-
-				print("success update rating")
 			} else {
 				let hudView = HudView.hudInView(self.view, animated: true)
-				hudView.text = "联网失败\n操作失效"
-				hudView.textColor = self.nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
-				hudView.hudBackgroundColor = self.nightStyle ? UIColor(white: 0.3, alpha: 0.7) : UIColor(white: 1.0, alpha: 0.7)
+				hudView.text = "无法连接\n操作失效"
+				hudView.nightStyle = self.nightStyle
 			}
 		})
 
@@ -179,8 +176,7 @@ extension DetailViewController: XYScrollViewDelegate {
 
 		let hudView = HudView.hudInView(view, animated: true)
 		hudView.text = "已复制"
-		hudView.textColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
-		hudView.hudBackgroundColor = nightStyle ? UIColor(white: 0.3, alpha: 0.7) : UIColor(white: 1.0, alpha: 0.7)
+		hudView.nightStyle = nightStyle
 	}
 
 

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import AVFoundation
 
 @objc enum XYScrollType: Int {
 	case Up, Down, Left, Right, NotScrollYet
@@ -185,7 +186,7 @@ class XYScrollView: UIScrollView {
 				switch scrollType {
 				case .Left:
 					topViewIndex = 0
-					writeView.firstColor = true
+					writeView.checkText()
 					X0_contentView.alpha = 1.0
 
 					XXAnimate({ 
@@ -193,7 +194,6 @@ class XYScrollView: UIScrollView {
 						self.X0_contentView.frame.origin.x += ScreenWidth
 						}, completion: { 
 							delay(seconds: 0.5, completion: {
-								self.writeView.firstColor = false
 								self.writeView.layer.cornerRadius = globalRadius
 							})
 					})
@@ -320,6 +320,7 @@ class XYScrollView: UIScrollView {
 			}
 
 		}
+
 	}
 
 	func XXAnimate(animations: () -> (), completion: (() -> ())?) {

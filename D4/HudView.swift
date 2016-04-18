@@ -10,8 +10,7 @@ import UIKit
 
 class HudView: UIView {
 	var text = ""
-	var textColor = UIColor()
-	var hudBackgroundColor = UIColor()
+	var nightStyle = false
 
 	class func hudInView(view: UIView, animated: Bool) -> HudView {
 		let hudView = HudView(frame: view.bounds)
@@ -35,11 +34,12 @@ class HudView: UIView {
 		let boxHeight: CGFloat = 130
 
 		let boxRect = CGRect(x: round((bounds.size.width - boxWidth) / 2), y: round((bounds.size.height - boxHeight) / 2), width: boxWidth, height: boxHeight)
-
+		let color = nightStyle ? UIColor(white: 0.3, alpha: 0.8) : UIColor(white: 1.0, alpha: 0.9)
 		let roundedRect = UIBezierPath(roundedRect: boxRect, cornerRadius: 20)
-		hudBackgroundColor.setFill()
+		color.setFill()
 		roundedRect.fill()
 
+		let textColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
 		let attribs = [NSFontAttributeName: UIFont.systemFontOfSize(22.0), NSForegroundColorAttributeName: textColor]
 		let textSize = text.sizeWithAttributes(attribs)
 		let textPoint = CGPoint(x: center.x - round(textSize.width / 2), y: bounds.size.height / 2 - round(textSize.height / 2))

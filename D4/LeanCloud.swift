@@ -39,7 +39,7 @@ extension LeanCloud {
 		object.setObject(story.author, forKey: AVKey.author)
 
 		object.saveInBackgroundWithBlock { (success, error) in
-			self.saveLastStoryID(object.objectId)
+			if success { self.saveLastStoryID(object.objectId) }
 			completion(success, error)
 		}
 	}
@@ -58,23 +58,18 @@ extension LeanCloud {
 		query.whereKey("createdAt", greaterThan: trueToday)
 		query.findObjectsInBackgroundWithBlock { (results, error) in
 			if let objects = results as? [AVObject] {
-				if results.count != 0 {
-					storys = objects.map({ Story(object: $0) })
+				let filteredObjects = objects.filter({ self.testObject($0) == true })
+				storys = results.count != 0 ? filteredObjects.map({ Story(object: $0) }) : [Story]()
 
-					if let story = self.getSelfLastOneStory() {
-						storys.append(story)
-					}
-
-					self.get49bestStorysOfyesterday({ (bestStorys) in
-						UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-						print(bestStorys.count)
-						storys += bestStorys
-						gotStorys(storys)
-					})
-
-				} else {
-					gotStorys([Story]())
+				if let story = self.getSelfLastOneStory() {
+					storys.append(story)
 				}
+
+				self.get49bestStorysOfyesterday({ (bestStorys) in
+					UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+					storys += bestStorys
+					gotStorys(storys)
+				})
 			}
 
 			if error != nil {
@@ -114,7 +109,8 @@ extension LeanCloud {
 		query.findObjectsInBackgroundWithBlock { (results, error) in
 			if let objects = results as? [AVObject] {
 				if results.count != 0 {
-					storys = objects.map({ Story(object: $0) })
+					let filteredObjects = objects.filter({ self.testObject($0) == true })
+					storys = filteredObjects.map({ Story(object: $0) })
 				}
 
 				gotStorys(storys)
@@ -124,10 +120,21 @@ extension LeanCloud {
 
 			if error != nil {
 				print(error)
+				gotStorys([Story]())
 			}
 			
 		}
 
+	}
+
+	func testObject(object: AVObject) -> Bool {
+		let A = object.createdAt != nil
+		let B = object.objectForKey(AVKey.sentences) != nil
+		let C = object.objectForKey(AVKey.colors) != nil
+		let D = object.objectForKey(AVKey.rating) != nil
+		let E = object.objectForKey(AVKey.author) != nil
+
+		return A && B && C && D && E
 	}
 
 	func updateRating(ID: String, rating: Int, done: (Bool) -> ()) {

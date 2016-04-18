@@ -124,7 +124,7 @@ class InputViewController: UIViewController {
 	func randomAlertText() -> String {
 		let alertTexts = [
 			"写那么多干嘛",
-			"要相信简洁的力量",
+			"注意简洁",
 			"浓缩的是精华",
 			"话太多",
 			"少说两句"

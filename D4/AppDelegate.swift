@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 import AVOSCloud
-//import iAd
+import AVFoundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -51,12 +51,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		window?.rootViewController = navi
 		window?.makeKeyAndVisible()
 
+		try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
+
 		// MARK: Network
 
 		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
 		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
-
-//		UIViewController.prepareInterstitialAds()
 
 		return shouldPerformAdditionalDelegateHandling
 	}
@@ -125,7 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		switch (shortCutType) {
 		case ShortcutIdentifier.First.type:
 			mainVC.viewDidLoad()
-			mainVC.goToAddPage()
+			mainVC.gotoPage(UIBarButtonItem())
 		default:
 			break
 		}

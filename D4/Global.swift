@@ -20,6 +20,9 @@ let TriggerDistance: CGFloat = 60
 
 let globalRadius: CGFloat = 5
 
+// URL
+let jianShuURL = NSURL(string: "http://www.jianshu.com/users/83ddcf71e52c")
+
 // 数字格式转换
 
 var priceFormatter: NSNumberFormatter = {

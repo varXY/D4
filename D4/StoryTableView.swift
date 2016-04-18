@@ -97,7 +97,7 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		let number = storys.count != 0 ? storys.count : 1
-		backgroundColor = number > 9 ? UIColor.clearColor() : UIColor.blackColor()
+		backgroundColor = number > 9 ? UIColor.clearColor() : MyColor.code(5).BTColors[0]
 		return number
 	}
 

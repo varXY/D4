@@ -9,6 +9,44 @@
 import Foundation
 import UIKit
 
+struct Pointer {
+	let length: CGFloat = 30
+	let imageName = "Pointer"
+
+	let left_transform = CGAffineTransformMakeRotation(CGFloat(90 * M_PI / 180))
+	let right_transform = CGAffineTransformMakeRotation(CGFloat(-90 * M_PI / 180))
+	let up_transform = CGAffineTransformMakeRotation(CGFloat(180 * M_PI / 180))
+	let down_transform = CGAffineTransformMakeRotation(CGFloat(0 * M_PI / 180))
+
+	func imageView(type: XYScrollType) -> UIImageView {
+		let imageView = UIImageView(image: UIImage(named: imageName))
+		imageView.frame.size = CGSize(width: length, height: length)
+
+		switch type {
+		case .Up:
+			imageView.center = CGPoint(x: ScreenWidth / 2, y: length / 2)
+			imageView.transform = up_transform
+
+		case .Down:
+			imageView.center = CGPoint(x: ScreenWidth / 2, y: ScreenHeight - (length / 2))
+			imageView.transform = down_transform
+
+		case .Left:
+			imageView.center = CGPoint(x: length / 2, y: ScreenHeight / 2)
+			imageView.transform = left_transform
+
+		case .Right:
+			imageView.center = CGPoint(x: ScreenWidth - (length / 2), y: ScreenHeight / 2)
+			imageView.transform = right_transform
+
+		default:
+			break
+		}
+
+		return imageView
+	}
+}
+
 class PointerView: UIView {
 
 	var upPointer: UIImageView!
@@ -22,53 +60,14 @@ class PointerView: UIView {
 	var lastUpDateTime: NSDate! {
 		didSet {
 			let today = lastUpDateTime.string(.MMddyy) == NSDate().string(.MMddyy)
-			lastUpdateText = today ? "\(NSDate().string(.HHmm))" : lastUpDateTime.string(.MMdd)
 			delay(seconds: 1.5) {
-				self.UDLR_labels[0].text = self.lastUpdateText + "更新"
+				self.UDLR_labels[0].text = today ? "今天已更新" : "无法更新"
+				self.lastUpdateText = self.UDLR_labels[0].text!
 			}
-
 		}
 	}
 
 	var lastUpdateText = ""
-
-	struct Pointer {
-		let length: CGFloat = 30
-		let imageName = "Pointer"
-
-		let left_transform = CGAffineTransformMakeRotation(CGFloat(90 * M_PI / 180))
-		let right_transform = CGAffineTransformMakeRotation(CGFloat(-90 * M_PI / 180))
-		let up_transform = CGAffineTransformMakeRotation(CGFloat(180 * M_PI / 180))
-		let down_transform = CGAffineTransformMakeRotation(CGFloat(0 * M_PI / 180))
-
-		func imageView(type: XYScrollType) -> UIImageView {
-			let imageView = UIImageView(image: UIImage(named: imageName))
-			imageView.frame.size = CGSize(width: length, height: length)
-
-			switch type {
-			case .Up:
-				imageView.center = CGPoint(x: ScreenWidth / 2, y: length / 2)
-				imageView.transform = up_transform
-
-			case .Down:
-				imageView.center = CGPoint(x: ScreenWidth / 2, y: ScreenHeight - (length / 2))
-				imageView.transform = down_transform
-
-			case .Left:
-				imageView.center = CGPoint(x: length / 2, y: ScreenHeight / 2)
-				imageView.transform = left_transform
-
-			case .Right:
-				imageView.center = CGPoint(x: ScreenWidth - (length / 2), y: ScreenHeight / 2)
-				imageView.transform = right_transform
-
-			default:
-				break
-			}
-
-			return imageView
-		}
-	}
 
 	struct Label {
 		let UD_size = CGSize(width: ScreenWidth - 30 * 2, height: 30)
@@ -138,7 +137,7 @@ class PointerView: UIView {
 			blankViews.append(topBlankView)
 			blankViews.append(bottomBlankView)
 			blankViews.forEach({
-				$0.backgroundColor = UIColor.lightGrayColor()
+				$0.backgroundColor = MyColor.code(5).BTColors[0]
 				addSubview($0)
 			})
 
@@ -172,7 +171,7 @@ class PointerView: UIView {
 		}
 	}
 
-	func changePointerDirection(type: XYScrollType) {
+	func changePointerDirection(type: XYScrollType) {		
 		switch type {
 		case .Up: rotation({ self.upPointer.transform = self.pointer.down_transform })
 		case .Down: rotation({ self.downPointer.transform = self.pointer.up_transform })
@@ -223,7 +222,7 @@ class PointerView: UIView {
 			sendSubviewToBack(downPointer)
 
 			if UDLR_labels[1].frame.origin.y != ScreenHeight - 60 { UDLR_labels[1].frame.origin.y += 24 }
-			let texts = topIndex == 0 ? ["还没想好什么功能", "写完上划发布"] : ["联系开发者", "￥12 请独立开发者吃顿好的"]
+			let texts = topIndex == 0 ? [randomTip(.Up), "写完上划发布"] : ["联系开发者", "￥12 请独立开发者吃顿好的"]
 			UDLR_labels[0].text = texts[0]
 			UDLR_labels[1].text = texts[1]
 
@@ -233,7 +232,7 @@ class PointerView: UIView {
 			upPointer.removeFromSuperview()
 			downPointer.removeFromSuperview()
 
-			UDLR_labels[0].text = lastUpdateText + "更新"
+			UDLR_labels[0].text = lastUpdateText
 			UDLR_labels[1].text = "" // 去创造新故事吧
 			if UDLR_labels[1].frame.origin.y == ScreenHeight - 60 { UDLR_labels[1].frame.origin.y -= 24 }
 		}
@@ -257,7 +256,40 @@ class PointerView: UIView {
 	}
 
 	func changeLabelTextForCanSaveStory(can: Bool) {
-		UDLR_labels[1].text = can ? "发布" : "写完上划发布"
+		UDLR_labels[1].text = can ? "发布" : randomTip(.Down)
+	}
+
+	func changeTextForUpInWriteView() {
+		UDLR_labels[0].text = randomTip(.Up)
+	}
+
+	func randomTip(scrollType: XYScrollType) -> String {
+		var tips = [String]()
+
+		switch scrollType {
+		case .Up:
+			tips = [
+				"时间、地点、人物",
+				"开端、发展、高潮",
+				"WHEN WHAT WHY",
+				"矛盾、冲突、行为",
+				"建置、对抗、结局",
+				"观点没有对错",
+				"无冲突、不故事",
+			]
+		case .Down:
+			tips = [
+//				"还没写完",
+				"写完上划发布",
+//				"故事不完整",
+			]
+
+		default:
+			break
+
+		}
+		let index = random() % tips.count
+		return tips[index]
 	}
 
 	// MARK: - DetailViewController

@@ -8,6 +8,7 @@
 
 import UIKit
 import StoreKit
+import AVFoundation
 
 class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDefaults, MailSending {
 
@@ -19,16 +20,13 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	var statusBarStyle = UIStatusBarStyle.Default
 	var statusBarHidden = false
-
 	var dailyStoryLoaded = false
-
 	var forceTouchWay = false
+	var nightStyle = false
+	var oldTopIndex = 0
 
 	var dailyStorys: [Story]!
-
-	var nightStyle = false
-
-	var oldTopIndex = 0
+	var backgroundSound = BackgroundSound()
 
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
 		return statusBarStyle
@@ -51,6 +49,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		xyScrollView.XYDelegate = self
 		view.addSubview(xyScrollView)
 		xyScrollView.X1_storyTableView.scrollsToTop = true
+		xyScrollView.writeView.backgroundSound = backgroundSound
 
 		dailyStorys = xyScrollView.X1_storyTableView.storys
 
@@ -64,7 +63,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
-		testLoadStory()
+		reloadDailyStory()
+		xyScrollView.writeView.addtipLabels(true, removeIndex: nil)
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -79,7 +79,13 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	// MARK: -
 
-	func testLoadStory() {
+	func reloadDailyStory() {
+
+//		let lastDate = lastLoadDate()
+//		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
+//		print(lastDate.string(.dd))
+//		print(NSDate().string(.dd))
+
 		if !dailyStoryLoaded {
 			xyScrollView.X1_storyTableView.loading(true)
 			loadingStory(true)
@@ -99,44 +105,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 					self.save100DailyStorys(storys, completion: { (success) in
 						self.removeAllLikedStoryIndexes()
-						print("save 100 story to coreData:", success)
-					})
-
-				} else {
-					print("Get zero story online")
-				}
-			}
-
-		}
-	}
-
-
-	func reloadDailyStory() {
-
-		let lastDate = lastLoadDate()
-		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
-		print(lastDate.string(.dd))
-		print(NSDate().string(.dd))
-
-		if !dailyStoryLoaded {
-			xyScrollView.X1_storyTableView.loading(true)
-			loadingStory(true)
-			getDailyStory { (storys) in
-				self.xyScrollView.X1_storyTableView.loading(false)
-				self.loadingStory(false)
-
-				if storys.count != 0 {
-					self.dailyStorys = storys
-
-					self.xyScrollView.storys = storys
-					self.xyScrollView.X1_storyTableView.reloadData()
-
-					self.dailyStoryLoaded = true
-					self.updateLastLoadDate(NSDate())
-
-					self.save100DailyStorys(storys, completion: { (success) in
-						self.removeAllLikedStoryIndexes()
-						print("save 100 story to coreData:", success)
+						self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
 					})
 
 				} else {
@@ -144,21 +113,13 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 				}
 			}
 			
-		} else {
-			dailyStorys = xyScrollView.X1_storyTableView.storys
 		}
 
 	}
 
 	func loadingStory(loading: Bool) {
-
 		if loading {
-			var images = [UIImage]()
-			for i in 0..<colorCode.count {
-				let image = UIImage.imageWithColor(MyColor.code(colorCode[i]).BTColors[0], rect: CGRectMake(0, 0, ScreenWidth, 50))
-				images.append(image)
-			}
-
+			let images = colorCode.map({ UIImage.imageWithColor(MyColor.code($0).BTColors[0], rect: CGRectMake(0, 0, ScreenWidth, 50)) })
 			let loadingImage = UIImage.animatedImageWithImages(images, duration: 1.5)
 			let imageView = UIImageView(image: loadingImage)
 			imageView.frame.origin = CGPoint(x: 0, y: 20)
@@ -176,7 +137,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 						imageView.removeFromSuperview()
 				})
 			}
-
 		}
 	}
 
@@ -206,10 +166,10 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		segmentedControl.addTarget(self, action: #selector(segmentedControlSelected(_:)), forControlEvents: .ValueChanged)
 		let barButton = UIBarButtonItem(customView: segmentedControl)
 
-		addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(goToAddPage))
+		addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(gotoPage(_:)))
 
 		let infoButton = UIButton(type: .InfoLight)
-		infoButton.addTarget(self, action: #selector(goToInfoPage), forControlEvents: .TouchUpInside)
+		infoButton.addTarget(self, action: #selector(gotoPage(_:)), forControlEvents: .TouchUpInside)
 		let infoBarButton = UIBarButtonItem(customView: infoButton)
 
 		let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
@@ -220,41 +180,12 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		navigationController?.toolbar.clipsToBounds = true
 		setToolbarItems(toolBarItems, animated: true)
 
-		addShandowForBar()
 		changeBarStyleBaseOnTime()
-	}
-
-	func addShandowForBar() {
-
-		func addShandow(view: UIView) {
-			view.layer.masksToBounds = false
-			view.layer.shadowRadius = 5.0
-			view.layer.shadowOpacity = 0.7
-			view.layer.shadowColor = UIColor.blackColor().CGColor
-			view.layer.shadowOffset = CGSizeMake(0, 0)
-		}
-		// 加阴影
-//		addShandow(statusView)
-//		addShandow((navigationController?.toolbar)!)
-
-		// 加边框
-//		statusView.addBorder(borderColor: UIColor.whiteColor(), width: 0.2)
-//		navigationController?.toolbar.addBorder(borderColor: UIColor.whiteColor(), width: 0.2)
-
-		// 变不透明
-//		let image = UIImage.imageWithColor(MyColor.code(1).BTColors[0], rect: statusView.bounds)
-//		let imageView = UIImageView(image: image)
-//		statusView.addSubview(imageView)
-//
-//		let image_1 = UIImage.imageWithColor(MyColor.code(1).BTColors[0], rect: (navigationController?.toolbar.bounds)!)
-//		navigationController?.toolbar.setBackgroundImage(image_1, forToolbarPosition: UIBarPosition.Any, barMetrics: UIBarMetrics.Default)
-
 	}
 
 	func changeBarStyleBaseOnTime() {
 		let hour = Int(NSDate().string(.HH))
 		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
-//		nightStyle = true
 		xyScrollView.writeView.nightStyle = nightStyle
 		let blurEffect = nightStyle ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
 		let tintColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
@@ -271,27 +202,20 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	}
 
 	func segmentedControlSelected(segmentedControl: UISegmentedControl) {
+		backgroundSound.playSound(true, sound: backgroundSound.selected_sound)
 		segmentedControl.selectedSegmentIndex == 0 ? loadSavedDailyStory() : loadSelfStory()
 	}
 
-	func goToAddPage() {
-		xyScrollView.scrolledType = .NotScrollYet
-		xyScrollView.moveContentViewToTop(.Left)
-		pointerView.showTextBaseOnTopIndex(0)
-		pointerView.addOrRemoveUpAndDownPointerAndLabel(0)
-		pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
-		hideOrShowStatusViewAndToolbar(nil)
+	func gotoPage(sender: AnyObject) {
+		var pageIndex = 0
+		if let _ = sender as? UIButton { pageIndex = 2 }
 
-		if xyScrollView.writeView.firstColor == false {
-			xyScrollView.writeView.labelsGetRandomColors()
-		}
-	}
-
-	func goToInfoPage() {
+		backgroundSound.playSound(true, sound: backgroundSound.selected_sound)
 		xyScrollView.scrolledType = .NotScrollYet
-		xyScrollView.moveContentViewToTop(.Right)
-		pointerView.showTextBaseOnTopIndex(2)
-		pointerView.addOrRemoveUpAndDownPointerAndLabel(2)
+		xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
+		pointerView.showTextBaseOnTopIndex(pageIndex)
+		pointerView.addOrRemoveUpAndDownPointerAndLabel(pageIndex)
+		if pageIndex == 0 { pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready) }
 		hideOrShowStatusViewAndToolbar(nil)
 	}
 
@@ -304,7 +228,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 			navigationController?.setToolbarHidden(hidden, animated: true)
 			hideStatusView(hidden)
 		}
-
 	}
 
 	func hideStatusView(hide: Bool) {
@@ -312,7 +235,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		if hide { setNeedsStatusBarAppearanceUpdate() }
 
 		if (hide && statusView.frame.origin.y == 0) || (!hide && statusView.frame.origin.y == -20) {
-
 			let distance: CGFloat = hide ? -20 : 20
 
 			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
@@ -321,14 +243,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 					if !hide { self.statusBarHidden = hide; self.setNeedsStatusBarAppearanceUpdate() }
 			})
 
-//			UIView.animateWithDuration(0.3, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut, animations: {
-//				self.statusView.frame.origin.y += distance
-//				}, completion: { (_) in
-//					if !hide { self.setNeedsStatusBarAppearanceUpdate() }
-//			})
-
 		}
-
 	}
 
 }
@@ -344,7 +259,6 @@ extension MainViewController: XYScrollViewDelegate {
 	func didSelectedStory(storyIndex: Int) {
 		forceTouchWay = false
 
-
 		let detailVC = DetailViewController()
 		detailVC.topStoryIndex = storyIndex
 		setUpDetailVC(detailVC)
@@ -354,11 +268,7 @@ extension MainViewController: XYScrollViewDelegate {
 
 		UIView.animateWithDuration(0.3, animations: {
 			self.view.alpha = 0.0
-//			self.view.transform = CGAffineTransformMakeScale(0.95, 0.95)
 			}) { (_) in
-//				self.view.alpha = 0.0
-//				self.view.transform = CGAffineTransformMakeScale(1.0, 1.0)
-//				self.statusView.frame.origin.y -= 20
 		}
 	}
 
@@ -371,16 +281,6 @@ extension MainViewController: XYScrollViewDelegate {
 		detailVC.delegate = self
 	}
 
-	func writeViewWillInputText(index: Int, oldText: String, colorCode: Int) {
-		let inputVC = InputViewController()
-		inputVC.modalPresentationStyle = .Custom
-		inputVC.transitioningDelegate = inputVC
-		inputVC.index = index
-		inputVC.oldText = oldText
-		inputVC.colorCode = colorCode
-		inputVC.delegate = self
-		presentViewController(inputVC, animated: true, completion: nil)
-	}
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		oldTopIndex = topViewIndex
@@ -397,6 +297,9 @@ extension MainViewController: XYScrollViewDelegate {
 				pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
 
 				switch scrollType {
+				case .Up:
+					pointerView.changeTextForUpInWriteView()
+					
 				case .Down:
 					delay(seconds: 0.7) { self.goBackSaveUploadStory() }
 
@@ -418,7 +321,7 @@ extension MainViewController: XYScrollViewDelegate {
 					}
 
 				case .Right:
-					UIApplication.sharedApplication().openURL(NSURL(string: "http://www.jianshu.com/users/83ddcf71e52c")!)
+					UIApplication.sharedApplication().openURL(jianShuURL!)
 
 				case .Down:
 					connectToStore()
@@ -448,24 +351,61 @@ extension MainViewController: XYScrollViewDelegate {
 				segmentedControl.selectedSegmentIndex = 1
 				loadSelfStory()
 
-				delay(seconds: 1.0, completion: {
-					self.xyScrollView.X1_storyTableView.insertNewStory(story!)
-				})
-
-				delay(seconds: 1.5, completion: {
-					self.saveMyStory(story!, completion: { (success) in
-						self.uploadStory(story!, completion: { (success, error) in
-							if success == true {
-								self.saveLastStory(story!)
-								print(success)
-								self.xyScrollView.writeView.clearContent()
-							}
-						})
-						print(success, " to save my story")
+				delay(seconds: 0.0, completion: {
+					self.uploadStory(story!, completion: { (success, error) in
+						if success != nil && success == true {
+							self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
+							self.saveLastStory(story!)
+							self.saveMyStory(story!, completion: { (success) in
+								if success {
+									self.xyScrollView.writeView.clearContent()
+									self.xyScrollView.X1_storyTableView.insertNewStory(story!)
+								}
+							})
+						} else {
+							let hudView = HudView.hudInView(self.view, animated: true)
+							hudView.text = "联网失败"
+							hudView.nightStyle = self.nightStyle
+						}
 					})
 				})
+
+//				delay(seconds: 1.0, completion: {
+//					var lastStory: Story?
+//					self.getMyStorys({ (storys) in lastStory = storys[0] })
+//					if story!.sentences != lastStory!.sentences && story!.colors != lastStory!.colors {
+//						self.xyScrollView.X1_storyTableView.insertNewStory(story!)
+//					}
+//				})
+//
+//				delay(seconds: 1.5, completion: {
+//					self.saveMyStory(story!, completion: { (success) in
+//						self.uploadStory(story!, completion: { (success, error) in
+//							if success != nil && success == true {
+//								self.saveLastStory(story!)
+//								self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
+//								self.xyScrollView.writeView.clearContent()
+//							} else {
+//								let hudView = HudView.hudInView(self.view, animated: true)
+//								hudView.text = "联网失败"
+//								hudView.nightStyle = self.nightStyle
+//							}
+//						})
+//					})
+//				})
 			}
 		}
+	}
+
+	func writeViewWillInputText(index: Int, oldText: String, colorCode: Int) {
+		let inputVC = InputViewController()
+		inputVC.modalPresentationStyle = .Custom
+		inputVC.transitioningDelegate = inputVC
+		inputVC.index = index
+		inputVC.oldText = oldText
+		inputVC.colorCode = colorCode
+		inputVC.delegate = self
+		presentViewController(inputVC, animated: true, completion: nil)
 	}
 
 }
@@ -568,8 +508,7 @@ extension MainViewController {
 		SupportProducts.store.purchaseProduct(product)
 		let hudView = HudView.hudInView(self.view, animated: true)
 		hudView.text = "谢谢!"
-		hudView.textColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
-		hudView.hudBackgroundColor = nightStyle ? UIColor(white: 0.3, alpha: 0.7) : UIColor(white: 1.0, alpha: 0.7)
+		hudView.nightStyle = nightStyle
 	}
 
 	func productPurchased(notification: NSNotification) {

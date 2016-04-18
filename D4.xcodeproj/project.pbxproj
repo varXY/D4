@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		311EC7841CAE39280021FFB7 /* StoryTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311EC7831CAE39280021FFB7 /* StoryTableView.swift */; };
 		312391871CBE0AF600D4DBC2 /* RateViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312391861CBE0AF600D4DBC2 /* RateViews.swift */; };
+		312A178F1CC461A700FB27F9 /* Selected.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 312A178C1CC461A700FB27F9 /* Selected.m4a */; };
+		312A17901CC461A700FB27F9 /* SwitchOn.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 312A178D1CC461A700FB27F9 /* SwitchOn.m4a */; };
+		312A17911CC461A700FB27F9 /* Done.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 312A178E1CC461A700FB27F9 /* Done.m4a */; };
+		312A17931CC461E000FB27F9 /* BackgroundSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A17921CC461E000FB27F9 /* BackgroundSound.swift */; };
+		312A17951CC47A5400FB27F9 /* Selected2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 312A17941CC47A5400FB27F9 /* Selected2.wav */; };
+		312A17971CC47C5800FB27F9 /* Done2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 312A17961CC47C5800FB27F9 /* Done2.wav */; };
+		312A17991CC47DB500FB27F9 /* Done3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 312A17981CC47DB500FB27F9 /* Done3.wav */; };
 		312B938B1CC3050200C4EC40 /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B938A1CC3050200C4EC40 /* UIViewController+.swift */; };
 		312B938D1CC3080100C4EC40 /* HudView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B938C1CC3080100C4EC40 /* HudView.swift */; };
 		312B938F1CC34AFF00C4EC40 /* MailSending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B938E1CC34AFF00C4EC40 /* MailSending.swift */; };
@@ -63,6 +70,13 @@
 /* Begin PBXFileReference section */
 		311EC7831CAE39280021FFB7 /* StoryTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryTableView.swift; sourceTree = "<group>"; };
 		312391861CBE0AF600D4DBC2 /* RateViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RateViews.swift; sourceTree = "<group>"; };
+		312A178C1CC461A700FB27F9 /* Selected.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Selected.m4a; sourceTree = "<group>"; };
+		312A178D1CC461A700FB27F9 /* SwitchOn.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = SwitchOn.m4a; sourceTree = "<group>"; };
+		312A178E1CC461A700FB27F9 /* Done.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Done.m4a; sourceTree = "<group>"; };
+		312A17921CC461E000FB27F9 /* BackgroundSound.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundSound.swift; sourceTree = "<group>"; };
+		312A17941CC47A5400FB27F9 /* Selected2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Selected2.wav; sourceTree = "<group>"; };
+		312A17961CC47C5800FB27F9 /* Done2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Done2.wav; sourceTree = "<group>"; };
+		312A17981CC47DB500FB27F9 /* Done3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Done3.wav; sourceTree = "<group>"; };
 		312B938A1CC3050200C4EC40 /* UIViewController+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
 		312B938C1CC3080100C4EC40 /* HudView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HudView.swift; sourceTree = "<group>"; };
 		312B938E1CC34AFF00C4EC40 /* MailSending.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailSending.swift; sourceTree = "<group>"; };
@@ -133,6 +147,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		312A178B1CC4619400FB27F9 /* Sound */ = {
+			isa = PBXGroup;
+			children = (
+				312A178C1CC461A700FB27F9 /* Selected.m4a */,
+				312A178D1CC461A700FB27F9 /* SwitchOn.m4a */,
+				312A178E1CC461A700FB27F9 /* Done.m4a */,
+				312A17941CC47A5400FB27F9 /* Selected2.wav */,
+				312A17961CC47C5800FB27F9 /* Done2.wav */,
+				312A17981CC47DB500FB27F9 /* Done3.wav */,
+			);
+			name = Sound;
+			sourceTree = "<group>";
+		};
 		312B93901CC36C3600C4EC40 /* Purchese */ = {
 			isa = PBXGroup;
 			children = (
@@ -194,6 +221,7 @@
 		3179194F1CABB3D100DB9A0A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				312A178B1CC4619400FB27F9 /* Sound */,
 				317919391CABB25900DB9A0A /* Assets.xcassets */,
 				3179193B1CABB25900DB9A0A /* LaunchScreen.storyboard */,
 			);
@@ -243,6 +271,7 @@
 				31FF3A371CAD03F0008B2C69 /* LeanCloud.swift */,
 				317BC7F01CB08C86000A36FB /* UserDefaults.swift */,
 				312B938E1CC34AFF00C4EC40 /* MailSending.swift */,
+				312A17921CC461E000FB27F9 /* BackgroundSound.swift */,
 				31F2A4DD1CB9C6B7001725A0 /* CoreData.swift */,
 				31F2A4EF1CB9CE92001725A0 /* CoreData */,
 			);
@@ -339,7 +368,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3179193D1CABB25900DB9A0A /* LaunchScreen.storyboard in Resources */,
+				312A17971CC47C5800FB27F9 /* Done2.wav in Resources */,
+				312A178F1CC461A700FB27F9 /* Selected.m4a in Resources */,
+				312A17951CC47A5400FB27F9 /* Selected2.wav in Resources */,
 				3179193A1CABB25900DB9A0A /* Assets.xcassets in Resources */,
+				312A17901CC461A700FB27F9 /* SwitchOn.m4a in Resources */,
+				312A17991CC47DB500FB27F9 /* Done3.wav in Resources */,
+				312A17911CC461A700FB27F9 /* Done.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,6 +386,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				31FF3A331CACFB8A008B2C69 /* UIImageView+.swift in Sources */,
+				312A17931CC461E000FB27F9 /* BackgroundSound.swift in Sources */,
 				317919321CABB25900DB9A0A /* MainViewController.swift in Sources */,
 				31F2A4E71CB9CE4F001725A0 /* Sentences+CoreDataProperties.swift in Sources */,
 				3198F12E1CB48315006612B8 /* DetailViewController.swift in Sources */,

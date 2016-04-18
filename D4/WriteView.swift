@@ -31,6 +31,8 @@ class WriteView: UIView {
 	var dots = [UIView]()
 	var colorCodes = [Int]()
 
+	var backgroundSound: BackgroundSound!
+
 	var nightStyle = false {
 		didSet {
 			let color = nightStyle ? UIColor(white: 0.3, alpha: 0.7) : MyColor.code(0).BTColors[0]
@@ -92,7 +94,7 @@ class WriteView: UIView {
 			startPosition = locationToColorCode(location)
 			selectingColor = true
 			delegate?.selectingColor(selectingColor)
-
+			backgroundSound.playSound(true, sound: backgroundSound.switchOn_sound)
 			bringSubviewToFront(dots[selectedDotIndex])
 			dots[selectedDotIndex].alpha = 1.0
 			UIView.animateWithDuration(0.25, animations: {
@@ -119,6 +121,7 @@ class WriteView: UIView {
 				startPosition = currentPosition
 				changeLabelBackgoundColorAtDotIndex(selectedDotIndex, colorCode: currentPosition)
 				touchMoved = true
+				addtipLabels(false, removeIndex: 1)
 			}
 
 		}
@@ -166,6 +169,7 @@ class WriteView: UIView {
 	}
 
 	func changeLabelText(index: Int, text: String) {
+		addtipLabels(false, removeIndex: 0)
 		let inputted = text != ""
 		let newText = inputted ? text : placeHolderTexts[index]
 		changeLabelTextFont(index, inputted: inputted)
@@ -268,6 +272,43 @@ class WriteView: UIView {
 		} while selectedDotIndex == nil && i < dots.count
 	}
 
+	func addtipLabels(add: Bool, removeIndex: Int?) {
+		if add {
+			let tipLabels = tipViewFrames().map({ UILabel(frame: $0) })
+			let tips = [
+				"点击\n中间\n开始\n输入\n",
+				"按住\n圆点\n滑动\n选择\n颜色"
+			]
+			tipLabels.forEach({
+				$0.textColor = MyColor.code(colorCodes[2]).BTColors[1]
+				let index = tipLabels.indexOf($0)
+				$0.numberOfLines = 0
+				$0.font = UIFont.systemFontOfSize(12)
+				$0.text = tips[index!]
+				$0.adjustsFontSizeToFitWidth = true
+				$0.textAlignment = .Center
+				$0.tag = 123 + index!
+				addSubview($0)
+			})
+		} else {
+			switch removeIndex! {
+			case 0:
+				if let label = viewWithTag(123) as? UILabel {
+					label.removeFromSuperview()
+				}
+			case 1:
+				if let label = viewWithTag(124) as? UILabel {
+					label.removeFromSuperview()
+				}
+			default:
+				break
+			}
+
+
+
+		}
+	}
+
 
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
@@ -321,5 +362,13 @@ extension WriteView {
 		let x = ScreenWidth - 50
 		let y = bigBlockHeight * CGFloat(index)
 		return CGRectMake(x, y, dotLength, dotLength)
+	}
+
+	func tipViewFrames() -> [CGRect] {
+		let width: CGFloat = 40
+		let twoX = [5, ScreenWidth - width - 5]
+		let y = smallBlockHeight + bigBlockHeight + 5
+		let height = bigBlockHeight - 60
+		return [CGRectMake(twoX[0], y, width, height), CGRectMake(twoX[1], y, width, height)]
 	}
 }
