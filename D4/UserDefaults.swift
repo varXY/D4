@@ -14,6 +14,8 @@ struct UDKey {
 	static let LastLoadDate = "LastLoadDate"
 	static let LikedStoryIndexes = "LikedStoryIndexes"
 	static let LastStoryID = "LastStoryID"
+	static let Sentences = "Sentences"
+	static let Colors = "Colors"
 }
 
 protocol UserDefaults {
@@ -28,10 +30,16 @@ protocol UserDefaults {
 	func updateLastLoadDate(date: NSDate)
 	func lastLoadDate() -> NSDate
 
-	func saveLastStory(story: Story)
-	func getLastStory() -> Story
+//	func saveLastStory(story: Story)
+//	func getLastStory() -> Story
+
+	func saveSentencesAndColors(sentences: [String], colors: [Int])
+	func getSentences() -> [String]?
+	func getColors() -> [Int]?
+	func removeSentencesAndColors()
 
 	func saveLikedStoryIndex(index: Int)
+	func removeLikedStoryIndex(index: Int)
 	func likedStoryIndexes() -> [Int]
 	func removeAllLikedStoryIndexes()
 
@@ -83,30 +91,57 @@ extension UserDefaults {
 
 
 
-	func saveLastStory(story: Story) {
-		userDefaults.setObject(story.date, forKey: AVKey.date)
-		userDefaults.setObject(story.rating, forKey: AVKey.rating)
-		userDefaults.setObject(story.author, forKey: AVKey.author)
-		userDefaults.setObject(story.sentences, forKey: AVKey.sentences)
-		userDefaults.setObject(story.colors, forKey: AVKey.colors)
+//	func saveLastStory(story: Story) {
+//		userDefaults.setObject(story.date, forKey: AVKey.date)
+//		userDefaults.setObject(story.rating, forKey: AVKey.rating)
+//		userDefaults.setObject(story.author, forKey: AVKey.author)
+//		userDefaults.setObject(story.sentences, forKey: AVKey.sentences)
+//		userDefaults.setObject(story.colors, forKey: AVKey.colors)
+//		userDefaults.synchronize()
+//	}
+//
+//	func getLastStory() -> Story {
+//		let date = userDefaults.objectForKey(AVKey.date) as! NSDate
+//		let rating = userDefaults.objectForKey(AVKey.rating) as! Int
+//		let author = userDefaults.objectForKey(AVKey.author) as! String
+//		let sentences = userDefaults.objectForKey(AVKey.sentences) as! [String]
+//		let colors = userDefaults.objectForKey(AVKey.colors) as! [Int]
+//
+//		let story = Story(date: date, sentences: sentences, colors: colors, rating: rating, author: author)
+//		return story
+//	}
+
+	func saveSentencesAndColors(sentences: [String], colors: [Int]) {
+		userDefaults.setObject(sentences, forKey: UDKey.Sentences)
+		userDefaults.setObject(colors, forKey: UDKey.Colors)
 		userDefaults.synchronize()
 	}
 
-	func getLastStory() -> Story {
-		let date = userDefaults.objectForKey(AVKey.date) as! NSDate
-		let rating = userDefaults.objectForKey(AVKey.rating) as! Int
-		let author = userDefaults.objectForKey(AVKey.author) as! String
-		let sentences = userDefaults.objectForKey(AVKey.sentences) as! [String]
-		let colors = userDefaults.objectForKey(AVKey.colors) as! [Int]
+	func getSentences() -> [String]? {
+		return userDefaults.objectForKey(UDKey.Sentences) as? [String]
+	}
 
-		let story = Story(date: date, sentences: sentences, colors: colors, rating: rating, author: author)
-		return story
+	func getColors() -> [Int]? {
+		return userDefaults.objectForKey(UDKey.Colors) as? [Int]
+	}
+
+	func removeSentencesAndColors() {
+		userDefaults.setObject(nil, forKey: UDKey.Sentences)
+		userDefaults.setObject(nil, forKey: UDKey.Colors)
+		userDefaults.synchronize()
 	}
 
 
 	func saveLikedStoryIndex(index: Int) {
 		guard let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] else { return }
 		let newLikes = likes + [index]
+		userDefaults.setObject(newLikes, forKey: UDKey.LikedStoryIndexes)
+		userDefaults.synchronize()
+	}
+
+	func removeLikedStoryIndex(index: Int) {
+		guard let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] else { return }
+		let newLikes = likes.filter({ $0 != index })
 		userDefaults.setObject(newLikes, forKey: UDKey.LikedStoryIndexes)
 		userDefaults.synchronize()
 	}

@@ -25,6 +25,7 @@ class InputViewController: UIViewController {
 			}
 		}
 	}
+
 	var oldText = ""
 	var colorCode: Int!
 	var textLimit = 0
@@ -44,10 +45,8 @@ class InputViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-
-		transitioningDelegate = self
-
 		view.backgroundColor = MyColor.code(colorCode).BTColors[0]
+		transitioningDelegate = self
 
 		numberLabel = UILabel(frame: CGRectMake(0, 0, ScreenWidth, 60))
 		numberLabel.backgroundColor = UIColor.clearColor()
@@ -64,6 +63,7 @@ class InputViewController: UIViewController {
 		textView.textColor = MyColor.code(colorCode).BTColors[1]
 		textView.font = UIFont.systemFontOfSize(25)
 		textView.textAlignment = .Center
+		textView.textContainerInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
 		textView.delegate = self
 		view.addSubview(textView)
 
@@ -98,7 +98,7 @@ class InputViewController: UIViewController {
 		}
 
 		textView.text = oldText
-
+		numberLabel.text = String(textLimit - oldText.characters.count)
 
 		textView.becomeFirstResponder()
 	}
@@ -125,7 +125,6 @@ class InputViewController: UIViewController {
 		let alertTexts = [
 			"写那么多干嘛",
 			"注意简洁",
-			"浓缩的是精华",
 			"话太多",
 			"少说两句"
 		]
@@ -189,9 +188,9 @@ extension InputViewController: UITextViewDelegate {
 
 extension InputViewController: UIViewControllerTransitioningDelegate {
 
-	func presentationControllerForPresentedViewController(presented: UIViewController, presentingViewController presenting: UIViewController, sourceViewController source: UIViewController) -> UIPresentationController? {
-		return DimmingPresentationController(presentedViewController: presented, presentingViewController: presenting)
-	}
+//	func presentationControllerForPresentedViewController(presented: UIViewController, presentingViewController presenting: UIViewController, sourceViewController source: UIViewController) -> UIPresentationController? {
+//		return DimmingPresentationController(presentedViewController: presented, presentingViewController: presenting)
+//	}
 
 	func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return BounceAnimationController()

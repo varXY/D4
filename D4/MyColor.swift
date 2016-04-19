@@ -24,7 +24,7 @@ func fiveRandomColorCodes() -> [Int] {
 }
 
 func randomColorCode() -> Int {
-	let index = getRandomNumbers(1, lessThan: colorCode.count)[0]
+	let index = random() % colorCode.count
 	return colorCode[index]
 }
 

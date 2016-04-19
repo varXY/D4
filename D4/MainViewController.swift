@@ -187,6 +187,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		let hour = Int(NSDate().string(.HH))
 		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
 		xyScrollView.writeView.nightStyle = nightStyle
+		xyScrollView.settingView.nightStyle = nightStyle
+		
 		let blurEffect = nightStyle ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
 		let tintColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
 		let barStyle = nightStyle ? UIBarStyle.Black : UIBarStyle.Default
@@ -203,6 +205,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	func segmentedControlSelected(segmentedControl: UISegmentedControl) {
 		backgroundSound.playSound(true, sound: backgroundSound.selected_sound)
+		pointerView.changeTopLabelTextWhenSegmentedControlSelected(segmentedControl.selectedSegmentIndex)
 		segmentedControl.selectedSegmentIndex == 0 ? loadSavedDailyStory() : loadSelfStory()
 	}
 
@@ -306,6 +309,9 @@ extension MainViewController: XYScrollViewDelegate {
 				case .Left:
 					xyScrollView.writeView.labelsGetRandomColors()
 
+				case.Right:
+					break
+
 				default:
 					break
 				}
@@ -346,6 +352,7 @@ extension MainViewController: XYScrollViewDelegate {
 				xyScrollView.moveContentViewToTop(.Right)
 				pointerView.showTextBaseOnTopIndex(1)
 				pointerView.addOrRemoveUpAndDownPointerAndLabel(1)
+				pointerView.changeTopLabelTextWhenSegmentedControlSelected(1)
 				hideOrShowStatusViewAndToolbar(nil)
 
 				segmentedControl.selectedSegmentIndex = 1
@@ -355,7 +362,7 @@ extension MainViewController: XYScrollViewDelegate {
 					self.uploadStory(story!, completion: { (success, error) in
 						if success != nil && success == true {
 							self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
-							self.saveLastStory(story!)
+//							self.saveLastStory(story!)
 							self.saveMyStory(story!, completion: { (success) in
 								if success {
 									self.xyScrollView.writeView.clearContent()
@@ -464,6 +471,7 @@ extension MainViewController: UIViewControllerPreviewingDelegate {
 
 	func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController viewControllerToCommit: UIViewController) {
 		statusView.frame.origin.y -= 20
+		statusBarHidden = true
 		navigationController?.setToolbarHidden(true, animated: true)
 		presentViewController(viewControllerToCommit, animated: false, completion: nil)
 		forceTouchWay = false

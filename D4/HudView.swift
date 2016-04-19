@@ -34,7 +34,7 @@ class HudView: UIView {
 		let boxHeight: CGFloat = 130
 
 		let boxRect = CGRect(x: round((bounds.size.width - boxWidth) / 2), y: round((bounds.size.height - boxHeight) / 2), width: boxWidth, height: boxHeight)
-		let color = nightStyle ? UIColor(white: 0.3, alpha: 0.8) : UIColor(white: 1.0, alpha: 0.9)
+		let color = nightStyle ? UIColor(white: 0.2, alpha: 0.9) : UIColor(white: 1.0, alpha: 0.9)
 		let roundedRect = UIBezierPath(roundedRect: boxRect, cornerRadius: 20)
 		color.setFill()
 		roundedRect.fill()

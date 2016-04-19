@@ -21,7 +21,7 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 			return UIPreviewAction(title: title, style: style) { previewAction, viewController in
 				guard let detailViewController = viewController as? DetailViewController else { return }
 				let like = previewAction.title == "顶"
-				detailViewController.likeItOrNot(like)
+				detailViewController.likeItOrNot(like, forceTouchWay: true)
 			}
 		}
 
@@ -47,7 +47,7 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 	weak var delegate: DetailViewControllerDelegate?
 
 	override func previewActionItems() -> [UIPreviewActionItem] {
-		return !likedStoryIndexes().contains(topStoryIndex) ? previewActions : []
+		return !likedStoryIndexes().contains(topStoryIndex) && netOrLocalStory != 1 ? previewActions : []
 	}
 
 	override func prefersStatusBarHidden() -> Bool {
@@ -109,26 +109,35 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 		let like = sender.tag == 100
 		let amount = like ? 1 : -1
 		let newRating = storys[topStoryIndex].rating + amount
-		likeItOrNot(like)
 
-		self.rateViews.ratingLabel.text = "\(newRating)"
-		self.rateViews.hideAfterTapped({ self.view.userInteractionEnabled = true })
-		self.rateViewShowed = false
+		saveLikedStoryIndex(topStoryIndex)
+		rateViews.likedIndexes = likedStoryIndexes()
+		likeItOrNot(like, forceTouchWay: false)
+
+		rateViews.ratingLabel.text = "\(newRating)"
+		rateViews.hideAfterTapped({ self.view.userInteractionEnabled = true })
+		rateViewShowed = false
 	}
 
-	func likeItOrNot(like: Bool) {
+	func likeItOrNot(like: Bool, forceTouchWay: Bool) {
 		let amount = like ? 1 : -1
 		let newRating = storys[topStoryIndex].rating + amount
+
+		if forceTouchWay {
+			saveLikedStoryIndex(topStoryIndex)
+			rateViews.likedIndexes = likedStoryIndexes()
+		}
 
 		updateRating(storys[topStoryIndex].ID, rating: newRating, done: { (success) in
 			if success {
 				self.storys[self.topStoryIndex].rating = newRating
 				self.delegate?.ratingChanged(self.topStoryIndex, rating: self.storys[self.topStoryIndex].rating)
-				self.saveLikedStoryIndex(self.topStoryIndex)
-				self.rateViews.likedIndexes = self.likedStoryIndexes()
 			} else {
+				self.removeLikedStoryIndex(self.topStoryIndex)
+				self.rateViews.likedIndexes = self.likedStoryIndexes()
+
 				let hudView = HudView.hudInView(self.view, animated: true)
-				hudView.text = "无法连接\n操作失效"
+				hudView.text = "无法联网\n操作失效"
 				hudView.nightStyle = self.nightStyle
 			}
 		})
@@ -163,7 +172,7 @@ extension DetailViewController: XYScrollViewDelegate {
 			dismissViewControllerAnimated(true, completion: nil)
 
 		case .Right:
-			netOrLocalStory == 0 ? showOrHideRateViews() : copyTextOfStory()
+			netOrLocalStory == -1 || netOrLocalStory == 0 ? showOrHideRateViews() : copyTextOfStory()
 
 		default:
 			break

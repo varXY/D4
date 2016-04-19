@@ -65,6 +65,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	func applicationDidEnterBackground(application: UIApplication) {
+		guard let navi = window?.rootViewController as? UINavigationController else { return }
+		guard let mainVC = navi.topViewController as? MainViewController else { return }
+		mainVC.xyScrollView.writeView.saveContent()
 	}
 
 	func applicationWillEnterForeground(application: UIApplication) {
@@ -85,7 +88,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	func applicationWillTerminate(application: UIApplication) {
-		self.saveContext()
+		saveContext()
+
+		guard let navi = window?.rootViewController as? UINavigationController else { return }
+		guard let mainVC = navi.topViewController as? MainViewController else { return }
+		mainVC.xyScrollView.writeView.saveContent()
 	}
 
 

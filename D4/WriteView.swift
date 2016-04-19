@@ -15,7 +15,7 @@ protocol WriteViewDelegate: class {
 	func canUpLoad(can: Bool)
 }
 
-class WriteView: UIView {
+class WriteView: UIView, UserDefaults {
 
 	var touchMoved = false
 	var selectingColor = false
@@ -29,13 +29,15 @@ class WriteView: UIView {
 
 	var labels = [UILabel]()
 	var dots = [UIView]()
+
 	var colorCodes = [Int]()
+	var sentences: [String]!
 
 	var backgroundSound: BackgroundSound!
 
 	var nightStyle = false {
 		didSet {
-			let color = nightStyle ? UIColor(white: 0.3, alpha: 0.7) : MyColor.code(0).BTColors[0]
+			let color = nightStyle ? UIColor(white: 0.3, alpha: 0.75) : MyColor.code(0).BTColors[0]
 			dots.forEach({ $0.backgroundColor = color })
 		}
 	}
@@ -45,7 +47,7 @@ class WriteView: UIView {
 		"上 午",
 		"下 午",
 		"晚 上",
-		"总 结"
+		"睡 前 哲 思"
 	]
 
 	weak var delegate: WriteViewDelegate?
@@ -56,8 +58,9 @@ class WriteView: UIView {
 		multipleTouchEnabled = false
 		exclusiveTouch = true
 		clipsToBounds = true
-		
-		colorCodes = fiveRandomColorCodes()
+
+		sentences = getSentences() != nil ? getSentences()! : placeHolderTexts
+		colorCodes = getColors() != nil ? getColors()! : fiveRandomColorCodes()
 
 		var index = 0
 		repeat {
@@ -67,10 +70,10 @@ class WriteView: UIView {
 			label.textAlignment = .Center
 			label.numberOfLines = 0
 			label.adjustsFontSizeToFitWidth = true
-			label.text = placeHolderTexts[index]
+			label.text = sentences[index]
 			labels.append(label)
 			addSubview(label)
-			changeLabelTextFont(index, inputted: false)
+			changeLabelTextFont(index, inputted: sentences[index] != placeHolderTexts[index])
 
 			if index < 4 {
 				let dot = UIView(frame: dotFrame(index))
@@ -175,6 +178,8 @@ class WriteView: UIView {
 		changeLabelTextFont(index, inputted: inputted)
 		labels[index].text = newText
 		checkText()
+
+		sentences = labels.map({ $0.text! })
 	}
 
 	func changeLabelTextFont(index: Int, inputted: Bool) {
@@ -184,8 +189,12 @@ class WriteView: UIView {
 			labels[index].font = UIFont.boldSystemFontOfSize(35)
 		}
 
-		if index == 0 || index == 4 {
-			labels[index].font = UIFont.systemFontOfSize(19)
+		if index == 0 {
+			labels[index].font = UIFont.boldSystemFontOfSize(17)
+		}
+
+		if index == 4 {
+			labels[index].font = UIFont.italicSystemFontOfSize(17)
 			labels[index].numberOfLines = 1
 		}
 	}
@@ -236,12 +245,19 @@ class WriteView: UIView {
 		}
 	}
 
+	func saveContent() {
+		saveSentencesAndColors(sentences, colors: colorCodes)
+	}
+
 	func clearContent() {
 		labels.forEach({
 			let index = labels.indexOf($0)!
 			$0.text = placeHolderTexts[index]
 			changeLabelTextFont(index, inputted: false)
 		})
+
+		sentences = placeHolderTexts
+		removeSentencesAndColors()
 	}
 
 	func locationToColorCode(location: CGPoint) -> Int {

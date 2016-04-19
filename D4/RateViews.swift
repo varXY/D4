@@ -42,23 +42,21 @@ struct RateViews {
 		buttonsView.layer.cornerRadius = globalRadius
 		buttonsView.clipsToBounds = true
 
-
 		let titles = ["顶", "踩"]
-		var i = 0
-		repeat	{
-			let button = UIButton(type: .System)
-			button.frame = CGRectMake(0, 50 * CGFloat(i), width, 50)
-			button.backgroundColor = UIColor.clearColor()
-			button.setTitle(titles[i], forState: .Normal)
-			button.tintColor = textColor
-			button.tag = 100 + i
-			button.addTarget(VC, action: #selector(DetailViewController.rateButtonTapped(_:)), forControlEvents: .TouchUpInside)
-			buttonsView.addSubview(button)
-			buttons.append(button)
-			i += 1
-		} while i < titles.count
+		let frames = [CGRectMake(0, 0, width, 50), CGRectMake(0, 50, width, 50)]
+		buttons = [UIButton(type: .System), UIButton(type: .System)]
+		buttons.forEach({
+			let i = buttons.indexOf($0)!
+			$0.frame = frames[i]
+			$0.backgroundColor = UIColor.clearColor()
+			$0.setTitle(titles[i], forState: .Normal)
+			$0.tintColor = textColor
+			$0.tag = 100 + i
+			$0.addTarget(VC, action: #selector(VC.rateButtonTapped(_:)), forControlEvents: .TouchUpInside)
+			buttonsView.addSubview($0)
+		})
 
-		if VC.netOrLocalStory == 0 {
+		if VC.netOrLocalStory == -1 || VC.netOrLocalStory == 0 {
 			VC.view.addSubview(ratingView)
 			VC.view.addSubview(buttonsView)
 		}
@@ -100,12 +98,16 @@ struct RateViews {
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 			self.buttonsView.frame.origin.x += self.width
 			}) { (_) in
-				UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
-					self.ratingView.frame.origin.x += self.width
-					}, completion: { (_) in
-						done()
-				})
 		}
+
+		delay(seconds: 0.2) {
+			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
+				self.ratingView.frame.origin.x += self.width
+				}, completion: { (_) in
+					done()
+			})
+		}
+
 	}
 
 }

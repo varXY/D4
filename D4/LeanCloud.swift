@@ -61,14 +61,12 @@ extension LeanCloud {
 				let filteredObjects = objects.filter({ self.testObject($0) == true })
 				storys = results.count != 0 ? filteredObjects.map({ Story(object: $0) }) : [Story]()
 
-				if let story = self.getSelfLastOneStory() {
-					storys.append(story)
-				}
+				let myStory = self.getSelfLastOneStory()
 
 				self.get49bestStorysOfyesterday({ (bestStorys) in
 					UIApplication.sharedApplication().networkActivityIndicatorVisible = false
-					storys += bestStorys
-					gotStorys(storys)
+					let story100 = self.mergeThree(storys, array_1: bestStorys, myStory: myStory)
+					gotStorys(story100)
 				})
 			}
 
@@ -84,7 +82,6 @@ extension LeanCloud {
 	func getSelfLastOneStory() -> Story? {
 		let ID = getLastStoryID()
 		let query = AVQuery(className: AVKey.classStory)
-
 		guard let object = query.getObjectWithId(ID) else { return nil }
 		return Story(object: object)
 
@@ -127,6 +124,16 @@ extension LeanCloud {
 
 	}
 
+	func updateRating(ID: String, rating: Int, done: (Bool) -> ()) {
+		let story = AVObject(outDataWithClassName: AVKey.classStory, objectId: ID)
+		story.setObject(rating, forKey: AVKey.rating)
+		story.saveInBackgroundWithBlock { (success, error) in
+			done(success)
+		}
+	}
+
+	// MARK: - Tools
+
 	func testObject(object: AVObject) -> Bool {
 		let A = object.createdAt != nil
 		let B = object.objectForKey(AVKey.sentences) != nil
@@ -137,13 +144,35 @@ extension LeanCloud {
 		return A && B && C && D && E
 	}
 
-	func updateRating(ID: String, rating: Int, done: (Bool) -> ()) {
-		let story = AVObject(outDataWithClassName: AVKey.classStory, objectId: ID)
-		story.setObject(rating, forKey: AVKey.rating)
-		story.saveInBackgroundWithBlock { (success, error) in
-			done(success)
+	func mergeThree(array_0: [Story], array_1: [Story], myStory: Story?) -> [Story]{
+		var newArray = [Story]()
+		var i = 0
+
+		if array_0.count >= array_1.count {
+			repeat {
+				if i < array_1.count { newArray.append(array_1[i]) }
+				newArray.append(array_0[i])
+				i += 1
+			} while i < array_0.count
+
+		} else {
+			repeat {
+				newArray.append(array_1[i])
+				if i < array_0.count { newArray.append(array_0[i]) }
+				i += 1
+			} while i < array_1.count
+
 		}
+
+		if myStory != nil {
+			let randomIndex = random() % newArray.count
+			newArray.insert(myStory!, atIndex: randomIndex)
+		}
+
+		return newArray
 	}
+
+
 }
 
 //class LeanCloud {

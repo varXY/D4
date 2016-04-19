@@ -24,7 +24,7 @@ class StoryTableView: UITableView, CoreDataAndStory {
 	var headerView: UIView!
 	var footerView: UIView!
 
-	var netOrLocalStory = 0
+	var netOrLocalStory = -1
 	
 	weak var SDelegate: StoryTableViewDelegate?
 
@@ -106,7 +106,8 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 	}
 
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = UITableViewCell(style: .Default, reuseIdentifier: "cell")
+		let style = netOrLocalStory == -1 || netOrLocalStory == 0 ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1
+		var cell = UITableViewCell(style: style, reuseIdentifier: "Cell")
 		cell.textLabel?.font = UIFont.systemFontOfSize(17)
 
 		if storys.count != 0 {
@@ -117,10 +118,19 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 			cell.backgroundColor = MyColor.code(colorCode).BTColors[0]
 			cell.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
 			cell.textLabel!.text = storys[indexPath.row].sentences[0]
+
+			cell.detailTextLabel?.text = storys[indexPath.row].date.string(.MMddyy)
+			cell.detailTextLabel?.textColor = MyColor.code(colorCode).BTColors[1]
+			cell.detailTextLabel?.alpha = 0.4
+
 		} else {
+			cell = UITableViewCell(style: .Default, reuseIdentifier: "EmptyCell")
 			cell.backgroundColor = UIColor.clearColor()
 			cell.textLabel?.textColor = UIColor.whiteColor()
-			cell.textLabel?.text = netOrLocalStory == 0 ? "网络问题 无法加载" : "没有故事 右滑添加"
+			var text = ""
+			if netOrLocalStory == 0 { text = "网络故障 无法加载" }
+			if netOrLocalStory == 1 { text = "没有故事 右滑添加" }
+			cell.textLabel?.text = text
 			cell.textLabel?.textAlignment = .Center
 		}
 

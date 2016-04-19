@@ -54,20 +54,20 @@ class PointerView: UIView {
 	var leftPointer: UIImageView!
 	var rightPointer: UIImageView!
 
-	var UDLR_labels: [UILabel]!
+	var UDLR_labels = [UILabel]()
 	var blankViews: [UIView]!
 
 	var lastUpDateTime: NSDate! {
 		didSet {
 			let today = lastUpDateTime.string(.MMddyy) == NSDate().string(.MMddyy)
 			delay(seconds: 1.5) {
-				self.UDLR_labels[0].text = today ? "今天已更新" : "无法更新"
+				self.UDLR_labels[0].text = today ? "已更新" : "无法更新"
 				self.lastUpdateText = self.UDLR_labels[0].text!
 			}
 		}
 	}
 
-	var lastUpdateText = ""
+	var lastUpdateText = "无法更新"
 
 	struct Label {
 		let UD_size = CGSize(width: ScreenWidth - 30 * 2, height: 30)
@@ -78,6 +78,7 @@ class PointerView: UIView {
 			label.backgroundColor = UIColor.clearColor()
 			label.textAlignment = .Center
 			label.textColor = UIColor.whiteColor()
+			label.font = UIFont.systemFontOfSize(14)
 
 			switch type {
 			case .Up:
@@ -117,40 +118,23 @@ class PointerView: UIView {
 		addSubview(leftPointer)
 		addSubview(rightPointer)
 
-		UDLR_labels = [UILabel]()
 		let types = [XYScrollType.Up, XYScrollType.Down, XYScrollType.Left, XYScrollType.Right]
-		let structLabel = Label()
-		var i = 0
-		repeat {
-			let label = structLabel.label(types[i])
-			label.font = UIFont.systemFontOfSize(14)
-			UDLR_labels.append(label)
-			i += 1
-		} while i < types.count
+		UDLR_labels = types.map({ Label().label($0) })
 
 		switch VC {
 		case is MainViewController:
-
 			blankViews = [UIView]()
-			let topBlankView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
-			let bottomBlankView = UIView(frame: CGRectMake(0, ScreenHeight - 44, ScreenWidth, 44))
-			blankViews.append(topBlankView)
-			blankViews.append(bottomBlankView)
-			blankViews.forEach({
-				$0.backgroundColor = MyColor.code(5).BTColors[0]
-				addSubview($0)
-			})
+			let frames = [CGRectMake(0, 0, ScreenWidth, 20), CGRectMake(0, ScreenHeight - 44, ScreenWidth, 44)]
+			blankViews = frames.map({ UIView(frame: $0) })
+			blankViews.forEach({ $0.backgroundColor = MyColor.code(24).BTColors[0]; addSubview($0) })
 
 			// 去创造新故事吧?
 			let texts = ["", "", "写\n故\n事", "关\n于"]
-			UDLR_labels.forEach({ (label) in
-				let index = UDLR_labels.indexOf(label)!
-				label.text = texts[index]
-				addSubview(label)
-
-				if index == 1 {
-					label.frame.origin.y -= 24
-				}
+			UDLR_labels.forEach({
+				let index = UDLR_labels.indexOf($0)!
+				$0.text = texts[index]
+				addSubview($0)
+				if index == 1 { $0.frame.origin.y -= 24 }
 			})
 
 		case is DetailViewController:
@@ -158,13 +142,9 @@ class PointerView: UIView {
 			addSubview(downPointer)
 
 			guard let detailVC = VC as? DetailViewController else { return }
-			let rightText = detailVC.netOrLocalStory == 0 ? "顶\n踩" : "复\n制\n文\n字"
+			let rightText = detailVC.netOrLocalStory == -1 || detailVC.netOrLocalStory == 0 ? "顶\n踩" : "复\n制\n文\n字"
 			let texts = ["上一个", "下一个", "主\n页", rightText]
-			UDLR_labels.forEach({ (label) in
-				let index = UDLR_labels.indexOf(label)!
-				label.text = texts[index]
-				addSubview(label)
-			})
+			UDLR_labels.forEach({ $0.text = texts[UDLR_labels.indexOf($0)!]; addSubview($0) })
 
 		default:
 			break
@@ -186,7 +166,7 @@ class PointerView: UIView {
 				let i = pointers.indexOf({ (imageView) -> Bool in
 					return imageView == pointer
 				})!
-				if UDLR_labels != nil && i < UDLR_labels.count { UDLR_labels[i].alpha = 0.0 }
+				if i < UDLR_labels.count { UDLR_labels[i].alpha = 0.0 }
 			})
 
 			delay(seconds: 0.4, completion: {
@@ -196,7 +176,7 @@ class PointerView: UIView {
 						return imageView == pointer
 					})!
 					pointers[i].transform = transforms[i]
-					if self.UDLR_labels != nil && i < self.UDLR_labels.count { self.UDLR_labels[i].alpha = 1.0 }
+					if i < self.UDLR_labels.count { self.UDLR_labels[i].alpha = 1.0 }
 				})
 			})
 
@@ -208,6 +188,7 @@ class PointerView: UIView {
 			animate()
 			}, completion: nil)
 	}
+
 
 	// MARK: - MainViewController
 
@@ -255,6 +236,10 @@ class PointerView: UIView {
 		}
 	}
 
+	func changeTopLabelTextWhenSegmentedControlSelected(index: Int) {
+		UDLR_labels[0].text = index == 0 ? lastUpdateText : ""
+	}
+
 	func changeLabelTextForCanSaveStory(can: Bool) {
 		UDLR_labels[1].text = can ? "发布" : randomTip(.Down)
 	}
@@ -276,6 +261,7 @@ class PointerView: UIView {
 				"建置、对抗、结局",
 				"观点没有对错",
 				"无冲突、不故事",
+				"一天一个故事",
 			]
 		case .Down:
 			tips = [
@@ -292,7 +278,9 @@ class PointerView: UIView {
 		return tips[index]
 	}
 
+
 	// MARK: - DetailViewController
+
 	func showNoMore(top: Bool?) {
 		if top == true {
 			UDLR_labels[0].text = "没有了"
