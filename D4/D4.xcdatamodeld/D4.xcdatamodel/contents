@@ -12,6 +12,7 @@
     <entity name="DailyStory" representedClassName=".DailyStory" syncable="YES">
         <attribute name="author" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="rating" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <relationship name="colors" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Colors" inverseName="dailyStory" inverseEntity="Colors" syncable="YES"/>
         <relationship name="sentences" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Sentences" inverseName="dailyStory" inverseEntity="Sentences" syncable="YES"/>
@@ -33,9 +34,9 @@
         <relationship name="myStory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MyStory" inverseName="sentences" inverseEntity="MyStory" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Colors" positionX="34" positionY="-108" width="128" height="148"/>
+        <element name="DailyStory" positionX="-9" positionY="45" width="128" height="135"/>
         <element name="MyStory" positionX="-153" positionY="11" width="126" height="118"/>
         <element name="Sentences" positionX="79" positionY="36" width="128" height="148"/>
-        <element name="Colors" positionX="34" positionY="-108" width="128" height="148"/>
-        <element name="DailyStory" positionX="-9" positionY="45" width="128" height="120"/>
     </elements>
 </model>

@@ -61,13 +61,16 @@ class PointerView: UIView {
 		didSet {
 			let today = lastUpDateTime.string(.MMddyy) == NSDate().string(.MMddyy)
 			delay(seconds: 1.5) {
-				self.UDLR_labels[0].text = today ? "已更新" : "无法更新"
-				self.lastUpdateText = self.UDLR_labels[0].text!
+				self.lastUpdateText = today ? "已更新" : "无法更新"
 			}
 		}
 	}
 
-	var lastUpdateText = "无法更新"
+	var lastUpdateText: String! {
+		didSet {
+			self.UDLR_labels[0].text = lastUpdateText
+		}
+	}
 
 	struct Label {
 		let UD_size = CGSize(width: ScreenWidth - 30 * 2, height: 30)
@@ -129,7 +132,7 @@ class PointerView: UIView {
 			blankViews.forEach({ $0.backgroundColor = MyColor.code(24).BTColors[0]; addSubview($0) })
 
 			// 去创造新故事吧?
-			let texts = [lastUpdateText, "", "写\n故\n事", "关\n于"]
+			let texts = ["", "", "写\n故\n事", "关\n于"]
 			UDLR_labels.forEach({
 				let index = UDLR_labels.indexOf($0)!
 				$0.text = texts[index]

@@ -127,7 +127,7 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 			cell = UITableViewCell(style: .Default, reuseIdentifier: "EmptyCell")
 			cell.backgroundColor = UIColor.clearColor()
 			cell.textLabel?.textColor = UIColor.whiteColor()
-			var text = ""
+			var text = "天的故事 需要下载"
 			if netOrLocalStory == 0 { text = "网络故障 无法加载" }
 			if netOrLocalStory == 1 { text = "没有故事 右滑添加" }
 			cell.textLabel?.text = text

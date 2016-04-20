@@ -17,7 +17,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var window: UIWindow?
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		window?.backgroundColor = UIColor.blackColor()
 		window?.layer.cornerRadius = globalRadius
@@ -28,18 +27,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		var shouldPerformAdditionalDelegateHandling = true
 
 		if let shortcutItem = launchOptions?[UIApplicationLaunchOptionsShortcutItemKey] as? UIApplicationShortcutItem {
-
 			launchedShortcutItem = shortcutItem
-
 			shouldPerformAdditionalDelegateHandling = false
 		}
 
 		if let shortcutItems = application.shortcutItems where shortcutItems.isEmpty {
-
 			let shortcut1 = UIApplicationShortcutItem(type: ShortcutIdentifier.First.type, localizedTitle: "写故事", localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .Add), userInfo: [
 				AppDelegate.applicationShortcutUserInfoIconKey: UIApplicationShortcutIconType.Play.rawValue
 				])
-
 			application.shortcutItems = [shortcut1]
 		}
 
@@ -54,7 +49,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		try! AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryAmbient)
 
 		// MARK: Network
-
 		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
 		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
 
@@ -119,7 +113,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	var launchedShortcutItem: UIApplicationShortcutItem?
 
 	func handleShortCutItem(shortcutItem: UIApplicationShortcutItem) -> Bool {
-
+		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
+		AVAnalytics.trackAppOpenedWithLaunchOptions(nil)
+		
 		var handled = false
 
 		guard let controller = window!.rootViewController as! UINavigationController? else { return false }
@@ -132,7 +128,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		switch (shortCutType) {
 		case ShortcutIdentifier.First.type:
 			mainVC.viewDidLoad()
-			mainVC.gotoPage(UIBarButtonItem())
+			if mainVC.presentedViewController != nil {
+				mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
+				delay(seconds: 0.8) { mainVC.gotoPage(UIBarButtonItem()) }
+			} else {
+				mainVC.gotoPage(UIBarButtonItem())
+			}
+
 		default:
 			break
 		}

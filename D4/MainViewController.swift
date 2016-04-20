@@ -10,6 +10,7 @@ import UIKit
 import StoreKit
 import AVFoundation
 
+
 class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDefaults, MailSending {
 
 	var xyScrollView: XYScrollView!
@@ -27,6 +28,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	var dailyStorys: [Story]!
 	var backgroundSound = BackgroundSound()
+
+	var internetReachability: Reachability!
 
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
 		return statusBarStyle
@@ -59,6 +62,10 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 			registerForPreviewingWithDelegate(self, sourceView: xyScrollView.X1_storyTableView)
 		}
 
+		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(reachabilityChanged(_:)), name: kReachabilityChangedNotification, object: nil)
+		internetReachability = Reachability.reachabilityForInternetConnection()
+		internetReachability.startNotifier()
+
 	}
 
  	override func viewWillAppear(animated: Bool) {
@@ -74,19 +81,26 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
+		NSNotificationCenter.defaultCenter().removeObserver(self)
+	}
 
+	func reachabilityChanged(note: NSNotification) {
+		if internetReachability.currentReachabilityStatus().rawValue != 0 {
+			reloadDailyStory()
+		}
 	}
 
 	// MARK: -
 
 	func reloadDailyStory() {
-
 //		let lastDate = lastLoadDate()
 //		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
 //		print(lastDate.string(.dd))
 //		print(NSDate().string(.dd))
 
 		if !dailyStoryLoaded {
+			scrollToRow(0)
+			pointerView.lastUpdateText = ""
 			xyScrollView.X1_storyTableView.loading(true)
 			loadingStory(true)
 			getDailyStory { (storys) in
@@ -104,11 +118,14 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 					self.pointerView.lastUpDateTime = NSDate()
 
 					self.save100DailyStorys(storys, completion: { (success) in
-						self.removeAllLikedStoryIndexes()
-						self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
+						if success {
+							self.removeAllLikedStoryIndexes()
+							self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
+						}
 					})
 
 				} else {
+					self.pointerView.lastUpdateText = "无法更新"
 					print("Get zero story online")
 				}
 			}
@@ -162,7 +179,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 		segmentedControl = UISegmentedControl(items: ["今日100", "我的故事"])
 		segmentedControl.selectedSegmentIndex = 0
-		segmentedControl.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 160, height: 29))
+		segmentedControl.frame.size = CGSize(width: 160, height: 29)
 		segmentedControl.addTarget(self, action: #selector(segmentedControlSelected(_:)), forControlEvents: .ValueChanged)
 		let barButton = UIBarButtonItem(customView: segmentedControl)
 
@@ -216,6 +233,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		backgroundSound.playSound(true, sound: backgroundSound.selected_sound)
 		xyScrollView.scrolledType = .NotScrollYet
 		xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
+		oldTopIndex = 1
+		xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: 0)
 		pointerView.showTextBaseOnTopIndex(pageIndex)
 		pointerView.addOrRemoveUpAndDownPointerAndLabel(pageIndex)
 		hideOrShowStatusViewAndToolbar(nil)
@@ -418,7 +437,13 @@ extension MainViewController: DetailViewControllerDelegate {
 				self.hideOrShowStatusViewAndToolbar(false)
 			}
 
-			let indexPath = NSIndexPath(forRow: topStoryIndex, inSection: 0)
+			scrollToRow(topStoryIndex)
+		}
+	}
+
+	func scrollToRow(row: Int) {
+		if xyScrollView.X1_storyTableView.numberOfRowsInSection(0) != 0 {
+			let indexPath = NSIndexPath(forRow: row, inSection: 0)
 			xyScrollView.X1_storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: false)
 		}
 	}

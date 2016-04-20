@@ -84,7 +84,6 @@ extension LeanCloud {
 		let query = AVQuery(className: AVKey.classStory)
 		guard let object = query.getObjectWithId(ID) else { return nil }
 		return Story(object: object)
-
 	}
 
 	func get49bestStorysOfyesterday(gotStorys: GotStorys) {
@@ -109,7 +108,6 @@ extension LeanCloud {
 					let filteredObjects = objects.filter({ self.testObject($0) == true })
 					storys = filteredObjects.map({ Story(object: $0) })
 				}
-
 				gotStorys(storys)
 			} else {
 				gotStorys([Story]())
@@ -128,6 +126,7 @@ extension LeanCloud {
 		let story = AVObject(outDataWithClassName: AVKey.classStory, objectId: ID)
 		story.setObject(rating, forKey: AVKey.rating)
 		story.saveInBackgroundWithBlock { (success, error) in
+			if error != nil { print(error) }
 			done(success)
 		}
 	}

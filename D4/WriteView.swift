@@ -161,7 +161,7 @@ class WriteView: UIView, UserDefaults {
 				$0.alpha = 0.6
 				$0.layer.cornerRadius = $0.frame.width / 2
 				addSubview($0)
-				$0.animateWithType(.BecomeVisble, delay: 0.0, distance: 0.0)
+//				$0.animateWithType(.BecomeVisble, delay: 0.0, distance: 0.0)
 			})
 
 		} else {

@@ -71,29 +71,13 @@ extension CoreDataAndStory {
 			if let myStorys = fetchResults as? [MyStory] {
 				
 				if myStorys.count != 0 {
-					var i = myStorys.count - 1
-					repeat {
-						let sentences: [String] = [
-							myStorys[i].sentences!.s0!,
-							myStorys[i].sentences!.s1!,
-							myStorys[i].sentences!.s2!,
-							myStorys[i].sentences!.s3!,
-							myStorys[i].sentences!.s4!
-						]
-
-						let colors: [Int] = [
-							myStorys[i].colors!.c0! as Int,
-							myStorys[i].colors!.c1! as Int,
-							myStorys[i].colors!.c2! as Int,
-							myStorys[i].colors!.c3! as Int,
-							myStorys[i].colors!.c4! as Int
-						]
-
-						let story = Story(date: myStorys[i].date!, sentences: sentences, colors: colors, rating: myStorys[i].rating! as Int, author: myStorys[i].author!)
-						storys.append(story)
-
-						i -= 1
-					} while i > -1
+					storys = myStorys.map({
+						let sentences = [$0.sentences!.s0!, $0.sentences!.s1!, $0.sentences!.s2!, $0.sentences!.s3!, $0.sentences!.s4!]
+						let colors = [$0.colors!.c0! as Int, $0.colors!.c1! as Int, $0.colors!.c2! as Int, $0.colors!.c3! as Int, $0.colors!.c4! as Int]
+						let story = Story(date: $0.date!, sentences: sentences, colors: colors, rating: $0.rating! as Int, author: $0.author!)
+						return story
+					})
+					storys = storys.reverse()
 
 				} else {
 					print("no story yet")
@@ -118,53 +102,50 @@ extension CoreDataAndStory {
 		do {
 			let oldStorys = try managedContext.executeFetchRequest(fetchRequest)
 			if oldStorys.count != 0 {
-				var i = 0
-				repeat {
-					managedContext.deleteObject(oldStorys[i] as! NSManagedObject)
-					i += 1
-				} while i < oldStorys.count
+				oldStorys.forEach({ managedContext.deleteObject($0 as! NSManagedObject) })
 			}
-
 		} catch {
 			print("can't get old storys")
 		}
 
-		var i = 0
-		repeat {
+		var success = true
+		let _: [DailyStory] = storys.map({
 			let entity_0 = NSEntityDescription.entityForName("Sentences", inManagedObjectContext: managedContext)
 			let sentences = Sentences(entity: entity_0!, insertIntoManagedObjectContext: managedContext)
-			sentences.s0 = storys[i].sentences[0]
-			sentences.s1 = storys[i].sentences[1]
-			sentences.s2 = storys[i].sentences[2]
-			sentences.s3 = storys[i].sentences[3]
-			sentences.s4 = storys[i].sentences[4]
+			sentences.s0 = $0.sentences[0]
+			sentences.s1 = $0.sentences[1]
+			sentences.s2 = $0.sentences[2]
+			sentences.s3 = $0.sentences[3]
+			sentences.s4 = $0.sentences[4]
 
 			let entity_1 = NSEntityDescription.entityForName("Colors", inManagedObjectContext: managedContext)
 			let colors = Colors(entity: entity_1!, insertIntoManagedObjectContext: managedContext)
-			colors.c0 = storys[i].colors[0]
-			colors.c1 = storys[i].colors[1]
-			colors.c2 = storys[i].colors[2]
-			colors.c3 = storys[i].colors[3]
-			colors.c4 = storys[i].colors[4]
+			colors.c0 = $0.colors[0]
+			colors.c1 = $0.colors[1]
+			colors.c2 = $0.colors[2]
+			colors.c3 = $0.colors[3]
+			colors.c4 = $0.colors[4]
 
 			let entity_2 = NSEntityDescription.entityForName("DailyStory", inManagedObjectContext: managedContext)
 			let dailyStory = DailyStory(entity: entity_2!, insertIntoManagedObjectContext: managedContext)
-			dailyStory.date = storys[i].date
-			dailyStory.rating = storys[i].rating
-			dailyStory.author = storys[i].author
+			dailyStory.id = $0.ID
+			dailyStory.date = $0.date
+			dailyStory.rating = $0.rating
+			dailyStory.author = $0.author
 			dailyStory.sentences = sentences
 			dailyStory.colors = colors
 
 			do {
 				try managedContext.save()
 			} catch {
-				print("can't save", i)
+				print("can't save")
+				success = false
 			}
-			
-			i += 1
-		} while i < storys.count
 
-		completion(true)
+			return dailyStory
+		})
+
+		completion(success)
 
 	}
 
@@ -181,32 +162,13 @@ extension CoreDataAndStory {
 			let results = try managedContext.executeFetchRequest(fetchRequest)
 			if let dailyStorys = results as? [DailyStory] {
 				if dailyStorys.count != 0 {
-					var i = 0
-					repeat {
-						let sentences: [String] = [
-							dailyStorys[i].sentences!.s0!,
-							dailyStorys[i].sentences!.s1!,
-							dailyStorys[i].sentences!.s2!,
-							dailyStorys[i].sentences!.s3!,
-							dailyStorys[i].sentences!.s4!
-						]
-
-						let colors: [Int] = [
-							dailyStorys[i].colors!.c0! as Int,
-							dailyStorys[i].colors!.c1! as Int,
-							dailyStorys[i].colors!.c2! as Int,
-							dailyStorys[i].colors!.c3! as Int,
-							dailyStorys[i].colors!.c4! as Int
-						]
-
-						let story = Story(date: dailyStorys[i].date!, sentences: sentences, colors: colors, rating: dailyStorys[i].rating! as Int, author: dailyStorys[i].author!)
-						storys.append(story)
-
-						i += 1
-					} while i < dailyStorys.count
+					storys = dailyStorys.map({
+						let sentences = [$0.sentences!.s0!, $0.sentences!.s1!, $0.sentences!.s2!, $0.sentences!.s3!, $0.sentences!.s4!]
+						let colors = [$0.colors!.c0! as Int, $0.colors!.c1! as Int, $0.colors!.c2! as Int, $0.colors!.c3! as Int, $0.colors!.c4! as Int]
+						let story = Story(id: $0.id!, date: $0.date!, sentences: sentences, colors: colors, rating: $0.rating! as Int, author: $0.author!)
+						return story
+					})
 				}
-
-
 			}
 
 			completion(storys)
