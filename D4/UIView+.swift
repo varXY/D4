@@ -23,7 +23,7 @@ extension UIView {
 			self.alpha = 0.0
 
 			UIView.animateWithDuration(0.5, delay: delay, options: [], animations: { () -> Void in
-				self.alpha = 1.0
+				self.alpha = 0.6
 				}, completion: nil)
 
 		case .Appear:

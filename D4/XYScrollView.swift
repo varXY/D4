@@ -186,13 +186,15 @@ class XYScrollView: UIScrollView {
 				switch scrollType {
 				case .Left:
 					topViewIndex = 0
-					writeView.checkText()
 					X0_contentView.alpha = 1.0
+					let notClear = X1_storyTableView.backgroundColor != UIColor.clearColor()
+					if notClear { X1_storyTableView.backgroundColor = UIColor.clearColor() }
 
-					XXAnimate({ 
+					animate({
 						self.X1_storyTableView.alpha = 0.0
 						self.X0_contentView.frame.origin.x += ScreenWidth
-						}, completion: { 
+						}, completion: {
+							if notClear { self.X1_storyTableView.backgroundColor = MyColor.code(5).BTColors[0] }
 							delay(seconds: 0.5, completion: {
 								self.writeView.layer.cornerRadius = globalRadius
 							})
@@ -201,11 +203,14 @@ class XYScrollView: UIScrollView {
 				case .Right:
 					topViewIndex = 2
 					X2_contentView.alpha = 1.0
-					XXAnimate({ 
+					let notClear = X1_storyTableView.backgroundColor != UIColor.clearColor()
+					if notClear { X1_storyTableView.backgroundColor = UIColor.clearColor() }
+
+					animate({
 						self.X1_storyTableView.alpha = 0.0
 						self.X2_contentView.frame.origin.x -= ScreenWidth
 						}, completion: { 
-
+							if notClear { self.X1_storyTableView.backgroundColor = MyColor.code(5).BTColors[0] }
 					})
 					
 				default: break
@@ -218,7 +223,7 @@ class XYScrollView: UIScrollView {
 					topViewIndex = 1
 					X1_storyTableView.alpha = 1.0
 					
-					XXAnimate({ 
+					animate({
 						self.X0_contentView.alpha = 0.0
 						self.X0_contentView.frame.origin.x -= ScreenWidth
 						}, completion: { 
@@ -235,7 +240,7 @@ class XYScrollView: UIScrollView {
 					topViewIndex = 1
 					X1_storyTableView.alpha = 1.0
 
-					XXAnimate({ 
+					animate({
 						self.X2_contentView.alpha = 0.0
 						self.X2_contentView.frame.origin.x += ScreenWidth
 						}, completion: { 
@@ -258,13 +263,10 @@ class XYScrollView: UIScrollView {
 					bringSubviewToFront(topView)
 					topView.alpha = 1.0
 
-					UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
+					animate({
 						self.middleView.alpha = 0.0
 						self.topView.frame.origin = self.middleOrigin
-						}, completion: { (_) in
-//							self.addSubview(self.middleView)
-//							self.addSubview(self.topView)
-
+						}, completion: {
 							self.middleView.frame.origin = self.topOrigin
 
 							if self.topStoryIndex > 1 {
@@ -274,18 +276,7 @@ class XYScrollView: UIScrollView {
 							self.reorderView()
 					})
 
-//					YYAnimate({ 
-//						self.middleView.alpha = 0.0
-//						self.topView.frame.origin = self.middleOrigin
-//						}, completion: { 
-//							self.middleView.frame.origin = self.topOrigin
-//
-//							if self.topStoryIndex > 1 {
-//								self.changeStoryForContentView(self.middleView, storyIndex: self.topStoryIndex - 1)
-//							}
-//
-//							self.reorderView()
-//					})
+
 
 				}
 
@@ -299,7 +290,7 @@ class XYScrollView: UIScrollView {
 					bringSubviewToFront(bottomView)
 					bottomView.alpha = 1.0
 
-					YYAnimate({ 
+					animate({
 						self.middleView.alpha = 0.0
 						self.bottomView.frame.origin = self.middleOrigin
 						}, completion: { 
@@ -323,22 +314,7 @@ class XYScrollView: UIScrollView {
 
 	}
 
-	func XXAnimate(animations: () -> (), completion: (() -> ())?) {
-
-		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-			animations()
-		}) { (_) in
-			completion!()
-		}
-
-//		UIView.animateWithDuration(animateTime, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: [], animations: {
-//			animations()
-//			}) { (_) in
-//				completion!()
-//		}
-	}
-
-	func YYAnimate(animations: () -> (), completion: (() -> ())?) {
+	func animate(animations: () -> (), completion: (() -> ())?) {
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 			animations()
 			}) { (_) in
@@ -373,9 +349,6 @@ class XYScrollView: UIScrollView {
 extension XYScrollView: UIScrollViewDelegate {
 
 	func scrollViewDidScroll(scrollView: UIScrollView) {
-
-
-
 		if scrollView != self {
 			if scrollView.contentOffset.y > TriggerDistance {
 				if scrolledType != .Down { scrolledType = .Down }
@@ -394,24 +367,14 @@ extension XYScrollView: UIScrollViewDelegate {
 			}
 		}
 
-
 	}
 
 	func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-
 		XYDelegate?.xyScrollViewWillScroll?(scrolledType, topViewIndex: topViewIndex)
-		
 		moveContentViewToTop(scrolledType)
-
 		if !inMainVC { topViewIndex = topStoryIndex }
-
 		XYDelegate?.xyScrollViewDidScroll(scrolledType, topViewIndex: topViewIndex)
-
 		scrolledType = .NotScrollYet
-	}
-
-	func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-
 	}
 
 }
@@ -432,9 +395,6 @@ extension XYScrollView: WriteViewDelegate {
 
 	func willInputText(index: Int, oldText: String, colorCode: Int) {
 		XYDelegate?.writeViewWillInputText!(index, oldText: oldText, colorCode: colorCode)
-	}
-
-	func canUpLoad(can: Bool) {
 	}
 
 }

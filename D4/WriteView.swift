@@ -12,14 +12,12 @@ import UIKit
 protocol WriteViewDelegate: class {
 	func selectingColor(selecting: Bool)
 	func willInputText(index: Int, oldText: String, colorCode: Int)
-	func canUpLoad(can: Bool)
 }
 
 class WriteView: UIView, UserDefaults {
 
 	var touchMoved = false
 	var selectingColor = false
-	var firstColor = true
 	var ready = false
 
 	var selectedDotIndex: Int!
@@ -62,31 +60,20 @@ class WriteView: UIView, UserDefaults {
 		sentences = getSentences() != nil ? getSentences()! : placeHolderTexts
 		colorCodes = getColors() != nil ? getColors()! : fiveRandomColorCodes()
 
-		var index = 0
-		repeat {
-			let label = SLabel(frame: blockFrame(index))
-			label.backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
-			label.textColor = MyColor.code(colorCodes[index]).BTColors[1]
-			label.textAlignment = .Center
-			label.numberOfLines = 0
-			label.adjustsFontSizeToFitWidth = true
-			label.text = sentences[index]
-			labels.append(label)
-			addSubview(label)
+		labels = blockFrames().map({ SLabel(frame: $0) })
+		labels.forEach({
+			let index = labels.indexOf($0)!
+			$0.backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
+			$0.textColor = MyColor.code(colorCodes[index]).BTColors[1]
+			$0.textAlignment = .Center
+			$0.numberOfLines = 0
+			$0.adjustsFontSizeToFitWidth = true
+			$0.text = sentences[index]
+			addSubview($0)
 			changeLabelTextFont(index, inputted: sentences[index] != placeHolderTexts[index])
+		})
 
-			if index < 4 {
-				let dot = UIView(frame: dotFrame(index))
-				dot.backgroundColor = UIColor.whiteColor()
-				dot.alpha = 0.6
-				dot.layer.cornerRadius = dot.frame.width / 2
-				addSubview(dot)
-				dots.append(dot)
-			}
-
-			index += 1
-		} while index < 5
-
+		dots = dotFrames().map({ UIView(frame: $0) })
 	}
 
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -110,14 +97,11 @@ class WriteView: UIView, UserDefaults {
 	}
 
 	override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-
 		guard let touch = touches.first else { return }
 		let currentLocation = touch.locationInView(self)
-
 		let currentPosition = locationToColorCode(currentLocation)
 
 		if selectingColor {
-
 			dots[selectedDotIndex].center = currentLocation
 
 			if currentPosition != startPosition {
@@ -133,12 +117,11 @@ class WriteView: UIView, UserDefaults {
 	}
 
 	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
-
 		if selectingColor {
 			UIView.animateWithDuration(0.2, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.0, 1.0)
 				self.dots[self.selectedDotIndex].alpha = 0.6
-				self.dots[self.selectedDotIndex].frame.origin = self.dotFrame(self.selectedDotIndex).origin
+				self.dots[self.selectedDotIndex].frame.origin = self.dotFrames()[self.selectedDotIndex].origin
 				}, completion: nil)
 
 			selectingColor = false
@@ -154,7 +137,7 @@ class WriteView: UIView, UserDefaults {
 			UIView.animateWithDuration(0.4, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.0, 1.0)
 				self.dots[self.selectedDotIndex].alpha = 0.6
-				self.dots[self.selectedDotIndex].frame.origin = self.dotFrame(self.selectedDotIndex).origin
+				self.dots[self.selectedDotIndex].frame.origin = self.dotFrames()[self.selectedDotIndex].origin
 				}, completion: nil)
 			selectingColor = false
 			delegate?.selectingColor(selectingColor)
@@ -169,6 +152,22 @@ class WriteView: UIView, UserDefaults {
 		} else {
 			touchMoved = false
 		}
+	}
+
+	func addDots(add: Bool) {
+		if add {
+			dots.forEach({
+				$0.backgroundColor = UIColor.whiteColor()
+				$0.alpha = 0.6
+				$0.layer.cornerRadius = $0.frame.width / 2
+				addSubview($0)
+				$0.animateWithType(.BecomeVisble, delay: 0.0, distance: 0.0)
+			})
+
+		} else {
+			dots.forEach({ $0.removeFromSuperview() })
+		}
+
 	}
 
 	func changeLabelText(index: Int, text: String) {
@@ -200,28 +199,16 @@ class WriteView: UIView, UserDefaults {
 	}
 
 	func checkText() {
-		var notReadyCount = 0
-		var i = 0
-		repeat {
-			if labels[i].text == placeHolderTexts[i] {
-				notReadyCount += 1
-			}
-
-			i += 1
-		} while i < labels.count
-
-		ready = notReadyCount == 0
+		let emptyLabel = labels.filter({ $0.text == placeHolderTexts[labels.indexOf($0)!] })
+		ready = emptyLabel.count == 0
 	}
 
 	func labelsGetRandomColors() {
-		self.colorCodes = fiveRandomColorCodes()
-		for i in 0..<4 {
-			changeLabelBackgoundColorAtDotIndex(i, colorCode: colorCodes[i])
-		}
+		colorCodes = fiveRandomColorCodes()
+		colorCodes.forEach({ changeLabelBackgoundColorAtDotIndex(colorCodes.indexOf($0)!, colorCode: $0) })
 	}
 
 	func changeLabelBackgoundColorAtDotIndex(dotIndex: Int, colorCode: Int) {
-
 		colorCodes[dotIndex] = colorCode
 		labels[dotIndex].backgroundColor = MyColor.code(colorCode).BTColors[0]
 		labels[dotIndex].textColor = MyColor.code(colorCode).BTColors[1]
@@ -268,24 +255,14 @@ class WriteView: UIView, UserDefaults {
 
 	func locationToBlockIndex(location: CGPoint) {
 		selectedBlockIndex = nil
-		var i = 0
-		repeat {
-			if activateBlockFrame(i).contains(location) {
-				selectedBlockIndex = i
-			}
-			i += 1
-		} while selectedBlockIndex == nil && i < labels.count
+		let frames = activateBlockFrames().filter({ $0.contains(location) })
+		if frames.count != 0 { selectedBlockIndex = activateBlockFrames().indexOf(frames[0]) }
 	}
 
 	func locationToDotIndex(location: CGPoint) {
 		selectedDotIndex = nil
-		var i = 0
-		repeat {
-			if activateDotFrame(i).contains(location) {
-				selectedDotIndex = i
-			}
-			i += 1
-		} while selectedDotIndex == nil && i < dots.count
+		let frames = activateDotFrames().filter({ $0.contains(location) })
+		if frames.count != 0 { selectedDotIndex = activateDotFrames().indexOf(frames[0]) }
 	}
 
 	func addtipLabels(add: Bool, removeIndex: Int?) {
@@ -319,9 +296,6 @@ class WriteView: UIView, UserDefaults {
 			default:
 				break
 			}
-
-
-
 		}
 	}
 
@@ -346,32 +320,50 @@ extension WriteView {
 		return CGRectMake(0, ScreenHeight - 20, ScreenWidth, 20)
 	}
 
-	func blockFrame(index: Int) -> CGRect {
-		let addend = index == 0 ? 0 : smallBlockHeight
-		let factor = index == 0 ? 0 : CGFloat(index - 1)
-		let y = addend + bigBlockHeight * factor
-		let height = (index == 0 || index == 4) ? smallBlockHeight : bigBlockHeight
-		return CGRectMake(0, y, ScreenWidth, height)
+	func blockFrames() -> [CGRect] {
+		func blockFrame(index: Int) -> CGRect {
+			let addend = index == 0 ? 0 : smallBlockHeight
+			let factor = index == 0 ? 0 : CGFloat(index - 1)
+			let y = addend + bigBlockHeight * factor
+			let height = (index == 0 || index == 4) ? smallBlockHeight : bigBlockHeight
+			return CGRectMake(0, y, ScreenWidth, height)
+		}
+
+		let indexes = [0, 1, 2, 3, 4]
+		return indexes.map({ blockFrame($0) })
 	}
 
-	func activateBlockFrame(index: Int) -> CGRect {
+	func activateBlockFrames() -> [CGRect] {
+		func activateBlockFrame(index: Int) -> CGRect {
+			let smallBlockheight_1: CGFloat = 70
+			let bigBlockHeight_1 = (ScreenHeight - smallBlockheight_1 * 2) / 3
 
-		let smallBlockheight_1: CGFloat = 70
-		let bigBlockHeight_1 = (ScreenHeight - smallBlockheight_1 * 2) / 3
+			let addend = index == 0 ? 0 : smallBlockheight_1
+			let factor = index == 0 ? 0 : CGFloat(index - 1)
+			let y = addend + bigBlockHeight_1 * factor
+			let height = (index == 0 || index == 4) ? smallBlockheight_1 : bigBlockHeight_1
+			return CGRectMake(0, y, ScreenWidth - 100, height)
+		}
 
-		let addend = index == 0 ? 0 : smallBlockheight_1
-		let factor = index == 0 ? 0 : CGFloat(index - 1)
-		let y = addend + bigBlockHeight_1 * factor
-		let height = (index == 0 || index == 4) ? smallBlockheight_1 : bigBlockHeight_1
-		return CGRectMake(0, y, ScreenWidth - 100, height)
-
+		let indexes = [0, 1, 2, 3, 4]
+		return indexes.map({ activateBlockFrame($0) })
 	}
 
-	func dotFrame(index: Int) -> CGRect {
-		let activate = activateDotFrame(index)
-		let x = activate.origin.x + 5
-		let y = activate.origin.y + 5
-		return CGRectMake(x, y, activate.width - 10, activate.height - 10)
+	func dotFrames() -> [CGRect] {
+		func dotFrame(index: Int) -> CGRect {
+			let activate = activateDotFrame(index)
+			let x = activate.origin.x + 5
+			let y = activate.origin.y + 5
+			return CGRectMake(x, y, activate.width - 10, activate.height - 10)
+		}
+
+		let indexes = [0, 1, 2, 3]
+		return indexes.map({ dotFrame($0) })
+	}
+
+	func activateDotFrames() -> [CGRect] {
+		let indexes = [0, 1, 2, 3]
+		return indexes.map({ activateDotFrame($0) })
 	}
 
 	func activateDotFrame(index: Int) -> CGRect {

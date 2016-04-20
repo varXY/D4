@@ -56,7 +56,7 @@ struct RateViews {
 			buttonsView.addSubview($0)
 		})
 
-		if VC.netOrLocalStory == -1 || VC.netOrLocalStory == 0 {
+		if VC.netOrLocalStory != 1 {
 			VC.view.addSubview(ratingView)
 			VC.view.addSubview(buttonsView)
 		}

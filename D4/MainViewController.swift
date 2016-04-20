@@ -218,7 +218,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
 		pointerView.showTextBaseOnTopIndex(pageIndex)
 		pointerView.addOrRemoveUpAndDownPointerAndLabel(pageIndex)
-		if pageIndex == 0 { pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready) }
 		hideOrShowStatusViewAndToolbar(nil)
 	}
 
@@ -294,11 +293,19 @@ extension MainViewController: XYScrollViewDelegate {
 		pointerView.showTextBaseOnTopIndex(topViewIndex)
 		pointerView.addOrRemoveUpAndDownPointerAndLabel(topViewIndex)
 
+		if topViewIndex == 0 && oldTopIndex == 1 {
+			xyScrollView.writeView.addDots(true)
+			xyScrollView.writeView.checkText()
+			pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
+		}
+
+		if topViewIndex == 1 && oldTopIndex == 0 {
+			xyScrollView.writeView.addDots(false)
+		}
+
 		if oldTopIndex == topViewIndex {
 			switch topViewIndex {
 			case 0:
-				pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
-
 				switch scrollType {
 				case .Up:
 					pointerView.changeTextForUpInWriteView()
@@ -322,9 +329,8 @@ extension MainViewController: XYScrollViewDelegate {
 					sendSupportEmail()
 
 				case .Left:
-					if !xyScrollView.writeView.firstColor {
-						xyScrollView.writeView.labelsGetRandomColors()
-					}
+					break
+//					xyScrollView.writeView.labelsGetRandomColors()
 
 				case .Right:
 					UIApplication.sharedApplication().openURL(jianShuURL!)
@@ -362,7 +368,6 @@ extension MainViewController: XYScrollViewDelegate {
 					self.uploadStory(story!, completion: { (success, error) in
 						if success != nil && success == true {
 							self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
-//							self.saveLastStory(story!)
 							self.saveMyStory(story!, completion: { (success) in
 								if success {
 									self.xyScrollView.writeView.clearContent()
@@ -377,29 +382,6 @@ extension MainViewController: XYScrollViewDelegate {
 					})
 				})
 
-//				delay(seconds: 1.0, completion: {
-//					var lastStory: Story?
-//					self.getMyStorys({ (storys) in lastStory = storys[0] })
-//					if story!.sentences != lastStory!.sentences && story!.colors != lastStory!.colors {
-//						self.xyScrollView.X1_storyTableView.insertNewStory(story!)
-//					}
-//				})
-//
-//				delay(seconds: 1.5, completion: {
-//					self.saveMyStory(story!, completion: { (success) in
-//						self.uploadStory(story!, completion: { (success, error) in
-//							if success != nil && success == true {
-//								self.saveLastStory(story!)
-//								self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
-//								self.xyScrollView.writeView.clearContent()
-//							} else {
-//								let hudView = HudView.hudInView(self.view, animated: true)
-//								hudView.text = "联网失败"
-//								hudView.nightStyle = self.nightStyle
-//							}
-//						})
-//					})
-//				})
 			}
 		}
 	}
@@ -488,8 +470,8 @@ extension MainViewController {
 		let indicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 		indicator.startAnimating()
 		indicator.frame = self.view.bounds
-		indicator.frame.size.height += 64
-		indicator.frame.origin.y -= 64
+//		indicator.frame.size.height += 64
+//		indicator.frame.origin.y -= 64
 		UIView.animateWithDuration(0.3, animations: { indicator.backgroundColor = UIColor(red: 45/255, green: 47/255, blue: 56/255, alpha: 0.45) })
 		view.addSubview(indicator)
 		view.userInteractionEnabled = false

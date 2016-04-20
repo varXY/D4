@@ -65,9 +65,7 @@ class SettingView: UIView {
 	}
 
 	func randomColorForPointerView() {
-		pointerImageViews.forEach({
-			$0.tintColor = MyColor.code(randomColorCode()).BTColors[0]
-		})
+		pointerImageViews.forEach({ $0.tintColor = MyColor.code(randomColorCode()).BTColors[0] })
 	}
 
 	func attributedStrings(nightStyle: Bool) -> [NSMutableAttributedString] {

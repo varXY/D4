@@ -129,7 +129,7 @@ class PointerView: UIView {
 			blankViews.forEach({ $0.backgroundColor = MyColor.code(24).BTColors[0]; addSubview($0) })
 
 			// 去创造新故事吧?
-			let texts = ["", "", "写\n故\n事", "关\n于"]
+			let texts = [lastUpdateText, "", "写\n故\n事", "关\n于"]
 			UDLR_labels.forEach({
 				let index = UDLR_labels.indexOf($0)!
 				$0.text = texts[index]
@@ -142,7 +142,7 @@ class PointerView: UIView {
 			addSubview(downPointer)
 
 			guard let detailVC = VC as? DetailViewController else { return }
-			let rightText = detailVC.netOrLocalStory == -1 || detailVC.netOrLocalStory == 0 ? "顶\n踩" : "复\n制\n文\n字"
+			let rightText = detailVC.netOrLocalStory != 1 ? "顶\n踩" : "复\n制\n文\n字"
 			let texts = ["上一个", "下一个", "主\n页", rightText]
 			UDLR_labels.forEach({ $0.text = texts[UDLR_labels.indexOf($0)!]; addSubview($0) })
 

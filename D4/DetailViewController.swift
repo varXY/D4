@@ -37,10 +37,8 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	var storys: [Story]!
 	var topStoryIndex: Int!
-	var cellRectHeight: Int!
 
 	var nightStyle = false
-
 	var netOrLocalStory = 0
 	var rateViewShowed = false
 
@@ -128,10 +126,11 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 			rateViews.likedIndexes = likedStoryIndexes()
 		}
 
-		updateRating(storys[topStoryIndex].ID, rating: newRating, done: { (success) in
+		let topIndex = topStoryIndex
+		updateRating(storys[topIndex].ID, rating: newRating, done: { (success) in
 			if success {
-				self.storys[self.topStoryIndex].rating = newRating
-				self.delegate?.ratingChanged(self.topStoryIndex, rating: self.storys[self.topStoryIndex].rating)
+				self.storys[topIndex].rating = newRating
+				self.delegate?.ratingChanged(topIndex, rating: self.storys[topIndex].rating)
 			} else {
 				self.removeLikedStoryIndex(self.topStoryIndex)
 				self.rateViews.likedIndexes = self.likedStoryIndexes()
@@ -172,7 +171,7 @@ extension DetailViewController: XYScrollViewDelegate {
 			dismissViewControllerAnimated(true, completion: nil)
 
 		case .Right:
-			netOrLocalStory == -1 || netOrLocalStory == 0 ? showOrHideRateViews() : copyTextOfStory()
+			netOrLocalStory != 1 ? showOrHideRateViews() : copyTextOfStory()
 
 		default:
 			break

@@ -57,15 +57,15 @@ class StoryTableView: UITableView, CoreDataAndStory {
 
 
 	func loading(loading: Bool) {
-		if loading {
-			self.frame.origin.y += 50
+		let distance: CGFloat = storys.count == 0 ? 70 : 50
 
+		if loading {
+			frame.origin.y += distance
 		} else {
 			UIView.animateWithDuration(0.3, animations: {
-				self.frame.origin.y -= 50
+				self.frame.origin.y -= distance
 				}, completion: { (_) in
 			})
-
 		}
 	}
 
@@ -106,7 +106,7 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 	}
 
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let style = netOrLocalStory == -1 || netOrLocalStory == 0 ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1
+		let style = netOrLocalStory != 1 ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1
 		var cell = UITableViewCell(style: style, reuseIdentifier: "Cell")
 		cell.textLabel?.font = UIFont.systemFontOfSize(17)
 
