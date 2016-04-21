@@ -57,7 +57,8 @@ class InputViewController: UIViewController {
 		numberLabel.text = String(textLimit)
 		view.addSubview(numberLabel)
 
-		textView = UITextView(frame: CGRectMake(0, 60, ScreenWidth, ScreenHeight / 2 - 100))
+		let factor: CGFloat = ScreenHeight != 480 ? 0.38 : 0.3
+		textView = UITextView(frame: CGRectMake(0, 60, ScreenWidth, ScreenHeight * factor))
 		textView.backgroundColor = UIColor.clearColor()
 		textView.tintColor = MyColor.code(colorCode).BTColors[1]
 		textView.textColor = MyColor.code(colorCode).BTColors[1]
@@ -73,7 +74,11 @@ class InputViewController: UIViewController {
 			textView.frame.origin.y += length
 
 			if index == 0 {
-				let dayLabel = UILabel(frame: CGRectMake(0, textView.frame.origin.y + textView.frame.height, ScreenWidth, 40))
+				var addend: CGFloat = 0
+				if ScreenHeight == 568 { addend = -40 }
+				if ScreenHeight == 480 { addend = -70 }
+
+				let dayLabel = UILabel(frame: CGRectMake(0, textView.frame.origin.y + textView.frame.height + addend, ScreenWidth, 40))
 				dayLabel.text = "的一天"
 				dayLabel.backgroundColor = UIColor.clearColor()
 				dayLabel.textColor = MyColor.code(colorCode).BTColors[1]
@@ -84,7 +89,6 @@ class InputViewController: UIViewController {
 			}
 
 		}
-
 
 	}
 
@@ -182,7 +186,9 @@ extension InputViewController: UITextViewDelegate {
 	}
 
 	func textViewDidEndEditing(textView: UITextView) {
-		delay(seconds: 2.0) { self.addBackButton() }
+//		sleep(1)
+//		addBackButton()
+		delay(seconds: 1.5) { self.addBackButton() }
 	}
 }
 

@@ -32,6 +32,7 @@ protocol LeanCloud: UserDefaults {
 extension LeanCloud {
 
 	func uploadStory(story: Story, completion: Completion) {
+		UIApplication.sharedApplication().networkActivityIndicatorVisible = true
 		let object = AVObject(className: AVKey.classStory)
 		object.setObject(story.sentences, forKey: AVKey.sentences)
 		object.setObject(story.colors, forKey: AVKey.colors)
@@ -39,6 +40,7 @@ extension LeanCloud {
 		object.setObject(story.author, forKey: AVKey.author)
 
 		object.saveInBackgroundWithBlock { (success, error) in
+			UIApplication.sharedApplication().networkActivityIndicatorVisible = false
 			if success { self.saveLastStoryID(object.objectId) }
 			completion(success, error)
 		}

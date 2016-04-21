@@ -243,8 +243,10 @@ class PointerView: UIView {
 		UDLR_labels[0].text = index == 0 ? lastUpdateText : ""
 	}
 
-	func changeLabelTextForCanSaveStory(can: Bool) {
-		UDLR_labels[1].text = can ? "发布" : randomTip(.Down)
+	func changeLabelTextForCanSaveStory(can: Bool, ready: Bool) {
+		if !can && !ready {	UDLR_labels[1].text = "写完上划发布" }
+		if can && !ready { UDLR_labels[1].text = randomTip(.Down) }
+		if can && ready { UDLR_labels[1].text = "发布" }
 	}
 
 	func changeTextForUpInWriteView() {
@@ -263,14 +265,14 @@ class PointerView: UIView {
 				"矛盾、冲突、行为",
 				"建置、对抗、结局",
 				"观点没有对错",
-				"无冲突、不故事",
+				"冲突与故事",
 				"一天一个故事",
 			]
 		case .Down:
 			tips = [
-//				"还没写完",
-				"写完上划发布",
-//				"故事不完整",
+				"今天已发布",
+				"一天一个故事",
+				"留着明天发",
 			]
 
 		default:

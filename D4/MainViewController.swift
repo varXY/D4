@@ -53,6 +53,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		view.addSubview(xyScrollView)
 		xyScrollView.X1_storyTableView.scrollsToTop = true
 		xyScrollView.writeView.backgroundSound = backgroundSound
+		xyScrollView.writeView.addtipLabels(true, removeIndex: nil)
 
 		dailyStorys = xyScrollView.X1_storyTableView.storys
 
@@ -71,7 +72,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		reloadDailyStory()
-		xyScrollView.writeView.addtipLabels(true, removeIndex: nil)
+		print(#function)
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -93,10 +94,10 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	// MARK: -
 
 	func reloadDailyStory() {
-//		let lastDate = lastLoadDate()
-//		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
-//		print(lastDate.string(.dd))
-//		print(NSDate().string(.dd))
+		let lastDate = lastLoadDate()
+		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
+		print(lastDate.string(.dd))
+		print(NSDate().string(.dd))
 
 		if !dailyStoryLoaded {
 			scrollToRow(0)
@@ -130,6 +131,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 				}
 			}
 			
+		} else {
+			pointerView.lastUpdateText = "已更新"
 		}
 
 	}
@@ -187,6 +190,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 		let infoButton = UIButton(type: .InfoLight)
 		infoButton.addTarget(self, action: #selector(gotoPage(_:)), forControlEvents: .TouchUpInside)
+		infoButton.exclusiveTouch = true
 		let infoBarButton = UIBarButtonItem(customView: infoButton)
 
 		let space = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
@@ -310,17 +314,6 @@ extension MainViewController: XYScrollViewDelegate {
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		hideOrShowStatusViewAndToolbar(nil)
 		pointerView.showTextBaseOnTopIndex(topViewIndex)
-		pointerView.addOrRemoveUpAndDownPointerAndLabel(topViewIndex)
-
-		if topViewIndex == 0 && oldTopIndex == 1 {
-			xyScrollView.writeView.addDots(true)
-			xyScrollView.writeView.checkText()
-			pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
-		}
-
-		if topViewIndex == 1 && oldTopIndex == 0 {
-			xyScrollView.writeView.addDots(false)
-		}
 
 		if oldTopIndex == topViewIndex {
 			switch topViewIndex {
@@ -330,6 +323,7 @@ extension MainViewController: XYScrollViewDelegate {
 					pointerView.changeTextForUpInWriteView()
 					
 				case .Down:
+					pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.doneWriting, ready: xyScrollView.writeView.ready)
 					delay(seconds: 0.7) { self.goBackSaveUploadStory() }
 
 				case .Left:
@@ -349,7 +343,6 @@ extension MainViewController: XYScrollViewDelegate {
 
 				case .Left:
 					break
-//					xyScrollView.writeView.labelsGetRandomColors()
 
 				case .Right:
 					UIApplication.sharedApplication().openURL(jianShuURL!)
@@ -363,6 +356,22 @@ extension MainViewController: XYScrollViewDelegate {
 				
 			default:
 				break
+			}
+		} else {
+			pointerView.addOrRemoveUpAndDownPointerAndLabel(topViewIndex)
+
+			if topViewIndex == 0 && oldTopIndex == 1 {
+				xyScrollView.writeView.addDots(true)
+				xyScrollView.writeView.checkText()
+				pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.doneWriting, ready: xyScrollView.writeView.ready)
+			}
+
+			if topViewIndex == 1 && oldTopIndex == 0 {
+				xyScrollView.writeView.addDots(false)
+			}
+
+			if topViewIndex == 2 && oldTopIndex == 1 {
+				xyScrollView.settingView.randomColorForPointerView()
 			}
 		}
 
@@ -389,6 +398,7 @@ extension MainViewController: XYScrollViewDelegate {
 							self.backgroundSound.playSound(true, sound: self.backgroundSound.done_sound)
 							self.saveMyStory(story!, completion: { (success) in
 								if success {
+									self.updateLastWriteDate(NSDate())
 									self.xyScrollView.writeView.clearContent()
 									self.xyScrollView.X1_storyTableView.insertNewStory(story!)
 								}
@@ -439,6 +449,8 @@ extension MainViewController: DetailViewControllerDelegate {
 
 			scrollToRow(topStoryIndex)
 		}
+
+		reloadDailyStory()
 	}
 
 	func scrollToRow(row: Int) {
@@ -456,7 +468,7 @@ extension MainViewController: InputViewControllerDelegate {
 	func inputTextViewDidReturn(index: Int, text: String) {
 		navigationController?.toolbarHidden = true
 		xyScrollView.writeView.changeLabelText(index, text: text)
-		pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.ready)
+		pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.doneWriting, ready: xyScrollView.writeView.ready)
 	}
 }
 
@@ -495,8 +507,6 @@ extension MainViewController {
 		let indicator = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 		indicator.startAnimating()
 		indicator.frame = self.view.bounds
-//		indicator.frame.size.height += 64
-//		indicator.frame.origin.y -= 64
 		UIView.animateWithDuration(0.3, animations: { indicator.backgroundColor = UIColor(red: 45/255, green: 47/255, blue: 56/255, alpha: 0.45) })
 		view.addSubview(indicator)
 		view.userInteractionEnabled = false

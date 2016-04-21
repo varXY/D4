@@ -68,6 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		guard let navi = window?.rootViewController as? UINavigationController else { return }
 		guard let mainVC = navi.topViewController as? MainViewController else { return }
 		mainVC.changeBarStyleBaseOnTime()
+		mainVC.reloadDailyStory()
 	}
 
 	func applicationDidBecomeActive(application: UIApplication) {

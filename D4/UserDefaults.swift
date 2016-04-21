@@ -16,6 +16,9 @@ struct UDKey {
 	static let LastStoryID = "LastStoryID"
 	static let Sentences = "Sentences"
 	static let Colors = "Colors"
+
+	static let TipA = "TipA"
+	static let TipB = "TipB"
 }
 
 protocol UserDefaults {
@@ -27,11 +30,13 @@ protocol UserDefaults {
 	func updateLastWriteDate(date: NSDate)
 	func lastWriteDate() -> NSDate
 
+	func tip_A_shown() -> Bool
+	func tip_B_shown() -> Bool
+	func saveTip_A_asShown()
+	func saveTip_B_asShown()
+
 	func updateLastLoadDate(date: NSDate)
 	func lastLoadDate() -> NSDate
-
-//	func saveLastStory(story: Story)
-//	func getLastStory() -> Story
 
 	func saveSentencesAndColors(sentences: [String], colors: [Int])
 	func getSentences() -> [String]?
@@ -53,6 +58,11 @@ extension UserDefaults {
 		return NSUserDefaults.standardUserDefaults()
 	}
 
+	var yesterday: NSDate {
+		let yesterday = NSDate(timeIntervalSinceNow: -86400)
+		let stringYesterday = yesterday.string(.MMddyy)
+		return NSDate.getDateWithString(stringYesterday)
+	}
 
 	func saveAuthor(author: String) {
 		userDefaults.setObject(author, forKey: UDKey.Author)
@@ -71,11 +81,28 @@ extension UserDefaults {
 	}
 
 	func lastWriteDate() -> NSDate {
-		guard let date = userDefaults.objectForKey(UDKey.LastWriteDate) as? NSDate else {
-			return NSDate(timeInterval: -86400, sinceDate: NSDate())
-		}
-
+		guard let date = userDefaults.objectForKey(UDKey.LastWriteDate) as? NSDate else { return yesterday }
 		return date
+	}
+
+	func tip_A_shown() -> Bool {
+		guard let shown = userDefaults.objectForKey(UDKey.TipA) as? Bool else { return false }
+		return shown
+	}
+
+	func tip_B_shown() -> Bool {
+		guard let shown = userDefaults.objectForKey(UDKey.TipB) as? Bool else { return false }
+		return shown
+	}
+
+	func saveTip_A_asShown() {
+		userDefaults.setBool(true, forKey: UDKey.TipA)
+		userDefaults.synchronize()
+	}
+
+	func saveTip_B_asShown() {
+		userDefaults.setBool(true, forKey: UDKey.TipB)
+		userDefaults.synchronize()
 	}
 
 
@@ -85,31 +112,9 @@ extension UserDefaults {
 	}
 
 	func lastLoadDate() -> NSDate {
-		guard let date = userDefaults.objectForKey(UDKey.LastLoadDate) as? NSDate else { return NSDate().earlierDate(NSDate()) }
+		guard let date = userDefaults.objectForKey(UDKey.LastLoadDate) as? NSDate else { return yesterday }
 		return date
 	}
-
-
-
-//	func saveLastStory(story: Story) {
-//		userDefaults.setObject(story.date, forKey: AVKey.date)
-//		userDefaults.setObject(story.rating, forKey: AVKey.rating)
-//		userDefaults.setObject(story.author, forKey: AVKey.author)
-//		userDefaults.setObject(story.sentences, forKey: AVKey.sentences)
-//		userDefaults.setObject(story.colors, forKey: AVKey.colors)
-//		userDefaults.synchronize()
-//	}
-//
-//	func getLastStory() -> Story {
-//		let date = userDefaults.objectForKey(AVKey.date) as! NSDate
-//		let rating = userDefaults.objectForKey(AVKey.rating) as! Int
-//		let author = userDefaults.objectForKey(AVKey.author) as! String
-//		let sentences = userDefaults.objectForKey(AVKey.sentences) as! [String]
-//		let colors = userDefaults.objectForKey(AVKey.colors) as! [Int]
-//
-//		let story = Story(date: date, sentences: sentences, colors: colors, rating: rating, author: author)
-//		return story
-//	}
 
 	func saveSentencesAndColors(sentences: [String], colors: [Int]) {
 		userDefaults.setObject(sentences, forKey: UDKey.Sentences)

@@ -19,6 +19,7 @@ class WriteView: UIView, UserDefaults {
 	var touchMoved = false
 	var selectingColor = false
 	var ready = false
+	var doneWriting = false
 
 	var selectedDotIndex: Int!
 	var selectedBlockIndex: Int!
@@ -74,6 +75,11 @@ class WriteView: UIView, UserDefaults {
 		})
 
 		dots = dotFrames().map({ UIView(frame: $0) })
+		dots.forEach({
+			$0.backgroundColor = UIColor.whiteColor()
+			$0.alpha = 0.6
+			$0.layer.cornerRadius = $0.frame.width / 2
+		})
 	}
 
 	override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -117,6 +123,7 @@ class WriteView: UIView, UserDefaults {
 	}
 
 	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
+		if touches!.count >= 2 { return }
 		if selectingColor {
 			UIView.animateWithDuration(0.2, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 				self.dots[self.selectedDotIndex].transform = CGAffineTransformMakeScale(1.0, 1.0)
@@ -130,6 +137,7 @@ class WriteView: UIView, UserDefaults {
 	}
 
 	override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+		if touches.count >= 2 { return }
 		guard let touch = touches.first else { return }
 		let currentLocation = touch.locationInView(self)
 
@@ -155,19 +163,7 @@ class WriteView: UIView, UserDefaults {
 	}
 
 	func addDots(add: Bool) {
-		if add {
-			dots.forEach({
-				$0.backgroundColor = UIColor.whiteColor()
-				$0.alpha = 0.6
-				$0.layer.cornerRadius = $0.frame.width / 2
-				addSubview($0)
-//				$0.animateWithType(.BecomeVisble, delay: 0.0, distance: 0.0)
-			})
-
-		} else {
-			dots.forEach({ $0.removeFromSuperview() })
-		}
-
+		add ? dots.forEach({ addSubview($0) }) : dots.forEach({ $0.removeFromSuperview() })
 	}
 
 	func changeLabelText(index: Int, text: String) {
@@ -200,7 +196,8 @@ class WriteView: UIView, UserDefaults {
 
 	func checkText() {
 		let emptyLabel = labels.filter({ $0.text == placeHolderTexts[labels.indexOf($0)!] })
-		ready = emptyLabel.count == 0
+		doneWriting = emptyLabel.count == 0
+		ready = doneWriting && lastWriteDate().string(.dd) != NSDate().string(.dd)
 	}
 
 	func labelsGetRandomColors() {
@@ -267,36 +264,49 @@ class WriteView: UIView, UserDefaults {
 
 	func addtipLabels(add: Bool, removeIndex: Int?) {
 		if add {
-			let tipLabels = tipViewFrames().map({ UILabel(frame: $0) })
-			let tips = [
-				"点击\n中间\n开始\n输入\n",
-				"按住\n圆点\n滑动\n选择\n颜色"
-			]
-			tipLabels.forEach({
-				$0.textColor = MyColor.code(colorCodes[2]).BTColors[1]
-				let index = tipLabels.indexOf($0)
-				$0.numberOfLines = 0
-				$0.font = UIFont.systemFontOfSize(12)
-				$0.text = tips[index!]
-				$0.adjustsFontSizeToFitWidth = true
-				$0.textAlignment = .Center
-				$0.tag = 123 + index!
-				addSubview($0)
-			})
+			var tipLabels = [UILabel]()
+			if !tip_A_shown() {
+				let label_A = UILabel(frame: tipViewFrames()[0])
+				label_A.text = "点击\n中间\n开始\n输入\n"
+				tipLabels.append(label_A)
+			}
+
+			if !tip_B_shown() {
+				let label_B = UILabel(frame: tipViewFrames()[1])
+				label_B.text = "按住\n圆点\n滑动\n选择\n颜色"
+				tipLabels.append(label_B)
+			}
+
+			if tipLabels.count != 0 {
+				tipLabels.forEach({
+					$0.textColor = MyColor.code(colorCodes[2]).BTColors[1]
+					let index = tipLabels.indexOf($0)
+					$0.numberOfLines = 0
+					$0.font = UIFont.systemFontOfSize(12)
+					$0.adjustsFontSizeToFitWidth = true
+					$0.textAlignment = .Center
+					$0.tag = 123 + index!
+					addSubview($0)
+				})
+			}
+
 		} else {
 			switch removeIndex! {
 			case 0:
 				if let label = viewWithTag(123) as? UILabel {
 					label.removeFromSuperview()
+					saveTip_A_asShown()
 				}
 			case 1:
 				if let label = viewWithTag(124) as? UILabel {
 					label.removeFromSuperview()
+					saveTip_B_asShown()
 				}
 			default:
 				break
 			}
 		}
+
 	}
 
 

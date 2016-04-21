@@ -72,7 +72,7 @@ class SettingView: UIView {
 		let texts = ["天的故事\n=\n标题\n+\n上午 + 下午 + 晚上\n+\n睡前哲思\n=\n10 + 100 + 100 + 100 + 20", "今日100\n=\n50个今日最新\n+\n49个昨日最热\n+\n1个你的故事\n=\n(50 + 49 + 1) × 330"]
 		let titleAttributes = [
 			NSForegroundColorAttributeName: MyColor.code(14).BTColors[0],
-			NSFontAttributeName: UIFont.boldSystemFontOfSize(20)
+			NSFontAttributeName: UIFont.boldSystemFontOfSize(19)
 		]
 
 		let bodyColor = nightStyle ? UIColor.whiteColor() : MyColor.code(5).BTColors[0]

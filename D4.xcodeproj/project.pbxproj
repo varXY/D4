@@ -21,7 +21,6 @@
 		312B938F1CC34AFF00C4EC40 /* MailSending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B938E1CC34AFF00C4EC40 /* MailSending.swift */; };
 		312B93921CC36C5000C4EC40 /* SupportProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B93911CC36C5000C4EC40 /* SupportProducts.swift */; };
 		312B93941CC36C5600C4EC40 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B93931CC36C5600C4EC40 /* IAPHelper.swift */; };
-		3140FD471CBC6A5500515666 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3140FD461CBC6A5500515666 /* iAd.framework */; };
 		3177CF651CBDBA23006C6C43 /* NSdate+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3177CF641CBDBA23006C6C43 /* NSdate+.swift */; };
 		317919301CABB25900DB9A0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3179192F1CABB25900DB9A0A /* AppDelegate.swift */; };
 		317919321CABB25900DB9A0A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317919311CABB25900DB9A0A /* MainViewController.swift */; };
@@ -82,7 +81,6 @@
 		312B938E1CC34AFF00C4EC40 /* MailSending.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailSending.swift; sourceTree = "<group>"; };
 		312B93911CC36C5000C4EC40 /* SupportProducts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportProducts.swift; sourceTree = "<group>"; };
 		312B93931CC36C5600C4EC40 /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
-		3140FD461CBC6A5500515666 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		3177CF641CBDBA23006C6C43 /* NSdate+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSdate+.swift"; sourceTree = "<group>"; };
 		3179192C1CABB25900DB9A0A /* D4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = D4.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3179192F1CABB25900DB9A0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -137,7 +135,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3140FD471CBC6A5500515666 /* iAd.framework in Frameworks */,
 				3179194D1CABB2D500DB9A0A /* CoreLocation.framework in Frameworks */,
 				3179194B1CABB2CD00DB9A0A /* CoreTelephony.framework in Frameworks */,
 				317919491CABB2C300DB9A0A /* MobileCoreServices.framework in Frameworks */,
@@ -210,7 +207,6 @@
 		3179194E1CABB35B00DB9A0A /* Framework */ = {
 			isa = PBXGroup;
 			children = (
-				3140FD461CBC6A5500515666 /* iAd.framework */,
 				3179194C1CABB2D500DB9A0A /* CoreLocation.framework */,
 				3179194A1CABB2CD00DB9A0A /* CoreTelephony.framework */,
 				317919481CABB2C300DB9A0A /* MobileCoreServices.framework */,

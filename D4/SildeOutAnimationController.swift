@@ -28,6 +28,7 @@ class SlideOutAnimationController: NSObject, UIViewControllerAnimatedTransitioni
 //			})
 
 			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
+//				fromView.backgroundColor = UIColor.clearColor()
 				fromView.alpha = 0.0
 				fromView.frame.origin.x += ScreenWidth
 				}, completion: { (finished) in

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-//import iAd
 
 enum StoryTableViewScrollType {
 	case Up, Down
@@ -152,14 +151,6 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		let cell = tableView.cellForRowAtIndexPath(indexPath)
 		let colorCode = storys[indexPath.row].colors[0]
 		cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
-//		delay(seconds: 0.5) {
-//			cell?.textLabel?.alpha = 0.0
-//			cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
-//
-//			UIView.animateWithDuration(0.3, animations: {
-//				cell?.textLabel?.alpha = 1.0
-//			})
-//		}
 	}
 
 	func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
@@ -177,34 +168,3 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		return indexPath
 	}
 }
-
-
-
-//extension StoryTableView: ADBannerViewDelegate {
-//
-//	func bannerViewWillLoadAd(banner: ADBannerView!) {
-//		banner.alpha = 1.0
-//	}
-//
-//	func bannerViewDidLoadAd(banner: ADBannerView!) {
-//		banner.alpha = 1.0
-//	}
-//
-//	func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
-//		banner.alpha = 0.0
-//	}
-//}
-
-//extension StoryTableView: UIScrollViewDelegate {
-//
-//	func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//			let translation = self.panGestureRecognizer.translationInView(self.superview)
-//			if translation.y < -20 {
-//				SDelegate?.showOrHideToolbar(true)
-//			} else if translation.y > 20{
-//				SDelegate?.showOrHideToolbar(false)
-//			}
-//
-//	}
-//
-//}

@@ -43,6 +43,8 @@ class XYScrollView: UIScrollView {
 	let topOrigin = CGPoint(x: 0, y: -ScreenHeight)
 	let middleOrigin = CGPoint(x: 0, y: 0)
 	let bottomOrigin = CGPoint(x: 0, y: ScreenHeight)
+	let upHalfOrigin = CGPoint(x: 0, y: -ScreenHeight / 2)
+	let downHalfOrigin = CGPoint(x: 0, y: ScreenHeight / 2)
 
 	var storys: [Story]! {
 		didSet {
@@ -175,6 +177,7 @@ class XYScrollView: UIScrollView {
 		scrollView.clipsToBounds = true
 		scrollView.exclusiveTouch = true
 		scrollView.directionalLockEnabled = true
+		scrollView.pagingEnabled = false
 		scrollView.scrollsToTop = false
 		scrollView.delegate = self
 	}
@@ -194,8 +197,10 @@ class XYScrollView: UIScrollView {
 						self.X1_storyTableView.alpha = 0.0
 						self.X0_contentView.frame.origin.x += ScreenWidth
 						}, completion: {
+							self.X1_storyTableView.alpha = 0.0
 							if notClear { self.X1_storyTableView.backgroundColor = MyColor.code(5).BTColors[0] }
 							delay(seconds: 0.5, completion: {
+//								self.X1_storyTableView.alpha = 0.0
 								self.writeView.layer.cornerRadius = globalRadius
 							})
 					})
@@ -209,7 +214,8 @@ class XYScrollView: UIScrollView {
 					animate({
 						self.X1_storyTableView.alpha = 0.0
 						self.X2_contentView.frame.origin.x -= ScreenWidth
-						}, completion: { 
+						}, completion: {
+//							self.X1_storyTableView.alpha = 0.0
 							if notClear { self.X1_storyTableView.backgroundColor = MyColor.code(5).BTColors[0] }
 					})
 					
@@ -226,7 +232,8 @@ class XYScrollView: UIScrollView {
 					animate({
 						self.X0_contentView.alpha = 0.0
 						self.X0_contentView.frame.origin.x -= ScreenWidth
-						}, completion: { 
+						}, completion: {
+//							self.X0_contentView.alpha = 0.0
 							self.writeView.layer.cornerRadius = 0
 					})
 
@@ -244,7 +251,7 @@ class XYScrollView: UIScrollView {
 						self.X2_contentView.alpha = 0.0
 						self.X2_contentView.frame.origin.x += ScreenWidth
 						}, completion: { 
-
+//							self.X2_contentView.alpha = 0.0
 					})
 
 				default: break
@@ -260,13 +267,19 @@ class XYScrollView: UIScrollView {
 					doneReorder = false
 
 					changeStoryForContentView(topView, storyIndex: topStoryIndex)
-					bringSubviewToFront(topView)
-					topView.alpha = 1.0
+					topView.frame.origin = middleOrigin
+					topView.transform = CGAffineTransformMakeScale(0.9, 0.9)
+					topView.alpha = 0.8
+					removePartOfStory(middleView, labelIndex: 4)
 
 					animate({
-						self.middleView.alpha = 0.0
-						self.topView.frame.origin = self.middleOrigin
+						self.topView.alpha = 1.0
+						self.topView.transform = CGAffineTransformIdentity
+						self.middleView.frame.origin = self.bottomOrigin
+//						self.middleView.alpha = 0.5
 						}, completion: {
+							self.sendSubviewToBack(self.middleView)
+							self.middleView.alpha = 0.0
 							self.middleView.frame.origin = self.topOrigin
 
 							if self.topStoryIndex > 1 {
@@ -275,8 +288,6 @@ class XYScrollView: UIScrollView {
 
 							self.reorderView()
 					})
-
-
 
 				}
 
@@ -289,11 +300,15 @@ class XYScrollView: UIScrollView {
 					changeStoryForContentView(bottomView, storyIndex: topStoryIndex)
 					bringSubviewToFront(bottomView)
 					bottomView.alpha = 1.0
+					removePartOfStory(middleView, labelIndex: 0)
 
 					animate({
-						self.middleView.alpha = 0.0
+						self.middleView.alpha = 0.4
+						self.middleView.transform = CGAffineTransformMakeScale(0.9, 0.9)
 						self.bottomView.frame.origin = self.middleOrigin
-						}, completion: { 
+						}, completion: {
+							self.middleView.transform = CGAffineTransformIdentity
+							self.middleView.alpha = 0.0
 							self.middleView.frame.origin = self.bottomOrigin
 
 							if self.topStoryIndex < self.storys.count - 1 {
@@ -304,7 +319,6 @@ class XYScrollView: UIScrollView {
 					})
 
 				}
-
 
 			default:
 				break
@@ -325,6 +339,21 @@ class XYScrollView: UIScrollView {
 	func changeStoryForContentView(contentView: UIScrollView, storyIndex: Int) {
 		if let storyView = contentView.viewWithTag(110) as? StoryView {
 			storyView.reloadStory(storys[storyIndex])
+		}
+	}
+
+	func removePartOfStory(contentView: UIScrollView, labelIndex: Int) {
+		if let storyView = contentView.viewWithTag(110) as? StoryView {
+			storyView.labels[labelIndex].text = ""
+			if labelIndex == 0 {
+				storyView.labels[0].text = ""
+//				storyView.labels[1].text = ""
+				storyView.labels[0].backgroundColor = storyView.labels[1].backgroundColor
+			} else {
+				storyView.labels[4].text = ""
+//				storyView.labels[3].text = ""
+				storyView.labels[4].backgroundColor = storyView.labels[3].backgroundColor
+			}
 		}
 	}
 
@@ -375,6 +404,15 @@ extension XYScrollView: UIScrollViewDelegate {
 		if !inMainVC { topViewIndex = topStoryIndex }
 		XYDelegate?.xyScrollViewDidScroll(scrolledType, topViewIndex: topViewIndex)
 		scrolledType = .NotScrollYet
+
+//		if scrollView == X0_contentView {
+//			print(scrollView.contentOffset)
+//			print(targetContentOffset.memory)
+////			targetContentOffset.memory.y = -50
+//			targetContentOffset.memory.x = 50
+//			print(targetContentOffset.memory)
+//		}
+
 	}
 
 }

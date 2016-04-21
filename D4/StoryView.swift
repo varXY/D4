@@ -51,6 +51,10 @@ class StoryView: UIView {
 		})
 	}
 
+	func removeTitle() {
+		labels[0].text = ""
+	}
+
 	func blockFrames() -> [CGRect] {
 		func blockFrame(index: Int) -> CGRect {
 			let bigBlockHeight = (ScreenHeight - 100) / 3

@@ -52,6 +52,7 @@ struct RateViews {
 			$0.setTitle(titles[i], forState: .Normal)
 			$0.tintColor = textColor
 			$0.tag = 100 + i
+			$0.exclusiveTouch = true
 			$0.addTarget(VC, action: #selector(VC.rateButtonTapped(_:)), forControlEvents: .TouchUpInside)
 			buttonsView.addSubview($0)
 		})
