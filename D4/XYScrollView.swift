@@ -405,14 +405,6 @@ extension XYScrollView: UIScrollViewDelegate {
 		XYDelegate?.xyScrollViewDidScroll(scrolledType, topViewIndex: topViewIndex)
 		scrolledType = .NotScrollYet
 
-//		if scrollView == X0_contentView {
-//			print(scrollView.contentOffset)
-//			print(targetContentOffset.memory)
-////			targetContentOffset.memory.y = -50
-//			targetContentOffset.memory.x = 50
-//			print(targetContentOffset.memory)
-//		}
-
 	}
 
 }
