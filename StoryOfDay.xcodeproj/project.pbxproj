@@ -21,6 +21,7 @@
 		312B938F1CC34AFF00C4EC40 /* MailSending.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B938E1CC34AFF00C4EC40 /* MailSending.swift */; };
 		312B93921CC36C5000C4EC40 /* SupportProducts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B93911CC36C5000C4EC40 /* SupportProducts.swift */; };
 		312B93941CC36C5600C4EC40 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312B93931CC36C5600C4EC40 /* IAPHelper.swift */; };
+		315438271CCCAC060095148F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 315438291CCCAC060095148F /* InfoPlist.strings */; };
 		3177CF651CBDBA23006C6C43 /* NSdate+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3177CF641CBDBA23006C6C43 /* NSdate+.swift */; };
 		317919301CABB25900DB9A0A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3179192F1CABB25900DB9A0A /* AppDelegate.swift */; };
 		317919321CABB25900DB9A0A /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317919311CABB25900DB9A0A /* MainViewController.swift */; };
@@ -81,8 +82,10 @@
 		312B938E1CC34AFF00C4EC40 /* MailSending.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailSending.swift; sourceTree = "<group>"; };
 		312B93911CC36C5000C4EC40 /* SupportProducts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportProducts.swift; sourceTree = "<group>"; };
 		312B93931CC36C5600C4EC40 /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
+		315438281CCCAC060095148F /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		3154382A1CCCAC290095148F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3177CF641CBDBA23006C6C43 /* NSdate+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSdate+.swift"; sourceTree = "<group>"; };
-		3179192C1CABB25900DB9A0A /* D4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = D4.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3179192C1CABB25900DB9A0A /* StoryOfDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoryOfDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3179192F1CABB25900DB9A0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		317919311CABB25900DB9A0A /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		317919371CABB25900DB9A0A /* D4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = D4.xcdatamodel; sourceTree = "<group>"; };
@@ -179,7 +182,7 @@
 		3179192D1CABB25900DB9A0A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3179192C1CABB25900DB9A0A /* D4.app */,
+				3179192C1CABB25900DB9A0A /* StoryOfDay.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -256,6 +259,7 @@
 			isa = PBXGroup;
 			children = (
 				3179193E1CABB25900DB9A0A /* Info.plist */,
+				315438291CCCAC060095148F /* InfoPlist.strings */,
 				31891EB31CC76FEE0046E0B7 /* Reachability.h */,
 				31891EB11CC76FE40046E0B7 /* Reachability.m */,
 				31891EB01CC76FE30046E0B7 /* D4-Bridging-Header.h */,
@@ -312,9 +316,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3179192B1CABB25900DB9A0A /* D4 */ = {
+		3179192B1CABB25900DB9A0A /* StoryOfDay */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 317919411CABB25900DB9A0A /* Build configuration list for PBXNativeTarget "D4" */;
+			buildConfigurationList = 317919411CABB25900DB9A0A /* Build configuration list for PBXNativeTarget "StoryOfDay" */;
 			buildPhases = (
 				317919281CABB25900DB9A0A /* Sources */,
 				317919291CABB25900DB9A0A /* Frameworks */,
@@ -324,9 +328,9 @@
 			);
 			dependencies = (
 			);
-			name = D4;
+			name = StoryOfDay;
 			productName = D4;
-			productReference = 3179192C1CABB25900DB9A0A /* D4.app */;
+			productReference = 3179192C1CABB25900DB9A0A /* StoryOfDay.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -341,10 +345,11 @@
 				TargetAttributes = {
 					3179192B1CABB25900DB9A0A = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = 9VT3ZYNA9Y;
 					};
 				};
 			};
-			buildConfigurationList = 317919271CABB25900DB9A0A /* Build configuration list for PBXProject "D4" */;
+			buildConfigurationList = 317919271CABB25900DB9A0A /* Build configuration list for PBXProject "StoryOfDay" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -357,7 +362,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3179192B1CABB25900DB9A0A /* D4 */,
+				3179192B1CABB25900DB9A0A /* StoryOfDay */,
 			);
 		};
 /* End PBXProject section */
@@ -368,6 +373,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				312A17971CC47C5800FB27F9 /* Done2.wav in Resources */,
+				315438271CCCAC060095148F /* InfoPlist.strings in Resources */,
 				312A178F1CC461A700FB27F9 /* Selected.m4a in Resources */,
 				312A17951CC47A5400FB27F9 /* Selected2.wav in Resources */,
 				3179193A1CABB25900DB9A0A /* Assets.xcassets in Resources */,
@@ -433,6 +439,18 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		315438291CCCAC060095148F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				315438281CCCAC060095148F /* Base */,
+				3154382A1CCCAC290095148F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		3179193F1CABB25900DB9A0A /* Debug */ = {
@@ -524,6 +542,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/D4",
@@ -539,7 +558,7 @@
 					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.xiaoyao.StoryOfDay;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = StoryOfDay;
 				SWIFT_OBJC_BRIDGING_HEADER = "D4/D4-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -551,6 +570,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/D4",
@@ -566,7 +586,7 @@
 					"-lsqlite3",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.xiaoyao.StoryOfDay;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = StoryOfDay;
 				SWIFT_OBJC_BRIDGING_HEADER = "D4/D4-Bridging-Header.h";
 			};
 			name = Release;
@@ -574,7 +594,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		317919271CABB25900DB9A0A /* Build configuration list for PBXProject "D4" */ = {
+		317919271CABB25900DB9A0A /* Build configuration list for PBXProject "StoryOfDay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3179193F1CABB25900DB9A0A /* Debug */,
@@ -583,7 +603,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		317919411CABB25900DB9A0A /* Build configuration list for PBXNativeTarget "D4" */ = {
+		317919411CABB25900DB9A0A /* Build configuration list for PBXNativeTarget "StoryOfDay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				317919421CABB25900DB9A0A /* Debug */,

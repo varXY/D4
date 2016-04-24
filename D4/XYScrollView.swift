@@ -347,11 +347,9 @@ class XYScrollView: UIScrollView {
 			storyView.labels[labelIndex].text = ""
 			if labelIndex == 0 {
 				storyView.labels[0].text = ""
-//				storyView.labels[1].text = ""
 				storyView.labels[0].backgroundColor = storyView.labels[1].backgroundColor
 			} else {
 				storyView.labels[4].text = ""
-//				storyView.labels[3].text = ""
 				storyView.labels[4].backgroundColor = storyView.labels[3].backgroundColor
 			}
 		}

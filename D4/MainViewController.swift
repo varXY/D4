@@ -72,7 +72,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
  	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		reloadDailyStory()
-		print(#function)
 	}
 
 	override func viewDidAppear(animated: Bool) {
@@ -96,8 +95,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func reloadDailyStory() {
 		let lastDate = lastLoadDate()
 		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
-		print(lastDate.string(.dd))
-		print(NSDate().string(.dd))
 
 		if !dailyStoryLoaded {
 			scrollToRow(0)
