@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3179192B1CABB25900DB9A0A"
-               BuildableName = "&#x5929;&#x7684;&#x6545;&#x4e8b;.app"
+               BuildableName = "StoryOfDay.app"
                BlueprintName = "StoryOfDay"
                ReferencedContainer = "container:StoryOfDay.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3179192B1CABB25900DB9A0A"
-            BuildableName = "&#x5929;&#x7684;&#x6545;&#x4e8b;.app"
+            BuildableName = "StoryOfDay.app"
             BlueprintName = "StoryOfDay"
             ReferencedContainer = "container:StoryOfDay.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3179192B1CABB25900DB9A0A"
-            BuildableName = "&#x5929;&#x7684;&#x6545;&#x4e8b;.app"
+            BuildableName = "StoryOfDay.app"
             BlueprintName = "StoryOfDay"
             ReferencedContainer = "container:StoryOfDay.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3179192B1CABB25900DB9A0A"
-            BuildableName = "&#x5929;&#x7684;&#x6545;&#x4e8b;.app"
+            BuildableName = "StoryOfDay.app"
             BlueprintName = "StoryOfDay"
             ReferencedContainer = "container:StoryOfDay.xcodeproj">
          </BuildableReference>

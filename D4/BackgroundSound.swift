@@ -10,9 +10,9 @@ import Foundation
 import AVFoundation
 
 struct BackgroundSound {
-	var selected_sound: AVAudioPlayer
-	var switchOn_sound: AVAudioPlayer
-	var done_sound: AVAudioPlayer
+	let selected_sound: AVAudioPlayer
+	let switchOn_sound: AVAudioPlayer
+	let done_sound: AVAudioPlayer
 
 	init() {
 		let soundPath_0 = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("Selected", ofType: "m4a")!)

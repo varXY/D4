@@ -18,10 +18,12 @@ let StatusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
 let smallBlockHeight: CGFloat = 50
 let TriggerDistance: CGFloat = 60
 
-let globalRadius: CGFloat = 5
+let globalRadius: CGFloat = ScreenHeight * 0.007
 
 // URL
 let jianShuURL = NSURL(string: "http://www.jianshu.com/users/83ddcf71e52c")
+let appStoreURL = NSURL(string: "https://itunes.apple.com/us/app/tian-gu-shi-yi-ge-gu-shi-yu/id1104752673?mt=8")
+// https://appsto.re/us/Hat2bb.i
 
 // 数字格式转换
 

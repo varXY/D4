@@ -200,7 +200,6 @@ class XYScrollView: UIScrollView {
 							self.X1_storyTableView.alpha = 0.0
 							if notClear { self.X1_storyTableView.backgroundColor = MyColor.code(5).BTColors[0] }
 							delay(seconds: 0.5, completion: {
-//								self.X1_storyTableView.alpha = 0.0
 								self.writeView.layer.cornerRadius = globalRadius
 							})
 					})
@@ -215,7 +214,6 @@ class XYScrollView: UIScrollView {
 						self.X1_storyTableView.alpha = 0.0
 						self.X2_contentView.frame.origin.x -= ScreenWidth
 						}, completion: {
-//							self.X1_storyTableView.alpha = 0.0
 							if notClear { self.X1_storyTableView.backgroundColor = MyColor.code(5).BTColors[0] }
 					})
 					
@@ -233,7 +231,6 @@ class XYScrollView: UIScrollView {
 						self.X0_contentView.alpha = 0.0
 						self.X0_contentView.frame.origin.x -= ScreenWidth
 						}, completion: {
-//							self.X0_contentView.alpha = 0.0
 							self.writeView.layer.cornerRadius = 0
 					})
 
@@ -251,7 +248,6 @@ class XYScrollView: UIScrollView {
 						self.X2_contentView.alpha = 0.0
 						self.X2_contentView.frame.origin.x += ScreenWidth
 						}, completion: { 
-//							self.X2_contentView.alpha = 0.0
 					})
 
 				default: break
@@ -269,14 +265,12 @@ class XYScrollView: UIScrollView {
 					changeStoryForContentView(topView, storyIndex: topStoryIndex)
 					topView.frame.origin = middleOrigin
 					topView.transform = CGAffineTransformMakeScale(0.9, 0.9)
-					topView.alpha = 0.8
+					topView.alpha = 1.0
 					removePartOfStory(middleView, labelIndex: 4)
 
 					animate({
-						self.topView.alpha = 1.0
 						self.topView.transform = CGAffineTransformIdentity
 						self.middleView.frame.origin = self.bottomOrigin
-//						self.middleView.alpha = 0.5
 						}, completion: {
 							self.sendSubviewToBack(self.middleView)
 							self.middleView.alpha = 0.0

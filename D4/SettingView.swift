@@ -39,11 +39,14 @@ class SettingView: UIView {
 			addSubview($0)
 		})
 
-		let iconView = UIImageView(image: UIImage(named: "Icon"))
-		iconView.center = center
-		iconView.layer.cornerRadius = iconView.frame.width / 2
-		iconView.clipsToBounds = true
-		addSubview(iconView)
+		let iconButton = UIButton(type: .Custom)
+		iconButton.frame.size = CGSize(width: 60, height: 60)
+		iconButton.center = center
+		iconButton.setImage(UIImage(named: "Icon"), forState: .Normal)
+		iconButton.addTarget(self, action: #selector(gotoAppStore), forControlEvents: .TouchUpInside)
+		iconButton.layer.cornerRadius = iconButton.frame.width / 2
+		iconButton.clipsToBounds = true
+		addSubview(iconButton)
 
 		let pointer = Pointer()
 		pointerImageViews = [pointer.imageView(.Up), pointer.imageView(.Down), pointer.imageView(.Left), pointer.imageView(.Right)]
@@ -54,6 +57,10 @@ class SettingView: UIView {
 			addSubview($0)
 		})
 
+	}
+
+	func gotoAppStore() {
+		UIApplication.sharedApplication().openURL(appStoreURL!)
 	}
 
 	func changeColorBaseOnNightStyle(nightStyle: Bool) {

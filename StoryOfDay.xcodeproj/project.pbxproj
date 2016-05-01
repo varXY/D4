@@ -40,6 +40,7 @@
 		317CC5C51CB1EEE0009A368B /* SildeOutAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 317CC5C41CB1EEE0009A368B /* SildeOutAnimationController.swift */; };
 		31891EB21CC76FE40046E0B7 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 31891EB11CC76FE40046E0B7 /* Reachability.m */; };
 		3189C1971CB74BC90092D363 /* SLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3189C1961CB74BC90092D363 /* SLabel.swift */; };
+		318A5F3D1CD1A6A1005E3C59 /* Purchase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318A5F3C1CD1A6A1005E3C59 /* Purchase.swift */; };
 		3198F12E1CB48315006612B8 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3198F12D1CB48315006612B8 /* DetailViewController.swift */; };
 		3198F1301CB48B27006612B8 /* StoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3198F12F1CB48B27006612B8 /* StoryView.swift */; };
 		31B6424C1CB0A75100D901CF /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B6424B1CB0A75100D901CF /* SettingView.swift */; };
@@ -83,7 +84,6 @@
 		312B93911CC36C5000C4EC40 /* SupportProducts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportProducts.swift; sourceTree = "<group>"; };
 		312B93931CC36C5600C4EC40 /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
 		315438281CCCAC060095148F /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		3154382A1CCCAC290095148F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3177CF641CBDBA23006C6C43 /* NSdate+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSdate+.swift"; sourceTree = "<group>"; };
 		3179192C1CABB25900DB9A0A /* StoryOfDay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StoryOfDay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3179192F1CABB25900DB9A0A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -106,6 +106,7 @@
 		31891EB11CC76FE40046E0B7 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		31891EB31CC76FEE0046E0B7 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		3189C1961CB74BC90092D363 /* SLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SLabel.swift; sourceTree = "<group>"; };
+		318A5F3C1CD1A6A1005E3C59 /* Purchase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Purchase.swift; sourceTree = "<group>"; };
 		3198F12D1CB48315006612B8 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		3198F12F1CB48B27006612B8 /* StoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryView.swift; sourceTree = "<group>"; };
 		31B6424B1CB0A75100D901CF /* SettingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
@@ -277,6 +278,7 @@
 				312B938E1CC34AFF00C4EC40 /* MailSending.swift */,
 				312A17921CC461E000FB27F9 /* BackgroundSound.swift */,
 				31F2A4DD1CB9C6B7001725A0 /* CoreData.swift */,
+				318A5F3C1CD1A6A1005E3C59 /* Purchase.swift */,
 				31F2A4EF1CB9CE92001725A0 /* CoreData */,
 			);
 			name = Model;
@@ -418,6 +420,7 @@
 				317CC5C51CB1EEE0009A368B /* SildeOutAnimationController.swift in Sources */,
 				31F2A4E91CB9CE4F001725A0 /* Colors+CoreDataProperties.swift in Sources */,
 				3189C1971CB74BC90092D363 /* SLabel.swift in Sources */,
+				318A5F3D1CD1A6A1005E3C59 /* Purchase.swift in Sources */,
 				31FF3A311CACFB8A008B2C69 /* String+.swift in Sources */,
 				31F2A4EA1CB9CE4F001725A0 /* Colors.swift in Sources */,
 				31FF3A381CAD03F0008B2C69 /* LeanCloud.swift in Sources */,
@@ -445,7 +448,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				315438281CCCAC060095148F /* Base */,
-				3154382A1CCCAC290095148F /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
