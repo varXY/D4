@@ -236,11 +236,12 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		backgroundSound.playSound(true, sound: backgroundSound.selected_sound)
 		xyScrollView.scrolledType = .NotScrollYet
 		xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
-		oldTopIndex = 1
-		xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: 0)
+
 		pointerView.showTextBaseOnTopIndex(pageIndex)
 		pointerView.addOrRemoveUpAndDownPointerAndLabel(pageIndex)
-		hideOrShowStatusViewAndToolbar(nil)
+		
+		oldTopIndex = 1
+		xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: 0)
 	}
 
 	func hideOrShowStatusViewAndToolbar(presentedVC: Bool?) {
@@ -367,6 +368,7 @@ extension MainViewController: XYScrollViewDelegate {
 
 			if topViewIndex == 1 && oldTopIndex == 0 {
 				xyScrollView.writeView.addDots(false)
+				if pointerView.lastUpdateText == nil { reloadDailyStory() }
 			}
 
 			if topViewIndex == 2 && oldTopIndex == 1 {
@@ -374,14 +376,13 @@ extension MainViewController: XYScrollViewDelegate {
 			}
 		}
 
-
 	}
 
 	func goBackSaveUploadStory() {
 		if xyScrollView.writeView.ready {
 			let story = xyScrollView.writeView.newStory()
-			if story != nil {
 
+			if story != nil {
 				xyScrollView.moveContentViewToTop(.Right)
 				pointerView.showTextBaseOnTopIndex(1)
 				pointerView.addOrRemoveUpAndDownPointerAndLabel(1)
@@ -433,6 +434,7 @@ extension MainViewController: DetailViewControllerDelegate {
 
 	func ratingChanged(index: Int, rating: Int) {
 		xyScrollView.X1_storyTableView.storys[index].rating = rating
+		updateRatingOfDailyStoryInCoreData(xyScrollView.X1_storyTableView.storys[index])
 	}
 
 	func detailViewControllerWillDismiss(topStoryIndex: Int) {

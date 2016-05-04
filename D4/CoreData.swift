@@ -17,6 +17,8 @@ protocol CoreDataAndStory {
 
 	func save100DailyStorys(storys: [Story], completion: (Bool) -> ())
 	func load100DailyStorys(completion: ([Story]) -> ())
+
+	func updateRatingOfDailyStoryInCoreData(story: Story)
 }
 
 extension CoreDataAndStory {
@@ -69,7 +71,6 @@ extension CoreDataAndStory {
 		do {
 			let fetchResults = try managedContext.executeFetchRequest(fetchRequest)
 			if let myStorys = fetchResults as? [MyStory] {
-				
 				if myStorys.count != 0 {
 					storys = myStorys.map({
 						let sentences = [$0.sentences!.s0!, $0.sentences!.s1!, $0.sentences!.s2!, $0.sentences!.s3!, $0.sentences!.s4!]
@@ -175,6 +176,31 @@ extension CoreDataAndStory {
 
 		} catch {
 			print("can't load storys from coreData")
+		}
+	}
+
+	func updateRatingOfDailyStoryInCoreData(story: Story) {
+		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		let managedContext = appDelegate.managedObjectContext
+
+		let fetchRequest = NSFetchRequest(entityName: "DailyStory")
+		fetchRequest.entity = NSEntityDescription.entityForName("DailyStory", inManagedObjectContext: managedContext)
+		fetchRequest.predicate = NSPredicate(format:"id == %@", story.ID)
+
+		do {
+			if let ratingChangedStory = try managedContext.executeFetchRequest(fetchRequest) as? [DailyStory] {
+				if ratingChangedStory.count == 1 {
+					ratingChangedStory.forEach({ $0.rating = story.rating })
+				}
+			}
+		} catch {
+			print("can't update rating in coreData")
+		}
+
+		do {
+			try managedContext.save()
+		} catch {
+			print("can't save rating in coreData")
 		}
 	}
 
