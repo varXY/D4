@@ -36,7 +36,6 @@ struct RateViews {
 		ratingLabel.textColor = textColor
 		ratingView.addSubview(ratingLabel)
 
-
 		buttonsView = UIVisualEffectView(effect: effect)
 		buttonsView.frame = CGRectMake(ScreenWidth, ScreenHeight - 150, width + 20, 100)
 		buttonsView.layer.cornerRadius = globalRadius

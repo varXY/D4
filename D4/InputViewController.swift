@@ -186,8 +186,6 @@ extension InputViewController: UITextViewDelegate {
 	}
 
 	func textViewDidEndEditing(textView: UITextView) {
-//		sleep(1)
-//		addBackButton()
 		delay(seconds: 1.5) { self.addBackButton() }
 	}
 }
