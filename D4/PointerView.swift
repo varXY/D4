@@ -61,7 +61,7 @@ class PointerView: UIView {
 		didSet {
 			let today = lastUpDateTime.string(.MMddyy) == NSDate().string(.MMddyy)
 			delay(seconds: 1.5) {
-				self.lastUpdateText = today ? "已更新" : "无法更新"
+				self.lastUpdateText = today ? "" : "无法更新"
 			}
 		}
 	}

@@ -130,7 +130,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 			
 		} else {
 			if xyScrollView.topViewIndex == 1 {
-				pointerView.lastUpdateText = "已更新"
+				pointerView.lastUpdateText = ""
 			}
 		}
 
