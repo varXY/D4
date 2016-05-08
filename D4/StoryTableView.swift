@@ -136,6 +136,13 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate {
 		return cell
 	}
 
+	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+		cell.transform = CGAffineTransformMakeScale(0.8, 0.8)
+		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
+			cell.transform = CGAffineTransformIdentity
+			}, completion: nil)
+	}
+
 	func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {
 		if storys.count != 0 {
 			let cell = tableView.cellForRowAtIndexPath(indexPath)

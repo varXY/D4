@@ -151,6 +151,10 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 extension DetailViewController: XYScrollViewDelegate {
 
+	func xyScrollViewDidBeginScroll(begin: Bool) {
+		pointerView.showAllSubviews(begin, VC: self)
+	}
+
 	func scrollTypeDidChange(type: XYScrollType) {
 		pointerView.changePointerDirection(type)
 	}

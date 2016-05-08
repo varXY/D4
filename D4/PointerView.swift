@@ -138,6 +138,7 @@ class PointerView: UIView {
 				$0.text = texts[index]
 				addSubview($0)
 				if index == 1 { $0.frame.origin.y -= 24 }
+				if index == 2 || index == 3 { $0.alpha = 0.0 }
 			})
 
 		case is DetailViewController:
@@ -146,12 +147,16 @@ class PointerView: UIView {
 
 			guard let detailVC = VC as? DetailViewController else { return }
 			let rightText = detailVC.netOrLocalStory != 1 ? "顶\n踩" : "复\n制\n文\n字"
-			let texts = ["上一个", "下一个", "主\n页", rightText]
+			let texts = ["前一天", "后一天", "主\n页", rightText]
 			UDLR_labels.forEach({ $0.text = texts[UDLR_labels.indexOf($0)!]; addSubview($0) })
 
 		default:
 			break
 		}
+
+		leftPointer.alpha = 0.0
+		rightPointer.alpha = 0.0
+
 	}
 
 	func changePointerDirection(type: XYScrollType) {		
@@ -190,6 +195,18 @@ class PointerView: UIView {
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 			animate()
 			}, completion: nil)
+	}
+
+	func showAllSubviews(show: Bool, VC: UIViewController) {
+		let pointers = [leftPointer, rightPointer]
+		pointers.forEach({ $0.alpha = show ? 1.0 : 0.0 })
+		if VC.isKindOfClass(MainViewController) {
+			UDLR_labels.forEach({
+				let index = UDLR_labels.indexOf($0)!
+				if index == 2 || index == 3 { $0.alpha = show ? 1.0 : 0.0 }
+			})
+		}
+
 	}
 
 
@@ -297,8 +314,8 @@ class PointerView: UIView {
 		} else if top == false {
 			UDLR_labels[1].text = "没有了"
 		} else {
-			UDLR_labels[0].text = "上一个"
-			UDLR_labels[1].text = "下一个"
+			UDLR_labels[0].text = "前一天"
+			UDLR_labels[1].text = "后一天"
 		}
 	}
 

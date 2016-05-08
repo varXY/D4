@@ -15,6 +15,7 @@ import AVFoundation
 }
 
 @objc protocol XYScrollViewDelegate: class {
+	func xyScrollViewDidBeginScroll(begin: Bool)
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int)
 	optional func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int)
 	optional func writeViewWillInputText(index: Int, oldText: String, colorCode: Int)
@@ -85,6 +86,8 @@ class XYScrollView: UIScrollView {
 	}
 
 	var topStoryIndex = 0
+
+	var beginScroll = false
 
 	var inMainVC = false
 	var doneReorder = true
@@ -370,6 +373,14 @@ class XYScrollView: UIScrollView {
 extension XYScrollView: UIScrollViewDelegate {
 
 	func scrollViewDidScroll(scrollView: UIScrollView) {
+		if (scrollView.contentOffset.x != 0 || scrollView.contentOffset.y != 0) && !beginScroll {
+			XYDelegate?.xyScrollViewDidBeginScroll(true)
+			beginScroll = true
+		} else if scrollView.contentOffset == CGPoint(x: 0, y: 0) {
+			XYDelegate?.xyScrollViewDidBeginScroll(false)
+			beginScroll = false
+		}
+
 		if scrollView != self {
 			if scrollView.contentOffset.y > TriggerDistance {
 				if scrolledType != .Down { scrolledType = .Down }

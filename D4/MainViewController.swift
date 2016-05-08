@@ -237,11 +237,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		xyScrollView.scrolledType = .NotScrollYet
 		xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
 
-		pointerView.showTextBaseOnTopIndex(pageIndex)
-		pointerView.addOrRemoveUpAndDownPointerAndLabel(pageIndex)
-		
 		oldTopIndex = 1
-		xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: 0)
+		xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: pageIndex)
 	}
 
 	func hideOrShowStatusViewAndToolbar(presentedVC: Bool?) {
@@ -277,6 +274,10 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 extension MainViewController: XYScrollViewDelegate {
 
+	func xyScrollViewDidBeginScroll(begin: Bool) {
+		pointerView.showAllSubviews(begin, VC: self)
+	}
+
 	func scrollTypeDidChange(type: XYScrollType) {
 		pointerView.changePointerDirection(type)
 	}
@@ -292,8 +293,9 @@ extension MainViewController: XYScrollViewDelegate {
 		}
 
 		UIView.animateWithDuration(0.3, animations: {
-			self.view.alpha = 0.0
+			self.view.alpha = 0.3
 			}) { (_) in
+				self.view.alpha = 0.0
 		}
 	}
 
