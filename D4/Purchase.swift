@@ -30,7 +30,7 @@ extension Purchase where Self: MainViewController {
 			indicator.removeFromSuperview()
 			self.view.userInteractionEnabled = true
 			if success {
-				self.purchaseProduct(products[0])
+				delay(seconds: 1.0, completion: { self.purchaseProduct(products[0]) })
 
 			} else {
 				let title = NSLocalizedString("连接失败", comment: "SettingVC")

@@ -206,6 +206,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func changeBarStyleBaseOnTime() {
 		let hour = Int(NSDate().string(.HH))
 		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
+		pointerView.nightStyle = nightStyle
 		xyScrollView.writeView.nightStyle = nightStyle
 		xyScrollView.settingView.nightStyle = nightStyle
 		
@@ -274,8 +275,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 extension MainViewController: XYScrollViewDelegate {
 
-	func xyScrollViewDidBeginScroll(begin: Bool) {
-		pointerView.showAllSubviews(begin, VC: self)
+	func xyScrollViewDidBeginScroll(begin: Bool, type: XYScrollType) {
+		pointerView.showAllSubviews(begin, VC: self, type: type)
 	}
 
 	func scrollTypeDidChange(type: XYScrollType) {
@@ -292,11 +293,11 @@ extension MainViewController: XYScrollViewDelegate {
 			self.hideOrShowStatusViewAndToolbar(true)
 		}
 
-		UIView.animateWithDuration(0.3, animations: {
-			self.view.alpha = 0.3
-			}) { (_) in
-				self.view.alpha = 0.0
-		}
+//		UIView.animateWithDuration(0.3, animations: {
+//			self.view.alpha = 0.3
+//			}) { (_) in
+//				self.view.alpha = 0.0
+//		}
 	}
 
 	func setUpDetailVC(detailVC: DetailViewController) {

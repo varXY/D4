@@ -11,6 +11,7 @@ import UIKit
 class SettingView: UIView {
 
 	var labels: [UILabel]!
+	var iconButton: UIButton!
 	var pointerImageViews: [UIImageView]!
 
 	var nightStyle = false {
@@ -39,19 +40,19 @@ class SettingView: UIView {
 			addSubview($0)
 		})
 
-		let iconButton = UIButton(type: .Custom)
+		iconButton = UIButton(type: .Custom)
 		iconButton.frame.size = CGSize(width: 60, height: 60)
 		iconButton.center = center
 		iconButton.setImage(UIImage(named: "Icon"), forState: .Normal)
 		iconButton.addTarget(self, action: #selector(gotoAppStore), forControlEvents: .TouchUpInside)
-		iconButton.layer.cornerRadius = iconButton.frame.width / 2
-		iconButton.clipsToBounds = true
+//		iconButton.layer.cornerRadius = iconButton.frame.width / 2
+//		iconButton.clipsToBounds = true
 		addSubview(iconButton)
 
 		let pointer = Pointer()
 		pointerImageViews = [pointer.imageView(.Up), pointer.imageView(.Down), pointer.imageView(.Left), pointer.imageView(.Right)]
 		pointerImageViews.forEach({
-			$0.transform = CGAffineTransformRotate($0.transform, CGFloat(180 * M_PI / 180))
+			$0.center = pointer.toCenters[pointerImageViews.indexOf($0)!]
 			$0.transform = CGAffineTransformScale($0.transform, 0.7, 0.7)
 			$0.tintColor = MyColor.code(randomColorCode()).BTColors[0]
 			addSubview($0)
@@ -65,6 +66,10 @@ class SettingView: UIView {
 
 	func changeColorBaseOnNightStyle(nightStyle: Bool) {
 		backgroundColor = nightStyle ? MyColor.code(5).BTColors[0] : UIColor.whiteColor()
+		
+		let imageName = nightStyle ? "IconBlack" : "Icon"
+		iconButton.setImage(UIImage(named: imageName), forState: .Normal)
+
 		randomColorForPointerView()
 		labels.forEach({
 			$0.attributedText = attributedStrings(nightStyle)[labels.indexOf($0)!]

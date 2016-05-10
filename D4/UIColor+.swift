@@ -14,4 +14,8 @@ extension UIColor {
 	class func colorWithValues(values: [CGFloat]) -> UIColor {
 		return UIColor(red: values[0]/255, green: values[1]/255, blue: values[2]/255, alpha: values[3])
 	}
+
+	class func backgroundColor() -> UIColor {
+		return UIColor(red: 236/255, green: 235/255, blue: 243/255, alpha: 1.0)
+	}
 }

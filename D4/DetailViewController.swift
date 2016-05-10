@@ -55,8 +55,9 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		transitioningDelegate = self
-		
+
 		pointerView = PointerView(VC: self)
+		pointerView.nightStyle = nightStyle
 		view = pointerView
 
 		xyScrollView = XYScrollView(VC: self)
@@ -76,6 +77,7 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
+
 		rateViews = RateViews(VC: self)
 		rateViews.likedIndexes = likedStoryIndexes()
 
@@ -151,8 +153,8 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 extension DetailViewController: XYScrollViewDelegate {
 
-	func xyScrollViewDidBeginScroll(begin: Bool) {
-		pointerView.showAllSubviews(begin, VC: self)
+	func xyScrollViewDidBeginScroll(begin: Bool, type: XYScrollType) {
+		pointerView.showAllSubviews(begin, VC: self, type: type)
 	}
 
 	func scrollTypeDidChange(type: XYScrollType) {
@@ -160,6 +162,11 @@ extension DetailViewController: XYScrollViewDelegate {
 	}
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
+		if scrollType != .NotScrollYet {
+			pointerView.pointers[scrollType.rawValue].alpha = 0.0
+			pointerView.UDLR_labels[scrollType.rawValue].alpha = 0.0
+		}
+
 		if rateViewShowed && (scrollType == .Up || scrollType == .Down) {
 			rateViewShowed = false
 			rateViews.show(rateViewShowed, rating: storys[topStoryIndex].rating, storyIndex: topStoryIndex)

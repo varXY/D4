@@ -16,7 +16,7 @@ let ScreenHeight = ScreenBounds.height
 let StatusBarHeight = UIApplication.sharedApplication().statusBarFrame.height
 
 let smallBlockHeight: CGFloat = 50
-let TriggerDistance: CGFloat = 60
+let TriggerDistance: CGFloat = 50
 
 let globalRadius: CGFloat = ScreenHeight * 0.007
 

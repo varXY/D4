@@ -13,49 +13,49 @@ struct Pointer {
 	let length: CGFloat = 30
 	let imageName = "Pointer"
 
-	let left_transform = CGAffineTransformMakeRotation(CGFloat(90 * M_PI / 180))
-	let right_transform = CGAffineTransformMakeRotation(CGFloat(-90 * M_PI / 180))
-	let up_transform = CGAffineTransformMakeRotation(CGFloat(180 * M_PI / 180))
-	let down_transform = CGAffineTransformMakeRotation(CGFloat(0 * M_PI / 180))
+	let transforms = [
+		CGAffineTransformMakeRotation(CGFloat(0 * M_PI / 180)),
+		CGAffineTransformMakeRotation(CGFloat(180 * M_PI / 180)),
+		CGAffineTransformMakeRotation(CGFloat(-90 * M_PI / 180)),
+		CGAffineTransformMakeRotation(CGFloat(90 * M_PI / 180)),
+	]
+
+	let originCenters = [
+		CGPointMake(ScreenWidth / 2, 30 / 2 - 30),
+		CGPointMake(ScreenWidth / 2, ScreenHeight - (30 / 2) + 30),
+		CGPointMake(30 / 2 - 30, ScreenHeight / 2),
+		CGPointMake(ScreenWidth - (30 / 2) + 30, ScreenHeight / 2),
+	]
+
+	let toCenters = [
+		CGPointMake(ScreenWidth / 2, 30 / 2 + 3),
+		CGPointMake(ScreenWidth / 2, ScreenHeight - (30 / 2) - 3),
+		CGPointMake(30 / 2 + 3, ScreenHeight / 2),
+		CGPointMake(ScreenWidth - (30 / 2) - 3, ScreenHeight / 2),
+	]
 
 	func imageView(type: XYScrollType) -> UIImageView {
 		let imageView = UIImageView(image: UIImage(named: imageName))
 		imageView.frame.size = CGSize(width: length, height: length)
-
-		switch type {
-		case .Up:
-			imageView.center = CGPoint(x: ScreenWidth / 2, y: length / 2)
-			imageView.transform = up_transform
-
-		case .Down:
-			imageView.center = CGPoint(x: ScreenWidth / 2, y: ScreenHeight - (length / 2))
-			imageView.transform = down_transform
-
-		case .Left:
-			imageView.center = CGPoint(x: length / 2, y: ScreenHeight / 2)
-			imageView.transform = left_transform
-
-		case .Right:
-			imageView.center = CGPoint(x: ScreenWidth - (length / 2), y: ScreenHeight / 2)
-			imageView.transform = right_transform
-
-		default:
-			break
-		}
-
+		imageView.center = originCenters[type.rawValue]
+		imageView.transform = transforms[type.rawValue]
 		return imageView
 	}
 }
 
 class PointerView: UIView {
 
-	var upPointer: UIImageView!
-	var downPointer: UIImageView!
-	var leftPointer: UIImageView!
-	var rightPointer: UIImageView!
-
+	var pointers = [UIImageView]()
 	var UDLR_labels = [UILabel]()
 	var blankViews: [UIView]!
+
+	var nightStyle = false {
+		didSet {
+			backgroundColor = nightStyle ? UIColor.blackColor() : UIColor.backgroundColor()
+			pointers.forEach({ $0.tintColor = nightStyle ? UIColor.whiteColor() : UIColor.lightGrayColor() })
+			UDLR_labels.forEach({ $0.textColor = nightStyle ? UIColor.whiteColor() : UIColor.blackColor() })
+		}
+	}
 
 	var lastUpDateTime: NSDate! {
 		didSet {
@@ -113,23 +113,22 @@ class PointerView: UIView {
 		backgroundColor = UIColor.blackColor()
 		tintColor = UIColor.whiteColor()
 
-		upPointer = pointer.imageView(.Up)
-		downPointer = pointer.imageView(.Down)
-		leftPointer = pointer.imageView(.Left)
-		rightPointer = pointer.imageView(.Right)
-
-		addSubview(leftPointer)
-		addSubview(rightPointer)
+		pointers = [pointer.imageView(.Up), pointer.imageView(.Down), pointer.imageView(.Left), pointer.imageView(.Right)]
+		addSubview(pointers[2])
+		addSubview(pointers[3])
 
 		let types = [XYScrollType.Up, XYScrollType.Down, XYScrollType.Left, XYScrollType.Right]
 		UDLR_labels = types.map({ Label().label($0) })
+
+		pointers.forEach({ $0.alpha = 0.0 })
+		UDLR_labels.forEach({ $0.alpha = 0.0 })
 
 		switch VC {
 		case is MainViewController:
 			blankViews = [UIView]()
 			let frames = [CGRectMake(0, 0, ScreenWidth, 20), CGRectMake(0, ScreenHeight - 44, ScreenWidth, 44)]
 			blankViews = frames.map({ UIView(frame: $0) })
-			blankViews.forEach({ $0.backgroundColor = MyColor.code(24).BTColors[0]; addSubview($0) })
+			blankViews.forEach({ $0.backgroundColor = MyColor.code(5).BTColors[0]; addSubview($0) })
 
 			// 去创造新故事吧?
 			let texts = ["", "", "写\n故\n事", "关\n于"]
@@ -138,12 +137,11 @@ class PointerView: UIView {
 				$0.text = texts[index]
 				addSubview($0)
 				if index == 1 { $0.frame.origin.y -= 24 }
-				if index == 2 || index == 3 { $0.alpha = 0.0 }
 			})
 
 		case is DetailViewController:
-			addSubview(upPointer)
-			addSubview(downPointer)
+			addSubview(pointers[0])
+			addSubview(pointers[1])
 
 			guard let detailVC = VC as? DetailViewController else { return }
 			let rightText = detailVC.netOrLocalStory != 1 ? "顶\n踩" : "复\n制\n文\n字"
@@ -154,21 +152,13 @@ class PointerView: UIView {
 			break
 		}
 
-		leftPointer.alpha = 0.0
-		rightPointer.alpha = 0.0
-
 	}
 
 	func changePointerDirection(type: XYScrollType) {		
 		switch type {
-		case .Up: rotation({ self.upPointer.transform = self.pointer.down_transform })
-		case .Down: rotation({ self.downPointer.transform = self.pointer.up_transform })
-		case .Left: rotation({ self.leftPointer.transform = self.pointer.right_transform })
-		case .Right: rotation({ self.rightPointer.transform = self.pointer.left_transform })
+		case .Up, .Down, .Left, .Right:
+			move({ self.pointers[type.rawValue].center = self.pointer.toCenters[type.rawValue] })
 		default:
-			let pointers = [upPointer, downPointer, leftPointer, rightPointer]
-			let transforms = [pointer.up_transform, pointer.down_transform, pointer.left_transform, pointer.right_transform]
-
 			pointers.forEach({ (pointer) in
 				pointer.alpha = 0.0
 				let i = pointers.indexOf({ (imageView) -> Bool in
@@ -178,12 +168,12 @@ class PointerView: UIView {
 			})
 
 			delay(seconds: 0.4, completion: {
-				pointers.forEach({ (pointer) in
+				self.pointers.forEach({ (pointer) in
 					pointer.alpha = 1.0
-					let i = pointers.indexOf({ (imageView) -> Bool in
+					let i = self.pointers.indexOf({ (imageView) -> Bool in
 						return imageView == pointer
 					})!
-					pointers[i].transform = transforms[i]
+					self.pointers[i].center = self.pointer.originCenters[i]
 					if i < self.UDLR_labels.count { self.UDLR_labels[i].alpha = 1.0 }
 				})
 			})
@@ -191,22 +181,20 @@ class PointerView: UIView {
 		}
 	}
 
-	func rotation(animate: () -> ()) {
+	func move(animate: () -> ()) {
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 			animate()
 			}, completion: nil)
 	}
 
-	func showAllSubviews(show: Bool, VC: UIViewController) {
-		let pointers = [leftPointer, rightPointer]
-		pointers.forEach({ $0.alpha = show ? 1.0 : 0.0 })
-		if VC.isKindOfClass(MainViewController) {
-			UDLR_labels.forEach({
-				let index = UDLR_labels.indexOf($0)!
-				if index == 2 || index == 3 { $0.alpha = show ? 1.0 : 0.0 }
-			})
+	func showAllSubviews(show: Bool, VC: UIViewController, type: XYScrollType) {
+		if type != .NotScrollYet {
+			pointers[type.rawValue].alpha = show ? 1.0 : 0.0
+			UDLR_labels[type.rawValue].alpha = show ? 1.0 : 0.0
+		} else if !show && type == .NotScrollYet {
+			pointers.forEach({ $0.alpha = 0.0 })
+			UDLR_labels.forEach({ $0.alpha = 0.0 })
 		}
-
 	}
 
 
@@ -217,10 +205,8 @@ class PointerView: UIView {
 		case 0, 2:
 			blankViews.forEach({ $0.removeFromSuperview() })
 
-			addSubview(upPointer)
-			addSubview(downPointer)
-			sendSubviewToBack(upPointer)
-			sendSubviewToBack(downPointer)
+			addSubview(pointers[0]); sendSubviewToBack(pointers[0])
+			addSubview(pointers[1]); sendSubviewToBack(pointers[1])
 
 			if UDLR_labels[1].frame.origin.y != ScreenHeight - 60 { UDLR_labels[1].frame.origin.y += 24 }
 			let texts = topIndex == 0 ? [randomTip(.Up), "写完上划发布"] : ["联系开发者", "￥12 请独立开发者吃顿好的"]
@@ -230,8 +216,8 @@ class PointerView: UIView {
 		default:
 			blankViews.forEach({ addSubview($0); sendSubviewToBack($0) })
 
-			upPointer.removeFromSuperview()
-			downPointer.removeFromSuperview()
+			pointers[0].removeFromSuperview()
+			pointers[1].removeFromSuperview()
 
 			UDLR_labels[0].text = lastUpdateText
 			UDLR_labels[1].text = "" // 去创造新故事吧
