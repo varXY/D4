@@ -119,7 +119,6 @@ class WriteView: UIView, UserDefaults {
 
 		}
 
-
 	}
 
 	override func touchesCancelled(touches: Set<UITouch>?, withEvent event: UIEvent?) {
@@ -265,45 +264,36 @@ class WriteView: UIView, UserDefaults {
 	func addtipLabels(add: Bool, removeIndex: Int?) {
 		if add {
 			var tipLabels = [UILabel]()
+
 			if !tip_A_shown() {
 				let label_A = UILabel(frame: tipViewFrames()[0])
 				label_A.text = "点击\n中间\n开始\n输入\n"
+				label_A.tag = 123
 				tipLabels.append(label_A)
 			}
 
 			if !tip_B_shown() {
 				let label_B = UILabel(frame: tipViewFrames()[1])
 				label_B.text = "按住\n圆点\n滑动\n选择\n颜色"
+				label_B.tag = 124
 				tipLabels.append(label_B)
 			}
 
 			if tipLabels.count != 0 {
 				tipLabels.forEach({
 					$0.textColor = MyColor.code(colorCodes[2]).BTColors[1]
-					let index = tipLabels.indexOf($0)
 					$0.numberOfLines = 0
 					$0.font = UIFont.systemFontOfSize(12)
 					$0.adjustsFontSizeToFitWidth = true
 					$0.textAlignment = .Center
-					$0.tag = 123 + index!
 					addSubview($0)
 				})
 			}
 
 		} else {
-			switch removeIndex! {
-			case 0:
-				if let label = viewWithTag(123) as? UILabel {
-					label.removeFromSuperview()
-					saveTip_A_asShown()
-				}
-			case 1:
-				if let label = viewWithTag(124) as? UILabel {
-					label.removeFromSuperview()
-					saveTip_B_asShown()
-				}
-			default:
-				break
+			if let label = viewWithTag(123 + removeIndex!) {
+				label.removeFromSuperview()
+				removeIndex == 0 ? saveTip_A_asShown() : saveTip_B_asShown()
 			}
 		}
 
