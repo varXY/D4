@@ -34,7 +34,7 @@ extension MailSending where Self: UIViewController {
 		if MFMailComposeViewController.canSendMail() {
 			let controller = MFMailComposeViewController()
 			controller.mailComposeDelegate = self
-			controller.setSubject("天的故事")
+			controller.setSubject("反馈的一天")
 			controller.setMessageBody(messageBody, isHTML: false)
 			controller.setToRecipients(["pmlcfwcs@foxmail.com"])
 			presentViewController(controller, animated: true, completion: nil)

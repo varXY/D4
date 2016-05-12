@@ -7,9 +7,6 @@
 //
 
 import UIKit
-import StoreKit
-import AVFoundation
-
 
 class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDefaults, MailSending, Purchase {
 
@@ -27,8 +24,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	var oldTopIndex = 0
 
 	var dailyStorys: [Story]!
-	var backgroundSound = BackgroundSound()
 
+	var backgroundSound = BackgroundSound()
 	var internetReachability: Reachability!
 
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -219,7 +216,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 		statusView.effect = blurEffect
 		addButton.tintColor = tintColor
-
 		navigationController?.toolbar.barStyle = barStyle
 		navigationController?.toolbar.tintColor = tintColor
 	}
@@ -292,12 +288,6 @@ extension MainViewController: XYScrollViewDelegate {
 		presentViewController(detailVC, animated: true) { 
 			self.hideOrShowStatusViewAndToolbar(true)
 		}
-
-//		UIView.animateWithDuration(0.3, animations: {
-//			self.view.alpha = 0.3
-//			}) { (_) in
-//				self.view.alpha = 0.0
-//		}
 	}
 
 	func setUpDetailVC(detailVC: DetailViewController) {

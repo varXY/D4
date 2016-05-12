@@ -20,7 +20,6 @@ class FadeOutAnimationController: NSObject, UIViewControllerAnimatedTransitionin
 
 			UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 				fromView.alpha = 0
-//				fromView.transform = CGAffineTransformMakeScale(0.7, 0.7)
 			}, completion: { (finished) -> Void in
 				transitionContext.completeTransition(finished)
 			})

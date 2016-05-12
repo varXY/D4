@@ -44,8 +44,6 @@ class XYScrollView: UIScrollView {
 	let topOrigin = CGPoint(x: 0, y: -ScreenHeight)
 	let middleOrigin = CGPoint(x: 0, y: 0)
 	let bottomOrigin = CGPoint(x: 0, y: ScreenHeight)
-	let upHalfOrigin = CGPoint(x: 0, y: -ScreenHeight / 2)
-	let downHalfOrigin = CGPoint(x: 0, y: ScreenHeight / 2)
 
 	var storys: [Story]! {
 		didSet {

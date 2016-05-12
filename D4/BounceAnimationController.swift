@@ -15,7 +15,6 @@ class BounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning
 	}
 
 	func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-
 		if let toViewController = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey) {
 			if let toView = transitionContext.viewForKey(UITransitionContextToViewKey) {
 				let duration = transitionDuration(transitionContext)
@@ -26,30 +25,12 @@ class BounceAnimationController: NSObject, UIViewControllerAnimatedTransitioning
 				toView.alpha = 0.0
 				toView.transform = CGAffineTransformMakeScale(0.7, 0.7)
 
-				if toViewController.isKindOfClass(InputViewController) {
-					UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
-						toView.alpha = 1.0
-						toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
-						}, completion: { (finished) in
-							transitionContext.completeTransition(finished)
-					})
-				} else {
-//					UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
-//						toView.alpha = 1.0
-//						toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
-//						}, completion: { (finished) in
-//							transitionContext.completeTransition(finished)
-//					})
-
-					UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
-						toView.alpha = 1.0
-						toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
-						}, completion: { (finished) in
-							transitionContext.completeTransition(finished)
-					})
-				}
-
-
+				UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+					toView.alpha = 1.0
+					toView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+					}, completion: { (finished) in
+						transitionContext.completeTransition(finished)
+				})
 
 			}
 		}

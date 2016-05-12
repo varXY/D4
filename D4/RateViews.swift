@@ -23,13 +23,12 @@ struct RateViews {
 	
 	init(VC: DetailViewController) {
 		let effect = VC.nightStyle ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
-		
+		let textColor = VC.nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
+
 		ratingView = UIVisualEffectView(effect: effect)
 		ratingView.frame = CGRectMake(ScreenWidth, 50, width + 20, 50)
 		ratingView.layer.cornerRadius = globalRadius
 		ratingView.clipsToBounds = true
-
-		let textColor = VC.nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
 
 		ratingLabel = UILabel(frame: CGRectMake(0, 0, width, 50))
 		ratingLabel.textAlignment = .Center
@@ -67,7 +66,6 @@ struct RateViews {
 		ratingLabel.text = "\(rating)"
 
 		if show {
-
 			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 				self.ratingView.frame.origin.x -= self.width
 				}, completion: nil)

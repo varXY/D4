@@ -104,7 +104,13 @@ class InputViewController: UIViewController {
 		textView.text = oldText
 		numberLabel.text = String(textLimit - oldText.characters.count)
 
-		textView.becomeFirstResponder()
+		if ScreenWidth != 320 { textView.becomeFirstResponder() }
+	}
+
+	override func viewDidAppear(animated: Bool) {
+		super.viewDidAppear(animated)
+		
+		if ScreenWidth == 320 { textView.becomeFirstResponder() }
 	}
 
 	func addBackButton() {
