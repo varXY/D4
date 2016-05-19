@@ -57,7 +57,6 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 		transitioningDelegate = self
 
 		pointerView = PointerView(VC: self)
-		pointerView.nightStyle = nightStyle
 		view = pointerView
 
 		xyScrollView = XYScrollView(VC: self)
@@ -77,7 +76,8 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-
+		pointerView.nightStyle = nightStyle
+		
 		rateViews = RateViews(VC: self)
 		rateViews.likedIndexes = likedStoryIndexes()
 

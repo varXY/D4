@@ -52,6 +52,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		xyScrollView.writeView.backgroundSound = backgroundSound
 		xyScrollView.writeView.addtipLabels(true, removeIndex: nil)
 
+		xyScrollView.settingView.delegate = self
+
 		dailyStorys = xyScrollView.X1_storyTableView.storys
 
 		setupBars()
@@ -94,17 +96,19 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
 
 		if !dailyStoryLoaded {
-			scrollToRow(0)
-			pointerView.lastUpdateText = ""
 			xyScrollView.X1_storyTableView.loading(true)
 			loadingStory(true)
+
+			scrollToRow(0)
+			pointerView.lastUpdateText = ""
+
 			getDailyStory { (storys) in
-				self.xyScrollView.X1_storyTableView.loading(false)
-				self.loadingStory(false)
 
 				if storys.count != 0 {
-					self.dailyStorys = storys
+					if self.segmentedControl.selectedSegmentIndex != 0 { self.segmentedControl.selectedSegmentIndex = 0 }
+					self.xyScrollView.X1_storyTableView.netOrLocalStory = 0
 
+					self.dailyStorys = storys
 					self.xyScrollView.storys = storys
 					self.xyScrollView.X1_storyTableView.reloadData()
 
@@ -123,6 +127,9 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 					self.pointerView.lastUpdateText = "无法更新"
 					print("Get zero story online")
 				}
+
+				self.xyScrollView.X1_storyTableView.loading(false)
+				self.loadingStory(false)
 			}
 			
 		} else {
@@ -139,19 +146,16 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 			let loadingImage = UIImage.animatedImageWithImages(images, duration: 1.5)
 			let imageView = UIImageView(image: loadingImage)
 			imageView.frame.origin = CGPoint(x: 0, y: 20)
-			imageView.tag = 30
+			imageView.tag = 301
 
 			view.addSubview(imageView)
 			view.sendSubviewToBack(imageView)
 		} else {
-			if let imageView = view.viewWithTag(30) as? UIImageView {
+			if let imageView = view.viewWithTag(301) as? UIImageView {
 				imageView.stopAnimating()
 
-				UIView.animateWithDuration(0.6, animations: {
-					imageView.alpha = 0.0
-					}, completion: { (_) in
-						imageView.removeFromSuperview()
-				})
+				UIView.animateWithDuration(0.6, animations: { imageView.alpha = 0.2 })
+				delay(seconds: 0.6, completion: { imageView.removeFromSuperview() })
 			}
 		}
 	}
@@ -281,6 +285,10 @@ extension MainViewController: XYScrollViewDelegate {
 
 	func didSelectedStory(storyIndex: Int) {
 		forceTouchWay = false
+
+		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
+			self.view.alpha = 0.0
+			}, completion: nil)
 
 		let detailVC = DetailViewController()
 		detailVC.topStoryIndex = storyIndex
@@ -491,7 +499,12 @@ extension MainViewController: InputViewControllerDelegate {
 	}
 }
 
+extension MainViewController: SettingViewProtocol {
 
+	func presentViewControllerForSettringView(VC: UIViewController) {
+		presentViewController(VC, animated: true, completion: nil)
+	}
+}
 
 
 

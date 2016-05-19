@@ -128,7 +128,7 @@ class PointerView: UIView {
 			blankViews = [UIView]()
 			let frames = [CGRectMake(0, 0, ScreenWidth, 20), CGRectMake(0, ScreenHeight - 44, ScreenWidth, 44)]
 			blankViews = frames.map({ UIView(frame: $0) })
-			blankViews.forEach({ $0.backgroundColor = MyColor.code(5).BTColors[0]; addSubview($0) })
+			blankViews.forEach({ $0.backgroundColor = MyColor.code(1).BTColors[0]; addSubview($0) })
 
 			// 去创造新故事吧?
 			let texts = ["", "", "写\n故\n事", "关\n于"]

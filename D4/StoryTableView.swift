@@ -115,7 +115,9 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate, UIScrollVi
 
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let style = netOrLocalStory != 1 ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1
-		var cell = UITableViewCell(style: style, reuseIdentifier: "Cell")
+		let reuseIdentifier = netOrLocalStory != 1 ? "DefaultCell" : "Value1Cell"
+		var cell: UITableViewCell! = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier)
+		if cell == nil { cell = UITableViewCell(style: style, reuseIdentifier: reuseIdentifier) }
 		cell.textLabel?.font = UIFont.systemFontOfSize(17)
 
 		if storys.count != 0 {

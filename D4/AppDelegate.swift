@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		}
 
 		if let shortcutItems = application.shortcutItems where shortcutItems.isEmpty {
-			let shortcut1 = UIApplicationShortcutItem(type: ShortcutIdentifier.First.type, localizedTitle: "写故事", localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .Add), userInfo: [
+			let shortcut1 = UIApplicationShortcutItem(type: ShortcutIdentifier.First.type, localizedTitle: "写故事", localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .Compose), userInfo: [
 				AppDelegate.applicationShortcutUserInfoIconKey: UIApplicationShortcutIconType.Play.rawValue
 				])
 			application.shortcutItems = [shortcut1]
@@ -53,6 +53,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
 
 		return shouldPerformAdditionalDelegateHandling
+	}
+
+	func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+		print(#function)
 	}
 
 	func applicationWillResignActive(application: UIApplication) {
