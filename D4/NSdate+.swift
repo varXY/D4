@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 extension NSDate {
 
 	enum Fomatter: String {
@@ -32,5 +31,13 @@ extension NSDate {
 		dateFomatter.dateFormat = Fomatter.MMddyyHHmm.rawValue
 		let date = dateFomatter.dateFromString(string + ", 00:00")!
 		return date
+	}
+
+	class func specificDate(tomorrow tomorrow: Bool, HH: String) -> NSDate {
+		let dateFomatter = NSDateFormatter()
+		dateFomatter.dateFormat = Fomatter.MMddyyHHmm.rawValue
+		let day = tomorrow ? NSDate(timeIntervalSinceNow: 86400) : NSDate()
+		let specificDate = dateFomatter.dateFromString(day.string(.MMddyy) + ", " + HH + ":00")!
+		return specificDate
 	}
 }

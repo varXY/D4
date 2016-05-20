@@ -56,7 +56,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
-		print(#function)
+		guard let controller = window!.rootViewController as! UINavigationController? else { return }
+		guard let mainVC = controller.viewControllers[0] as? MainViewController else { return }
+		mainVC.viewDidLoad()
+		if mainVC.presentedViewController != nil {
+			mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
+			delay(seconds: 0.8) { mainVC.gotoPage(UIBarButtonItem()) }
+		} else {
+			mainVC.gotoPage(UIBarButtonItem())
+		}
 	}
 
 	func applicationWillResignActive(application: UIApplication) {

@@ -75,7 +75,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-
+		xyScrollView.settingView.askedForAllowNotification = getAskedAllowNotification()
+		xyScrollView.settingView.savedNotificationIndex = getNotificationIndex()
 	}
 
 	override func viewWillDisappear(animated: Bool) {
@@ -96,6 +97,12 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
 
 		if !dailyStoryLoaded {
+			if self.segmentedControl.selectedSegmentIndex != 0 {
+				let holder = UISegmentedControl(items: ["0", "1"])
+				holder.selectedSegmentIndex = 0
+				self.segmentedControlSelected(holder)
+			}
+
 			xyScrollView.X1_storyTableView.loading(true)
 			loadingStory(true)
 
@@ -103,11 +110,10 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 			pointerView.lastUpdateText = ""
 
 			getDailyStory { (storys) in
+				self.xyScrollView.X1_storyTableView.loading(false)
+				self.loadingStory(false)
 
 				if storys.count != 0 {
-					if self.segmentedControl.selectedSegmentIndex != 0 { self.segmentedControl.selectedSegmentIndex = 0 }
-					self.xyScrollView.X1_storyTableView.netOrLocalStory = 0
-
 					self.dailyStorys = storys
 					self.xyScrollView.storys = storys
 					self.xyScrollView.X1_storyTableView.reloadData()
@@ -127,11 +133,8 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 					self.pointerView.lastUpdateText = "无法更新"
 					print("Get zero story online")
 				}
-
-				self.xyScrollView.X1_storyTableView.loading(false)
-				self.loadingStory(false)
 			}
-			
+
 		} else {
 			if xyScrollView.topViewIndex == 1 {
 				pointerView.lastUpdateText = ""
@@ -373,7 +376,7 @@ extension MainViewController: XYScrollViewDelegate {
 			}
 
 			if topViewIndex == 2 && oldTopIndex == 1 {
-				xyScrollView.settingView.randomColorForPointerView()
+				xyScrollView.settingView.randomColorForPrimaticButtons()
 			}
 		}
 
@@ -503,6 +506,14 @@ extension MainViewController: SettingViewProtocol {
 
 	func presentViewControllerForSettringView(VC: UIViewController) {
 		presentViewController(VC, animated: true, completion: nil)
+	}
+
+	func saveNotificationIndexToUserDefaults(index: Int) {
+		saveNotificationIndex(index)
+	}
+
+	func saveAskedAllowNotificationToUserDefaults(asked: Bool) {
+		saveAskedAllowNotification(asked)
 	}
 }
 

@@ -19,6 +19,9 @@ struct UDKey {
 
 	static let TipA = "TipA"
 	static let TipB = "TipB"
+
+	static let notificationIndex = "NotificationIndex"
+	static let askedAllowNotification = "AskedAllowNotification"
 }
 
 protocol UserDefaults {
@@ -50,6 +53,12 @@ protocol UserDefaults {
 
 	func saveLastStoryID(ID: String)
 	func getLastStoryID() -> String
+
+	func saveNotificationIndex(index: Int)
+	func getNotificationIndex() -> Int
+
+	func saveAskedAllowNotification(allow: Bool)
+	func getAskedAllowNotification() -> Bool
 }
 
 extension UserDefaults {
@@ -171,6 +180,26 @@ extension UserDefaults {
 	func getLastStoryID() -> String {
 		guard let ID = userDefaults.stringForKey(UDKey.LastStoryID) else { return "" }
 		return ID
+	}
+
+	func saveNotificationIndex(index: Int) {
+		userDefaults.setObject(index, forKey: UDKey.notificationIndex)
+		userDefaults.synchronize()
+	}
+
+	func getNotificationIndex() -> Int {
+		guard let index = userDefaults.objectForKey(UDKey.notificationIndex) as? Int else { return 0 }
+		return index
+	}
+
+	func saveAskedAllowNotification(allow: Bool) {
+		userDefaults.setBool(allow, forKey: UDKey.askedAllowNotification)
+		userDefaults.synchronize()
+	}
+
+	func getAskedAllowNotification() -> Bool {
+		guard let allow = userDefaults.objectForKey(UDKey.askedAllowNotification) as? Bool else { return false }
+		return allow
 	}
 
 }

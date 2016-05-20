@@ -28,6 +28,16 @@ func randomColorCode() -> Int {
 	return colorCode[index]
 }
 
+func randomColorCodeForPrimaticButton() -> Int {
+	let codes = [10, 20, 30, 40,
+	             1, 11, 21, 31, 41,
+	             2, 12, 22, 32, 42,
+	             3, 13, 23, 33, 43,
+	             4, 14, 24, 34, 44,
+	             15, 25, 35, 45]
+	return codes[random() % codes.count]
+}
+
 func randomBTColors() -> [UIColor] {
 	let index = getRandomNumbers(1, lessThan: colorCode.count)[0]
 	return MyColor.code(colorCode[index]).BTColors
