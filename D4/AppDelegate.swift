@@ -15,6 +15,7 @@ import AVFoundation
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	var window: UIWindow?
+	var mainVC: MainViewController!
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
@@ -32,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		}
 
 		if let shortcutItems = application.shortcutItems where shortcutItems.isEmpty {
-			let shortcut1 = UIApplicationShortcutItem(type: ShortcutIdentifier.First.type, localizedTitle: "写故事", localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .Compose), userInfo: [
+			let shortcut1 = UIApplicationShortcutItem(type: ShortcutIdentifier.First.type, localizedTitle: "写故事", localizedSubtitle: nil, icon: UIApplicationShortcutIcon(type: .Add), userInfo: [
 				AppDelegate.applicationShortcutUserInfoIconKey: UIApplicationShortcutIconType.Play.rawValue
 				])
 			application.shortcutItems = [shortcut1]
@@ -40,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		// MARK: Base
 
-		let mainVC = MainViewController()
+		mainVC = MainViewController()
 		let navi = UINavigationController(rootViewController: mainVC)
 		navi.view.layer.cornerRadius = globalRadius
 		window?.rootViewController = navi
@@ -50,18 +51,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		// MARK: Network
 		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
-		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
+//		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
 
 		return shouldPerformAdditionalDelegateHandling
 	}
 
 	func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
-		guard let controller = window!.rootViewController as! UINavigationController? else { return }
-		guard let mainVC = controller.viewControllers[0] as? MainViewController else { return }
 		mainVC.viewDidLoad()
 		if mainVC.presentedViewController != nil {
 			mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
-			delay(seconds: 0.8) { mainVC.gotoPage(UIBarButtonItem()) }
+			delay(seconds: 0.8) { self.mainVC.gotoPage(UIBarButtonItem()) }
 		} else {
 			mainVC.gotoPage(UIBarButtonItem())
 		}
@@ -71,22 +70,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	func applicationDidEnterBackground(application: UIApplication) {
-		guard let navi = window?.rootViewController as? UINavigationController else { return }
-		guard let mainVC = navi.topViewController as? MainViewController else { return }
 		mainVC.xyScrollView.writeView.saveContent()
 	}
 
 	func applicationWillEnterForeground(application: UIApplication) {
-		guard let navi = window?.rootViewController as? UINavigationController else { return }
-		guard let mainVC = navi.topViewController as? MainViewController else { return }
 		mainVC.changeBarStyleBaseOnTime()
 		mainVC.reloadDailyStory()
+
+		let notificationEnable = UIApplication.sharedApplication().currentUserNotificationSettings()!.types != UIUserNotificationType.None
+		if notificationEnable { mainVC.xyScrollView.settingView.savedNotificationIndex = mainVC.getNotificationIndex() }
 	}
 
 	func applicationDidBecomeActive(application: UIApplication) {
 		guard let shortcut = launchedShortcutItem else { return }
 		handleShortCutItem(shortcut)
 		launchedShortcutItem = nil
+	}
+
+	func application(application: UIApplication, didRegisterUserNotificationSettings notificationSettings: UIUserNotificationSettings) {
+		let notificationEnable = UIApplication.sharedApplication().currentUserNotificationSettings()!.types != UIUserNotificationType.None
+		if notificationEnable { mainVC.xyScrollView.settingView.savedNotificationIndex = mainVC.getNotificationIndex() }
 	}
 
 	func application(application: UIApplication, performActionForShortcutItem shortcutItem: UIApplicationShortcutItem, completionHandler: (Bool) -> Void) {
@@ -96,9 +99,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	func applicationWillTerminate(application: UIApplication) {
 		saveContext()
-
-		guard let navi = window?.rootViewController as? UINavigationController else { return }
-		guard let mainVC = navi.topViewController as? MainViewController else { return }
 		mainVC.xyScrollView.writeView.saveContent()
 	}
 
@@ -112,7 +112,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		init?(fullType: String) {
 			guard let last = fullType.componentsSeparatedByString(".").last else { return nil }
-
 			self.init(rawValue: last)
 		}
 
@@ -131,11 +130,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		var handled = false
 
-		guard let controller = window!.rootViewController as! UINavigationController? else { return false }
-		guard let mainVC = controller.viewControllers[0] as? MainViewController else { return false }
-
 		guard ShortcutIdentifier(fullType: shortcutItem.type) != nil else { return false }
-
 		guard let shortCutType = shortcutItem.type as String? else { return false }
 
 		switch (shortCutType) {
@@ -143,7 +138,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 			mainVC.viewDidLoad()
 			if mainVC.presentedViewController != nil {
 				mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
-				delay(seconds: 0.8) { mainVC.gotoPage(UIBarButtonItem()) }
+				delay(seconds: 0.8) { self.mainVC.gotoPage(UIBarButtonItem()) }
 			} else {
 				mainVC.gotoPage(UIBarButtonItem())
 			}

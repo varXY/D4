@@ -6,9 +6,7 @@
 //  Copyright © 2016 xiaoyao. All rights reserved.
 //
 
-import Foundation
 import UIKit
-import AVFoundation
 
 @objc enum XYScrollType: Int {
 	case Up, Down, Left, Right, NotScrollYet

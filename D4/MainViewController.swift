@@ -48,14 +48,17 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		xyScrollView = XYScrollView(VC: self)
 		xyScrollView.XYDelegate = self
 		view.addSubview(xyScrollView)
-		xyScrollView.X1_storyTableView.scrollsToTop = true
+
 		xyScrollView.writeView.backgroundSound = backgroundSound
 		xyScrollView.writeView.addtipLabels(true, removeIndex: nil)
 
+		xyScrollView.X1_storyTableView.scrollsToTop = true
+
 		xyScrollView.settingView.delegate = self
+		xyScrollView.settingView.askedForAllowNotification = getAskedAllowNotification()
+		xyScrollView.settingView.savedNotificationIndex = getNotificationIndex()
 
 		dailyStorys = xyScrollView.X1_storyTableView.storys
-
 		setupBars()
 
 		if traitCollection.forceTouchCapability == .Available {
@@ -66,6 +69,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		internetReachability = Reachability.reachabilityForInternetConnection()
 		internetReachability.startNotifier()
 
+
 	}
 
  	override func viewWillAppear(animated: Bool) {
@@ -75,8 +79,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		xyScrollView.settingView.askedForAllowNotification = getAskedAllowNotification()
-		xyScrollView.settingView.savedNotificationIndex = getNotificationIndex()
 	}
 
 	override func viewWillDisappear(animated: Bool) {

@@ -19,7 +19,8 @@ class SettingView: UIView {
 	var iconButton: UIButton!
 	var primaticButtons: [UIButton]!
 	var promptlabel: UILabel!
-	let notificationTitles = ["关", "晚8点", "晚9点", "晚10点", "早7点", "早8点", "早9点"]
+	
+	private let notificationTitles = ["关", "晚8点", "晚9点", "晚10点", "早7点", "早8点", "早9点"]
 
 	var nightStyle = false {
 		didSet {
@@ -30,7 +31,7 @@ class SettingView: UIView {
 	var savedNotificationIndex = 0 {
 		didSet {
 			guard let titleLabel = primaticButtons[0].subviews[0] as? UILabel else { return }
-			titleLabel.text = "写作提醒\n" + notificationTitles[savedNotificationIndex]
+			titleLabel.text = "\n写作提醒\n" + notificationTitles[savedNotificationIndex]
 		}
 	}
 
@@ -65,8 +66,8 @@ class SettingView: UIView {
 	}
 
 	func generatePrimaticButtons() {
-		let gap = CGFloat(sqrt(100.0))
-		let diagonalLength = (ScreenWidth - 40 - (gap * 3)) / 2
+		let gap: CGFloat = 0.0  // CGFloat(sqrt(100.0))
+		let diagonalLength = (ScreenWidth - (ScreenWidth / 3) - (gap * 3)) / 2
 		let center = CGPoint(x: ScreenWidth / 2, y: ScreenHeight / 2)
 		let centerDistance = diagonalLength / 2 + gap
 		let buttonCenters = [
@@ -77,13 +78,12 @@ class SettingView: UIView {
 		]
 
 		let buttonSize = CGSizeMake(diagonalLength / sqrt(2), diagonalLength / sqrt(2))
-		let titles = ["写作提醒\n" + notificationTitles[0], "分享", "评分", "简介"]
+		let titles = ["\n写作提醒\n" + notificationTitles[0], "分享", "评分", "简介"]
 
 		primaticButtons = buttonCenters.map({
 			let i = buttonCenters.indexOf($0)!
 			let button = prismaticButton(titles[i], center: buttonCenters[i], size: buttonSize)
 			button.addTarget(self, action: #selector(prismaticButtonTouchDown(_:)), forControlEvents: .TouchDown)
-			button.addTarget(self, action: #selector(prismaticButtonTouchUpOutside(_:)), forControlEvents: .TouchUpOutside)
 			button.addTarget(self, action: #selector(prismaticButtonTouchInside(_:)), forControlEvents: .TouchUpInside)
 			addSubview(button)
 			return button
@@ -116,12 +116,8 @@ class SettingView: UIView {
 
 	func changeColorBaseOnNightStyle(nightStyle: Bool) {
 		backgroundColor = nightStyle ? MyColor.code(5).BTColors[0] : UIColor.whiteColor()
-
-		let imageName = nightStyle ? "IconBlack" : "Icon"
-		iconButton.setImage(UIImage(named: imageName), forState: .Normal)
-
+		iconButton.setImage(UIImage(named: nightStyle ? "IconBlack" : "Icon"), forState: .Normal)
 		randomColorForPrimaticButtons()
-
 		promptlabel.attributedText = attributedString(nightStyle)
 	}
 
@@ -165,41 +161,26 @@ class SettingView: UIView {
 extension SettingView {
 
 	func prismaticButtonTouchDown(sender: UIButton) {
-		UIView.animateWithDuration(0.1) {
-			sender.transform = CGAffineTransformScale(sender.transform, 0.8, 0.8)
-		}
-	}
-
-	func prismaticButtonTouchUpOutside(sender: UIButton) {
-		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-			sender.transform = CGAffineTransformScale(sender.transform, (1.0 / 0.8), (1.0 / 0.8))
-			}, completion:  nil)
+		let colorCode = randomColorCodeForPrimaticButton()
+		sender.backgroundColor = MyColor.code(colorCode).BTColors[0]
+		guard let titleLabel = sender.subviews[0] as? UILabel else { return }
+		titleLabel.textColor = MyColor.code(colorCode).BTColors[1]
 	}
 
 	func prismaticButtonTouchInside(sender: UIButton) {
 		primaticButtons.forEach({ $0.userInteractionEnabled = false })
 		iconButton.userInteractionEnabled = false
 
-		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-			sender.transform = CGAffineTransformScale(sender.transform, (1.0 / 0.8), (1.0 / 0.8))
-			}, completion:  { (_) in
+		switch primaticButtons.indexOf(sender)! {
+		case 0: changeNotification()
+		case 1: shareContent()
+		case 2: gotoAppStore()
+		case 3: showInfo()
+		default: break
+		}
 
-				switch self.primaticButtons.indexOf(sender)! {
-				case 0:
-					self.changeNotification()
-				case 1:
-					self.shareContent()
-				case 2:
-					self.gotoAppStore()
-				case 3:
-					self.showInfo()
-				default:
-					break
-				}
-
-				self.primaticButtons.forEach({ $0.userInteractionEnabled = true })
-				self.iconButton.userInteractionEnabled = true
-		})
+		primaticButtons.forEach({ $0.userInteractionEnabled = true })
+		iconButton.userInteractionEnabled = true
 	}
 
 	func changeNotification() {
@@ -219,9 +200,6 @@ extension SettingView {
 
 	func notificationSelected(index: Int) {
 		delegate?.saveNotificationIndexToUserDefaults(index)
-		
-		guard let titleLabel = primaticButtons[0].subviews[0] as? UILabel else { return }
-		titleLabel.text = "写作提醒\n" + notificationTitles[index]
 		scheduleNotification(index)
 	}
 
@@ -237,7 +215,7 @@ extension SettingView {
 	}
 
 	func showInfo() {
-		let title = "开放匿名的分享故事社区"
+		let title = "开放匿名分享故事社区"
 		let message = "\n一天的故事\n=\n标题\n+\n上午 + 下午 + 晚上\n+\n睡前哲思\n=\n10 + 100 + 100 + 100 + 20\n\n今日100\n=\n50个今日最新\n+\n49个昨日最热\n+\n1个你的故事\n=\n(50 + 49 + 1) × 330\n\nPS：今日100每天刷新一次 <= 100"
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .ActionSheet)
 		let cancelAction = UIAlertAction(title: "了解了", style: .Cancel, handler: nil)
@@ -273,6 +251,11 @@ extension SettingView {
 				localNotification.soundName = UILocalNotificationDefaultSoundName
 
 				UIApplication.sharedApplication().scheduleLocalNotification(localNotification)
+			}
+
+			if notificationEnable {
+				guard let titleLabel = primaticButtons[0].subviews[0] as? UILabel else { return }
+				titleLabel.text = "\n写作提醒\n" + notificationTitles[index]
 			}
 
 			if !askedForAllowNotification {
