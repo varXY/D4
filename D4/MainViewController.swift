@@ -92,17 +92,20 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		}
 	}
 
-	// MARK: -
+	// MARK: Load story & UI
 
 	func reloadDailyStory() {
-		let lastDate = lastLoadDate()
-		dailyStoryLoaded = lastDate.string(.dd) == NSDate().string(.dd)
+		dailyStoryLoaded = lastLoadDate().string(.dd) == NSDate().string(.dd)
 
 		if !dailyStoryLoaded {
+
+			if self.presentedViewController != nil {
+				self.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
+			}
+
 			if self.segmentedControl.selectedSegmentIndex != 0 {
-				let holder = UISegmentedControl(items: ["0", "1"])
-				holder.selectedSegmentIndex = 0
-				self.segmentedControlSelected(holder)
+				self.segmentedControl.selectedSegmentIndex = 0
+				self.segmentedControlSelected(self.segmentedControl)
 			}
 
 			xyScrollView.X1_storyTableView.loading(true)
@@ -135,6 +138,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 					self.pointerView.lastUpdateText = "无法更新"
 					print("Get zero story online")
 				}
+
 			}
 
 		} else {
@@ -147,6 +151,10 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	func loadingStory(loading: Bool) {
 		if loading {
+			if let oldView = view.viewWithTag(301) as? UIImageView {
+				oldView.removeFromSuperview()
+			}
+
 			let images = colorCode.map({ UIImage.imageWithColor(MyColor.code($0).BTColors[0], rect: CGRectMake(0, 0, ScreenWidth, 50)) })
 			let loadingImage = UIImage.animatedImageWithImages(images, duration: 1.5)
 			let imageView = UIImageView(image: loadingImage)
@@ -158,9 +166,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		} else {
 			if let imageView = view.viewWithTag(301) as? UIImageView {
 				imageView.stopAnimating()
-
-				UIView.animateWithDuration(0.6, animations: { imageView.alpha = 0.2 })
-				delay(seconds: 0.6, completion: { imageView.removeFromSuperview() })
+				imageView.removeFromSuperview()
 			}
 		}
 	}
@@ -212,6 +218,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func changeBarStyleBaseOnTime() {
 		let hour = Int(NSDate().string(.HH))
 		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
+
 		pointerView.nightStyle = nightStyle
 		xyScrollView.writeView.nightStyle = nightStyle
 		xyScrollView.settingView.nightStyle = nightStyle
