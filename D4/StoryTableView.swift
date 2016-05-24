@@ -63,9 +63,11 @@ class StoryTableView: UITableView, CoreDataAndStory {
 	func loading(loading: Bool) {
 		let distance: CGFloat = storys.count == 0 ? 70 : 50
 
-		if loading {
+		if loading && frame.origin.y == 0 {
 			frame.origin.y += distance
-		} else {
+		}
+
+		if !loading && frame.origin.y == distance {
 			UIView.animateWithDuration(0.3, animations: {
 				self.frame.origin.y -= distance
 				}, completion: { (_) in

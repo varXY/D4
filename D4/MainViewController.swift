@@ -22,6 +22,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	var forceTouchWay = false
 	var nightStyle = false
 	var oldTopIndex = 0
+	var topViewIndex = 1
 
 	var dailyStorys: [Story]!
 
@@ -248,10 +249,23 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 		backgroundSound.playSound(true, sound: backgroundSound.selected_sound)
 		xyScrollView.scrolledType = .NotScrollYet
-		xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
 
-		oldTopIndex = 1
-		xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: pageIndex)
+		if topViewIndex == 2 {
+			oldTopIndex = 2
+			xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
+			xyScrollViewDidScroll(.Left, topViewIndex: 1)
+
+			delay(seconds: 1.0, completion: { 
+				self.oldTopIndex = 1
+				self.xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
+				self.xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: pageIndex)
+			})
+		} else {
+			oldTopIndex = 1
+			xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
+			xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: pageIndex)
+		}
+
 	}
 
 	func hideOrShowStatusViewAndToolbar(presentedVC: Bool?) {
@@ -297,7 +311,7 @@ extension MainViewController: XYScrollViewDelegate {
 
 	func didSelectedStory(storyIndex: Int) {
 		forceTouchWay = false
-		navigationController?.setToolbarHidden(true, animated: true)
+		hideOrShowStatusViewAndToolbar(true)
 
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 			self.view.alpha = 0.0
@@ -307,7 +321,6 @@ extension MainViewController: XYScrollViewDelegate {
 		detailVC.topStoryIndex = storyIndex
 		setUpDetailVC(detailVC)
 		presentViewController(detailVC, animated: true) { 
-			self.hideOrShowStatusViewAndToolbar(true)
 		}
 	}
 
@@ -326,6 +339,7 @@ extension MainViewController: XYScrollViewDelegate {
 	}
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
+		self.topViewIndex = topViewIndex
 		hideOrShowStatusViewAndToolbar(nil)
 		pointerView.showTextBaseOnTopIndex(topViewIndex)
 

@@ -122,7 +122,6 @@ class XYScrollView: UIScrollView {
 			writeView.delegate = self
 			X0_contentView.addSubview(writeView)
 			X0_contentView.alpha = 0.0
-			X0_contentView.decelerationRate = UIScrollViewDecelerationRateFast
 
 			X1_storyTableView = StoryTableView(frame: bounds, storys: [Story]())
 			X1_storyTableView.scrollsToTop = false
@@ -134,7 +133,6 @@ class XYScrollView: UIScrollView {
 			settingView = SettingView()
 			X2_contentView.addSubview(settingView)
 			X2_contentView.alpha = 0.0
-			X2_contentView.decelerationRate = UIScrollViewDecelerationRateFast
 
 			addSubview(X1_storyTableView)
 			addSubview(X0_contentView)
@@ -179,6 +177,7 @@ class XYScrollView: UIScrollView {
 		scrollView.pagingEnabled = false
 		scrollView.scrollsToTop = false
 		scrollView.delegate = self
+		scrollView.decelerationRate = UIScrollViewDecelerationRateFast
 	}
 
 

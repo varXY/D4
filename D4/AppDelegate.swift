@@ -51,13 +51,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		// MARK: Network
 		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
-//		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
+		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
 
 		return shouldPerformAdditionalDelegateHandling
 	}
 
 	func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
-		mainVC.viewDidLoad()
+		if !mainVC.isViewLoaded() { mainVC.viewDidLoad() }
 		if mainVC.presentedViewController != nil {
 			mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
 			delay(seconds: 0.8) { self.mainVC.gotoPage(UIBarButtonItem()) }
@@ -135,12 +135,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		switch (shortCutType) {
 		case ShortcutIdentifier.First.type:
-			mainVC.viewDidLoad()
+			if !mainVC.isViewLoaded() { mainVC.viewDidLoad() }
 			if mainVC.presentedViewController != nil {
 				mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
 				delay(seconds: 0.8) { self.mainVC.gotoPage(UIBarButtonItem()) }
 			} else {
-				mainVC.gotoPage(UIBarButtonItem())
+				if mainVC.topViewIndex != 0 {
+					mainVC.gotoPage(UIBarButtonItem())
+				}
 			}
 
 		default:
