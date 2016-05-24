@@ -120,7 +120,10 @@ class PointerView: UIView {
 		let types = [XYScrollType.Up, XYScrollType.Down, XYScrollType.Left, XYScrollType.Right]
 		UDLR_labels = types.map({ Label().label($0) })
 
-		pointers.forEach({ $0.alpha = 0.0 })
+		pointers.forEach({
+			$0.transform = CGAffineTransformScale($0.transform, 0.85, 0.85)
+			$0.alpha = 0.0
+		})
 		UDLR_labels.forEach({ $0.alpha = 0.0 })
 
 		switch VC {

@@ -31,9 +31,9 @@ class XYScrollView: UIScrollView {
 	var writeView: WriteView!
 	var settingView: SettingView!
 
-	var Y0_storyView: StoryView!
-	var Y1_storyView: StoryView!
-	var Y2_storyView: StoryView!
+//	var Y0_storyView: StoryView!
+//	var Y1_storyView: StoryView!
+//	var Y2_storyView: StoryView!
 
 	var topView: UIScrollView!
 	var middleView: UIScrollView!

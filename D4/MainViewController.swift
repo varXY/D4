@@ -297,6 +297,7 @@ extension MainViewController: XYScrollViewDelegate {
 
 	func didSelectedStory(storyIndex: Int) {
 		forceTouchWay = false
+		navigationController?.setToolbarHidden(true, animated: true)
 
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
 			self.view.alpha = 0.0
