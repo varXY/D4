@@ -31,10 +31,6 @@ class XYScrollView: UIScrollView {
 	var writeView: WriteView!
 	var settingView: SettingView!
 
-//	var Y0_storyView: StoryView!
-//	var Y1_storyView: StoryView!
-//	var Y2_storyView: StoryView!
-
 	var topView: UIScrollView!
 	var middleView: UIScrollView!
 	var bottomView: UIScrollView!
@@ -188,15 +184,14 @@ class XYScrollView: UIScrollView {
 				case .Left:
 					topViewIndex = 0
 					X0_contentView.alpha = 1.0
-					let notClear = X1_storyTableView.backgroundColor != UIColor.clearColor()
-					if notClear { X1_storyTableView.backgroundColor = UIColor.clearColor() }
+					X1_storyTableView.removeFromSuperview()
+					X1_storyTableView.alpha = 0.0
 
 					animate({
-						self.X1_storyTableView.alpha = 0.0
 						self.X0_contentView.frame.origin.x += ScreenWidth
 						}, completion: {
-							self.X1_storyTableView.alpha = 0.0
-							if notClear { self.X1_storyTableView.backgroundColor = MyColor.code(5).BTColors[0] }
+							self.addSubview(self.X1_storyTableView)
+							self.sendSubviewToBack(self.X1_storyTableView)
 							delay(seconds: 0.5, completion: {
 								self.writeView.layer.cornerRadius = globalRadius
 							})
@@ -205,14 +200,14 @@ class XYScrollView: UIScrollView {
 				case .Right:
 					topViewIndex = 2
 					X2_contentView.alpha = 1.0
-					let notClear = X1_storyTableView.backgroundColor != UIColor.clearColor()
-					if notClear { X1_storyTableView.backgroundColor = UIColor.clearColor() }
+					X1_storyTableView.removeFromSuperview()
+					X1_storyTableView.alpha = 0.0
 
 					animate({
-						self.X1_storyTableView.alpha = 0.0
 						self.X2_contentView.frame.origin.x -= ScreenWidth
 						}, completion: {
-							if notClear { self.X1_storyTableView.backgroundColor = MyColor.code(5).BTColors[0] }
+							self.addSubview(self.X1_storyTableView)
+							self.sendSubviewToBack(self.X1_storyTableView)
 					})
 					
 				default: break
@@ -232,7 +227,8 @@ class XYScrollView: UIScrollView {
 							self.writeView.layer.cornerRadius = 0
 					})
 
-				default: break
+				default:
+					break
 				}
 			}
 
@@ -248,7 +244,8 @@ class XYScrollView: UIScrollView {
 						}, completion: { 
 					})
 
-				default: break
+				default:
+					break
 				}
 			}
 

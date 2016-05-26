@@ -51,19 +51,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		// MARK: Network
 		AVOSCloud.setApplicationId("X61IrFz0Nl3uECb2PqyN7SjL-gzGzoHsz", clientKey: "9BkN2LTqw0D8VspjK92A2tIu")
-		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
+//		AVAnalytics.trackAppOpenedWithLaunchOptions(launchOptions)
 
 		return shouldPerformAdditionalDelegateHandling
 	}
 
 	func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
 		if !mainVC.isViewLoaded() { mainVC.viewDidLoad() }
+
 		if mainVC.presentedViewController != nil {
-			mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
-			delay(seconds: 0.8) { self.mainVC.gotoPage(UIBarButtonItem()) }
-		} else {
+			if mainVC.presentedViewController!.isKindOfClass(DetailViewController) {
+				mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
+
+				if mainVC.topViewIndex != 0 {
+					delay(seconds: 1.0, completion: {
+						self.mainVC.gotoPage(UIBarButtonItem())
+					})
+				}
+
+				return
+			}
+		}
+
+		if mainVC.topViewIndex != 0 {
 			mainVC.gotoPage(UIBarButtonItem())
 		}
+
+
 	}
 
 	func applicationWillResignActive(application: UIApplication) {
@@ -136,13 +150,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		switch (shortCutType) {
 		case ShortcutIdentifier.First.type:
 			if !mainVC.isViewLoaded() { mainVC.viewDidLoad() }
+
 			if mainVC.presentedViewController != nil {
-				mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
-				delay(seconds: 0.8) { self.mainVC.gotoPage(UIBarButtonItem()) }
-			} else {
-				if mainVC.topViewIndex != 0 {
-					mainVC.gotoPage(UIBarButtonItem())
+				if mainVC.presentedViewController!.isKindOfClass(DetailViewController) {
+					mainVC.presentedViewController?.dismissViewControllerAnimated(true, completion: nil)
+
+					if mainVC.topViewIndex != 0 {
+						delay(seconds: 1.0, completion: {
+							self.mainVC.gotoPage(UIBarButtonItem())
+						})
+					}
+
+					break
 				}
+			}
+
+			if mainVC.topViewIndex != 0 {
+				mainVC.gotoPage(UIBarButtonItem())
 			}
 
 		default:
