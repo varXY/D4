@@ -219,7 +219,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func changeBarStyleBaseOnTime() {
 		let hour = Int(NSDate().string(.HH))
 		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
-
+		
 		pointerView.nightStyle = nightStyle
 		xyScrollView.writeView.nightStyle = nightStyle
 		xyScrollView.settingView.nightStyle = nightStyle
@@ -301,12 +301,20 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 extension MainViewController: XYScrollViewDelegate {
 
-	func xyScrollViewDidBeginScroll(begin: Bool, type: XYScrollType) {
-		pointerView.showAllSubviews(begin, VC: self, type: type)
-	}
-
 	func scrollTypeDidChange(type: XYScrollType) {
-		pointerView.changePointerDirection(type)
+
+		if self.topViewIndex == 0 {
+			switch type {
+			case .Up:
+				pointerView.changeTextForUpInWriteView()
+			case .Down:
+				pointerView.changeLabelTextForCanSaveStory(self.xyScrollView.writeView.doneWriting, ready: self.xyScrollView.writeView.ready)
+			default:
+				break
+			}
+		}
+
+		pointerView.showPointer(type)
 	}
 
 	func didSelectedStory(storyIndex: Int) {
@@ -335,24 +343,25 @@ extension MainViewController: XYScrollViewDelegate {
 
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
+		pointerView.hidePointersAndLabels()
 		oldTopIndex = topViewIndex
 	}
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		self.topViewIndex = topViewIndex
 		hideOrShowStatusViewAndToolbar(nil)
-		pointerView.showTextBaseOnTopIndex(topViewIndex)
 
 		if oldTopIndex == topViewIndex {
 			switch topViewIndex {
 			case 0:
 				switch scrollType {
 				case .Up:
-					pointerView.changeTextForUpInWriteView()
-					
+					break
+
 				case .Down:
-					pointerView.changeLabelTextForCanSaveStory(xyScrollView.writeView.doneWriting, ready: xyScrollView.writeView.ready)
-					delay(seconds: 0.7) { self.goBackSaveUploadStory() }
+					delay(seconds: 0.7) {
+						self.goBackSaveUploadStory()
+					}
 
 				case .Left:
 					xyScrollView.writeView.labelsGetRandomColors()
@@ -386,6 +395,7 @@ extension MainViewController: XYScrollViewDelegate {
 				break
 			}
 		} else {
+			pointerView.showTextBaseOnTopIndex(topViewIndex)
 			pointerView.addOrRemoveUpAndDownPointerAndLabel(topViewIndex)
 
 			if topViewIndex == 0 && oldTopIndex == 1 {

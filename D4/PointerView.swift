@@ -157,30 +157,16 @@ class PointerView: UIView {
 
 	}
 
-	func changePointerDirection(type: XYScrollType) {		
+	func showPointer(type: XYScrollType) {
 		switch type {
 		case .Up, .Down, .Left, .Right:
-			move({ self.pointers[type.rawValue].center = self.pointer.toCenters[type.rawValue] })
+			move({
+				self.pointers[type.rawValue].alpha = 1.0
+				self.UDLR_labels[type.rawValue].alpha = 1.0
+				self.pointers[type.rawValue].center = self.pointer.toCenters[type.rawValue]
+			})
 		default:
-			pointers.forEach({ (pointer) in
-				pointer.alpha = 0.0
-				let i = pointers.indexOf({ (imageView) -> Bool in
-					return imageView == pointer
-				})!
-				if i < UDLR_labels.count { UDLR_labels[i].alpha = 0.0 }
-			})
-
-			delay(seconds: 0.4, completion: {
-				self.pointers.forEach({ (pointer) in
-					pointer.alpha = 1.0
-					let i = self.pointers.indexOf({ (imageView) -> Bool in
-						return imageView == pointer
-					})!
-					self.pointers[i].center = self.pointer.originCenters[i]
-					if i < self.UDLR_labels.count { self.UDLR_labels[i].alpha = 1.0 }
-				})
-			})
-
+			hidePointersAndLabels()
 		}
 	}
 
@@ -190,14 +176,16 @@ class PointerView: UIView {
 			}, completion: nil)
 	}
 
-	func showAllSubviews(show: Bool, VC: UIViewController, type: XYScrollType) {
-		if type != .NotScrollYet {
-			pointers[type.rawValue].alpha = show ? 1.0 : 0.0
-			UDLR_labels[type.rawValue].alpha = show ? 1.0 : 0.0
-		} else if !show && type == .NotScrollYet {
-			pointers.forEach({ $0.alpha = 0.0 })
-			UDLR_labels.forEach({ $0.alpha = 0.0 })
-		}
+	func hidePointersAndLabels() {
+		pointers.forEach({
+			$0.alpha = 0.0
+			let i = pointers.indexOf($0)!
+			if $0.center == self.pointer.toCenters[i] {
+				$0.center = self.pointer.originCenters[i]
+			}
+		})
+
+		UDLR_labels.forEach({ $0.alpha = 0.0 })
 	}
 
 
@@ -250,12 +238,14 @@ class PointerView: UIView {
 	}
 
 	func changeLabelTextForCanSaveStory(can: Bool, ready: Bool) {
+		UDLR_labels[1].alpha = 0.0
 		if !can && !ready {	UDLR_labels[1].text = "写完上划发布" }
 		if can && !ready { UDLR_labels[1].text = randomTip(.Down) }
 		if can && ready { UDLR_labels[1].text = "发布" }
 	}
 
 	func changeTextForUpInWriteView() {
+		UDLR_labels[0].alpha = 0.0
 		UDLR_labels[0].text = randomTip(.Up)
 	}
 

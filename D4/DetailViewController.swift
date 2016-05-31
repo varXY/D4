@@ -154,18 +154,20 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 extension DetailViewController: XYScrollViewDelegate {
 
 	func xyScrollViewDidBeginScroll(begin: Bool, type: XYScrollType) {
-		pointerView.showAllSubviews(begin, VC: self, type: type)
+//		pointerView.showAllSubviews(begin, VC: self, type: type)
 	}
 
 	func scrollTypeDidChange(type: XYScrollType) {
-		pointerView.changePointerDirection(type)
+		pointerView.showPointer(type)
 	}
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
-		if scrollType != .NotScrollYet {
-			pointerView.pointers[scrollType.rawValue].alpha = 0.0
-			pointerView.UDLR_labels[scrollType.rawValue].alpha = 0.0
-		}
+		pointerView.hidePointersAndLabels()
+
+//		if scrollType != .NotScrollYet {
+//			pointerView.pointers[scrollType.rawValue].alpha = 0.0
+//			pointerView.UDLR_labels[scrollType.rawValue].alpha = 0.0
+//		}
 
 		if rateViewShowed && (scrollType == .Up || scrollType == .Down) {
 			rateViewShowed = false

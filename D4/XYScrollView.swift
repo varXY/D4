@@ -13,7 +13,6 @@ import UIKit
 }
 
 @objc protocol XYScrollViewDelegate: class {
-	func xyScrollViewDidBeginScroll(begin: Bool, type: XYScrollType)
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int)
 	optional func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int)
 	optional func writeViewWillInputText(index: Int, oldText: String, colorCode: Int)
@@ -365,20 +364,6 @@ class XYScrollView: UIScrollView {
 extension XYScrollView: UIScrollViewDelegate {
 
 	func scrollViewDidScroll(scrollView: UIScrollView) {
-		if (scrollView.contentOffset.x != 0 || scrollView.contentOffset.y != 0) && !beginScroll {
-			var type = XYScrollType.NotScrollYet
-			if scrollView.contentOffset.x == 0 && scrollView.contentOffset.y < 0 { type = .Up }
-			if scrollView.contentOffset.x == 0 && scrollView.contentOffset.y > 0 { type = .Down	}
-			if scrollView.contentOffset.x < 0 && scrollView.contentOffset.y == 0 { type = .Left }
-			if scrollView.contentOffset.x > 0 && scrollView.contentOffset.y == 0 { type = .Right }
-
-			XYDelegate?.xyScrollViewDidBeginScroll(true, type: type)
-			beginScroll = true
-		} else if scrollView.contentOffset == CGPoint(x: 0, y: 0) {
-			XYDelegate?.xyScrollViewDidBeginScroll(false, type: XYScrollType.NotScrollYet)
-			beginScroll = false
-		}
-
 		if scrollView != self {
 			if scrollView.contentOffset.y > TriggerDistance {
 				if scrolledType != .Down { scrolledType = .Down }
@@ -396,16 +381,17 @@ extension XYScrollView: UIScrollViewDelegate {
 				if scrolledType != .NotScrollYet { scrolledType = .NotScrollYet }
 			}
 		}
-
 	}
 
-	func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+	func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
 		XYDelegate?.xyScrollViewWillScroll?(scrolledType, topViewIndex: topViewIndex)
 		moveContentViewToTop(scrolledType)
 		if !inMainVC { topViewIndex = topStoryIndex }
 		XYDelegate?.xyScrollViewDidScroll(scrolledType, topViewIndex: topViewIndex)
-		scrolledType = .NotScrollYet
+//		scrolledType = .NotScrollYet
+	}
 
+	func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
 	}
 
 }
