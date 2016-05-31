@@ -49,6 +49,8 @@ class PointerView: UIView {
 	var UDLR_labels = [UILabel]()
 	var blankViews: [UIView]!
 
+	var allHidden = true
+
 	var nightStyle = false {
 		didSet {
 			backgroundColor = nightStyle ? UIColor.blackColor() : UIColor.backgroundColor()
@@ -160,32 +162,38 @@ class PointerView: UIView {
 	func showPointer(type: XYScrollType) {
 		switch type {
 		case .Up, .Down, .Left, .Right:
+
 			move({
 				self.pointers[type.rawValue].alpha = 1.0
 				self.UDLR_labels[type.rawValue].alpha = 1.0
 				self.pointers[type.rawValue].center = self.pointer.toCenters[type.rawValue]
+				}, done: { 
+					self.allHidden = false
 			})
+
 		default:
 			hidePointersAndLabels()
 		}
 	}
 
-	func move(animate: () -> ()) {
+	func move(animate: () -> (), done: () -> ()) {
 		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
 			animate()
-			}, completion: nil)
+			}) { (_) in
+				done()
+		}
 	}
 
 	func hidePointersAndLabels() {
-		pointers.forEach({
-			$0.alpha = 0.0
-			let i = pointers.indexOf($0)!
-			if $0.center == self.pointer.toCenters[i] {
-				$0.center = self.pointer.originCenters[i]
-			}
-		})
+		if !allHidden {
+			pointers.forEach({
+				$0.alpha = 0.0
+				$0.center = self.pointer.originCenters[pointers.indexOf($0)!]
+			})
 
-		UDLR_labels.forEach({ $0.alpha = 0.0 })
+			UDLR_labels.forEach({ $0.alpha = 0.0 })
+			allHidden = true
+		}
 	}
 
 

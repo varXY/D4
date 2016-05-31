@@ -46,24 +46,24 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		pointerView = PointerView(VC: self)
 		view = pointerView
 
-		xyScrollView = XYScrollView(VC: self)
+		xyScrollView = XYScrollView(VC: self, storys: nil, topStoryIndex: nil)
 		xyScrollView.XYDelegate = self
 		view.addSubview(xyScrollView)
 
 		xyScrollView.writeView.backgroundSound = backgroundSound
 		xyScrollView.writeView.addtipLabels(true, removeIndex: nil)
 
-		xyScrollView.X1_storyTableView.scrollsToTop = true
+		xyScrollView.storyTableView.scrollsToTop = true
 
 		xyScrollView.settingView.delegate = self
 		xyScrollView.settingView.askedForAllowNotification = getAskedAllowNotification()
 		xyScrollView.settingView.savedNotificationIndex = getNotificationIndex()
 
-		dailyStorys = xyScrollView.X1_storyTableView.storys
+		dailyStorys = xyScrollView.storyTableView.storys
 		setupBars()
 
 		if traitCollection.forceTouchCapability == .Available {
-			registerForPreviewingWithDelegate(self, sourceView: xyScrollView.X1_storyTableView)
+			registerForPreviewingWithDelegate(self, sourceView: xyScrollView.storyTableView)
 		}
 
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(reachabilityChanged(_:)), name: kReachabilityChangedNotification, object: nil)
@@ -109,20 +109,20 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 				self.segmentedControlSelected(self.segmentedControl)
 			}
 
-			xyScrollView.X1_storyTableView.loading(true)
+			xyScrollView.storyTableView.loading(true)
 			loadingStory(true)
 
 			scrollToRow(0)
 			pointerView.lastUpdateText = ""
 
 			getDailyStory { (storys) in
-				self.xyScrollView.X1_storyTableView.loading(false)
+				self.xyScrollView.storyTableView.loading(false)
 				self.loadingStory(false)
 
 				if storys.count != 0 {
 					self.dailyStorys = storys
 					self.xyScrollView.storys = storys
-					self.xyScrollView.X1_storyTableView.reloadData()
+					self.xyScrollView.storyTableView.reloadData()
 
 					self.dailyStoryLoaded = true
 					self.updateLastLoadDate(NSDate())
@@ -174,15 +174,15 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 
 	func loadSavedDailyStory() {
 		xyScrollView.storys = dailyStorys
-		xyScrollView.X1_storyTableView.netOrLocalStory = 0
-		xyScrollView.X1_storyTableView.reloadData()
+		xyScrollView.storyTableView.netOrLocalStory = 0
+		xyScrollView.storyTableView.reloadData()
 	}
 
 	func loadSelfStory() {
 		getMyStorys { (storys) in
 			self.xyScrollView.storys = storys
-			self.xyScrollView.X1_storyTableView.netOrLocalStory = 1
-			self.xyScrollView.X1_storyTableView.reloadData()
+			self.xyScrollView.storyTableView.netOrLocalStory = 1
+			self.xyScrollView.storyTableView.reloadData()
 		}
 	}
 
@@ -335,9 +335,9 @@ extension MainViewController: XYScrollViewDelegate {
 	func setUpDetailVC(detailVC: DetailViewController) {
 		detailVC.modalPresentationStyle = .Custom
 		detailVC.transitioningDelegate = detailVC
-		detailVC.storys = xyScrollView.X1_storyTableView.storys
+		detailVC.storys = xyScrollView.storyTableView.storys
 		detailVC.nightStyle = nightStyle
-		detailVC.netOrLocalStory = xyScrollView.X1_storyTableView.netOrLocalStory
+		detailVC.netOrLocalStory = xyScrollView.storyTableView.netOrLocalStory
 		detailVC.delegate = self
 	}
 
@@ -438,7 +438,7 @@ extension MainViewController: XYScrollViewDelegate {
 								if success {
 									self.updateLastWriteDate(NSDate())
 									self.xyScrollView.writeView.clearContent()
-									self.xyScrollView.X1_storyTableView.insertNewStory(story!)
+									self.xyScrollView.storyTableView.insertNewStory(story!)
 								}
 							})
 						} else {
@@ -471,8 +471,8 @@ extension MainViewController: XYScrollViewDelegate {
 extension MainViewController: DetailViewControllerDelegate {
 
 	func ratingChanged(index: Int, rating: Int) {
-		xyScrollView.X1_storyTableView.storys[index].rating = rating
-		updateRatingOfDailyStoryInCoreData(xyScrollView.X1_storyTableView.storys[index])
+		xyScrollView.storyTableView.storys[index].rating = rating
+		updateRatingOfDailyStoryInCoreData(xyScrollView.storyTableView.storys[index])
 	}
 
 	func detailViewControllerWillDismiss(topStoryIndex: Int) {
@@ -493,9 +493,9 @@ extension MainViewController: DetailViewControllerDelegate {
 	}
 
 	func scrollToRow(row: Int) {
-		if xyScrollView.X1_storyTableView.numberOfRowsInSection(0) != 0 {
+		if xyScrollView.storyTableView.numberOfRowsInSection(0) != 0 {
 			let indexPath = NSIndexPath(forRow: row, inSection: 0)
-			xyScrollView.X1_storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: false)
+			xyScrollView.storyTableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: false)
 		}
 	}
 }
@@ -505,7 +505,7 @@ extension MainViewController: DetailViewControllerDelegate {
 extension MainViewController: UIViewControllerPreviewingDelegate {
 
 	func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-		guard let indexPath = xyScrollView.X1_storyTableView.indexPathForRowAtPoint(location), cell = xyScrollView.X1_storyTableView.cellForRowAtIndexPath(indexPath) else { return nil }
+		guard let indexPath = xyScrollView.storyTableView.indexPathForRowAtPoint(location), cell = xyScrollView.storyTableView.cellForRowAtIndexPath(indexPath) else { return nil }
 
 		let detailVC = DetailViewController()
 		detailVC.topStoryIndex = indexPath.row

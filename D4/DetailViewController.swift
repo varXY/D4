@@ -59,9 +59,7 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 		pointerView = PointerView(VC: self)
 		view = pointerView
 
-		xyScrollView = XYScrollView(VC: self)
-		xyScrollView.storys = storys
-		xyScrollView.initTopStoryIndex = topStoryIndex
+		xyScrollView = XYScrollView(VC: self, storys: storys, topStoryIndex: topStoryIndex)
 		xyScrollView.XYDelegate = self
 		view.addSubview(xyScrollView)
 
@@ -153,21 +151,12 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 extension DetailViewController: XYScrollViewDelegate {
 
-	func xyScrollViewDidBeginScroll(begin: Bool, type: XYScrollType) {
-//		pointerView.showAllSubviews(begin, VC: self, type: type)
-	}
-
 	func scrollTypeDidChange(type: XYScrollType) {
 		pointerView.showPointer(type)
 	}
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		pointerView.hidePointersAndLabels()
-
-//		if scrollType != .NotScrollYet {
-//			pointerView.pointers[scrollType.rawValue].alpha = 0.0
-//			pointerView.UDLR_labels[scrollType.rawValue].alpha = 0.0
-//		}
 
 		if rateViewShowed && (scrollType == .Up || scrollType == .Down) {
 			rateViewShowed = false
@@ -176,9 +165,6 @@ extension DetailViewController: XYScrollViewDelegate {
 	}
 
 	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
-		topStoryIndex = topViewIndex
-		showPointerTextBaseOnStoryIndex(topStoryIndex)
-
 		switch scrollType {
 		case .Left:
 			dismissViewControllerAnimated(true, completion: nil)
@@ -188,6 +174,11 @@ extension DetailViewController: XYScrollViewDelegate {
 
 		default:
 			break
+		}
+
+		delay(seconds: 0.8) {
+			self.topStoryIndex = topViewIndex
+			self.showPointerTextBaseOnStoryIndex(self.topStoryIndex)
 		}
 	}
 
