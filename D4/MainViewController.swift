@@ -217,9 +217,9 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	}
 
 	func changeBarStyleBaseOnTime() {
-		let hour = Int(NSDate().string(.HH))
-		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
-		
+//		let hour = Int(NSDate().string(.HH))
+//		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
+		nightStyle = true
 		pointerView.nightStyle = nightStyle
 		xyScrollView.writeView.nightStyle = nightStyle
 		xyScrollView.settingView.nightStyle = nightStyle
@@ -303,16 +303,16 @@ extension MainViewController: XYScrollViewDelegate {
 
 	func scrollTypeDidChange(type: XYScrollType) {
 
-		if self.topViewIndex == 0 {
-			switch type {
-			case .Up:
-				pointerView.changeTextForUpInWriteView()
-			case .Down:
-				pointerView.changeLabelTextForCanSaveStory(self.xyScrollView.writeView.doneWriting, ready: self.xyScrollView.writeView.ready)
-			default:
-				break
-			}
-		}
+//		if self.topViewIndex == 0 {
+//			switch type {
+//			case .Up:
+//				pointerView.changeTextForUpInWriteView()
+//			case .Down:
+//				pointerView.changeLabelTextForCanSaveStory(self.xyScrollView.writeView.doneWriting, ready: self.xyScrollView.writeView.ready)
+//			default:
+//				break
+//			}
+//		}
 
 		pointerView.showPointer(type)
 	}
@@ -356,9 +356,11 @@ extension MainViewController: XYScrollViewDelegate {
 			case 0:
 				switch scrollType {
 				case .Up:
-					break
+					pointerView.changeTextForUpInWriteView()
 
 				case .Down:
+					pointerView.changeLabelTextForCanSaveStory(self.xyScrollView.writeView.doneWriting, ready: self.xyScrollView.writeView.ready)
+
 					delay(seconds: 0.7) {
 						self.goBackSaveUploadStory()
 					}
@@ -472,6 +474,7 @@ extension MainViewController: DetailViewControllerDelegate {
 
 	func ratingChanged(index: Int, rating: Int) {
 		xyScrollView.storyTableView.storys[index].rating = rating
+		dailyStorys[index].rating = rating
 		updateRatingOfDailyStoryInCoreData(xyScrollView.storyTableView.storys[index])
 	}
 

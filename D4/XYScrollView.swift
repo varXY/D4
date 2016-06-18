@@ -50,7 +50,9 @@ class XYScrollView: UIScrollView {
 
 	var scrolledType: XYScrollType = .NotScrollYet {
 		didSet {
-			XYDelegate?.scrollTypeDidChange(scrolledType)
+			if scrolledType != oldValue {
+				XYDelegate?.scrollTypeDidChange(scrolledType)
+			}
 		}
 	}
 
@@ -132,7 +134,7 @@ class XYScrollView: UIScrollView {
 		scrollView.pagingEnabled = false
 		scrollView.scrollsToTop = false
 		scrollView.delegate = self
-		scrollView.decelerationRate = UIScrollViewDecelerationRateFast
+//		scrollView.decelerationRate = UIScrollViewDecelerationRateFast
 	}
 
 	func threeIndex(topIndex: Int) -> [Int] {
@@ -302,7 +304,7 @@ class XYScrollView: UIScrollView {
 	}
 
 	func removePartOfStory(contentView: UIScrollView, labelIndex: Int) {
-		if let storyView = contentView.viewWithTag(110) as? StoryView {
+		if let storyView = contentView.subviews[0] as? StoryView {
 			storyView.labels[labelIndex].text = ""
 			if labelIndex == 0 {
 				storyView.labels[0].text = ""

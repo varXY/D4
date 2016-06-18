@@ -24,8 +24,8 @@ class StoryTableView: UITableView, CoreDataAndStory {
 	var footerView: UIView!
 
 	var netOrLocalStory = -1
-	var willDisplayCellAnimate = false
-	
+//	var willDisplayCellAnimate = false
+
 	weak var SDelegate: StoryTableViewDelegate?
 
 	init(frame: CGRect, storys: [Story]) {
@@ -56,7 +56,7 @@ class StoryTableView: UITableView, CoreDataAndStory {
 	}
 
 	override func reloadData() {
-		willDisplayCellAnimate = false
+//		willDisplayCellAnimate = false
 		super.reloadData()
 	}
 
@@ -98,7 +98,7 @@ class StoryTableView: UITableView, CoreDataAndStory {
 extension StoryTableView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
 
 	func scrollViewDidScroll(scrollView: UIScrollView) {
-		willDisplayCellAnimate = scrollView.contentOffset != CGPointMake(0, 0)
+//		willDisplayCellAnimate = scrollView.contentOffset != CGPointMake(0, 0)
 	}
 
 	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -150,12 +150,12 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate, UIScrollVi
 	}
 
 	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-		if willDisplayCellAnimate {
-			cell.transform = CGAffineTransformMakeScale(0.85, 0.85)
-			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-				cell.transform = CGAffineTransformIdentity
-				}, completion: nil)
-		}
+//		if willDisplayCellAnimate {
+//			cell.transform = CGAffineTransformMakeScale(0.85, 0.85)
+//			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
+//				cell.transform = CGAffineTransformIdentity
+//				}, completion: nil)
+//		}
 	}
 
 	func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {

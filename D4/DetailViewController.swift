@@ -176,10 +176,9 @@ extension DetailViewController: XYScrollViewDelegate {
 			break
 		}
 
-		delay(seconds: 0.8) {
-			self.topStoryIndex = topViewIndex
-			self.showPointerTextBaseOnStoryIndex(self.topStoryIndex)
-		}
+		self.topStoryIndex = topViewIndex
+		self.showPointerTextBaseOnStoryIndex(self.topStoryIndex)
+
 	}
 
 	func copyTextOfStory() {

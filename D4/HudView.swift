@@ -20,7 +20,7 @@ class HudView: UIView {
 		view.userInteractionEnabled = false
 		hudView.showAnimated(animated)
 
-		delay(seconds: 1.0) {
+		delay(seconds: 0.8) {
 			hudView.disappear(animated, done: {
 				view.userInteractionEnabled = true
 			})

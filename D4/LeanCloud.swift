@@ -68,7 +68,15 @@ extension LeanCloud {
 				self.get49bestStorysOfyesterday({ (bestStorys) in
 					UIApplication.sharedApplication().networkActivityIndicatorVisible = false
 					let story100 = self.mergeThree(storys, array_1: bestStorys, myStory: myStory)
-					gotStorys(story100)
+					print(story100.count)
+					if story100.count <= 16 {
+						self.getAllStory({ (storys) in
+							gotStorys(storys)
+						})
+					} else {
+						gotStorys(story100)
+					}
+
 				})
 			}
 
@@ -124,6 +132,24 @@ extension LeanCloud {
 
 	}
 
+	func getAllStory(gotStorys: GotStorys) {
+		var storys = [Story]()
+
+		let query = AVQuery(className: AVKey.classStory)
+		query.orderByDescending(AVKey.date)
+		query.findObjectsInBackgroundWithBlock { (results, error) in
+			if let objects = results as? [AVObject] {
+				if results.count != 0 {
+					let filteredObjects = objects.filter({ self.testObject($0) == true })
+					storys = filteredObjects.map({ Story(object: $0) })
+				}
+			}
+
+			gotStorys(storys)
+
+		}
+	}
+
 	func updateRating(ID: String, rating: Int, done: (Bool) -> ()) {
 		let story = AVObject(outDataWithClassName: AVKey.classStory, objectId: ID)
 		story.setObject(rating, forKey: AVKey.rating)
@@ -149,24 +175,28 @@ extension LeanCloud {
 		var newArray = [Story]()
 		var i = 0
 
-		if array_0.count >= array_1.count {
-			repeat {
-				if i < array_1.count { newArray.append(array_1[i]) }
-				newArray.append(array_0[i])
-				i += 1
-			} while i < array_0.count
+		if array_1.count != 0 {
+			if array_0.count >= array_1.count {
+				repeat {
+					if i < array_1.count { newArray.append(array_1[i]) }
+					newArray.append(array_0[i])
+					i += 1
+				} while i < array_0.count
 
+			} else {
+				repeat {
+					newArray.append(array_1[i])
+					if i < array_0.count { newArray.append(array_0[i]) }
+					i += 1
+				} while i < array_1.count
+				
+			}
 		} else {
-			repeat {
-				newArray.append(array_1[i])
-				if i < array_0.count { newArray.append(array_0[i]) }
-				i += 1
-			} while i < array_1.count
-
+			newArray += array_0
 		}
 
 		if myStory != nil {
-			let randomIndex = random() % newArray.count
+			let randomIndex = newArray.count != 0 ? random() % newArray.count : 0
 			newArray.insert(myStory!, atIndex: randomIndex)
 		}
 

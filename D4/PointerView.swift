@@ -20,12 +20,12 @@ struct Pointer {
 		CGAffineTransformMakeRotation(CGFloat(90 * M_PI / 180)),
 	]
 
-	let originCenters = [
-		CGPointMake(ScreenWidth / 2, 30 / 2 - 30),
-		CGPointMake(ScreenWidth / 2, ScreenHeight - (30 / 2) + 30),
-		CGPointMake(30 / 2 - 30, ScreenHeight / 2),
-		CGPointMake(ScreenWidth - (30 / 2) + 30, ScreenHeight / 2),
-	]
+//	let originCenters = [
+//		CGPointMake(ScreenWidth / 2, 30 / 2 - 30),
+//		CGPointMake(ScreenWidth / 2, ScreenHeight - (30 / 2) + 30),
+//		CGPointMake(30 / 2 - 30, ScreenHeight / 2),
+//		CGPointMake(ScreenWidth - (30 / 2) + 30, ScreenHeight / 2),
+//	]
 
 	let toCenters = [
 		CGPointMake(ScreenWidth / 2, 30 / 2 + 3),
@@ -37,8 +37,10 @@ struct Pointer {
 	func imageView(type: XYScrollType) -> UIImageView {
 		let imageView = UIImageView(image: UIImage(named: imageName))
 		imageView.frame.size = CGSize(width: length, height: length)
-		imageView.center = originCenters[type.rawValue]
+		imageView.center = toCenters[type.rawValue]
 		imageView.transform = transforms[type.rawValue]
+//		imageView.tintColor = UIColor(white: 0.3, alpha: 0.75)
+		imageView.alpha = 0.3
 		return imageView
 	}
 }
@@ -49,7 +51,7 @@ class PointerView: UIView {
 	var UDLR_labels = [UILabel]()
 	var blankViews: [UIView]!
 
-	var allHidden = true
+	let pointerAlpha: CGFloat = 0.3
 
 	var nightStyle = false {
 		didSet {
@@ -164,11 +166,9 @@ class PointerView: UIView {
 		case .Up, .Down, .Left, .Right:
 
 			move({
-				self.pointers[type.rawValue].alpha = 1.0
+				self.pointers[type.rawValue].alpha = self.pointerAlpha
 				self.UDLR_labels[type.rawValue].alpha = 1.0
-				self.pointers[type.rawValue].center = self.pointer.toCenters[type.rawValue]
-				}, done: { 
-					self.allHidden = false
+				}, done: {
 			})
 
 		default:
@@ -185,15 +185,8 @@ class PointerView: UIView {
 	}
 
 	func hidePointersAndLabels() {
-		if !allHidden {
-			pointers.forEach({
-				$0.alpha = 0.0
-				$0.center = self.pointer.originCenters[pointers.indexOf($0)!]
-			})
-
-			UDLR_labels.forEach({ $0.alpha = 0.0 })
-			allHidden = true
-		}
+		pointers.forEach({ if $0.alpha != 0.0 { $0.alpha = 0.0 } })
+		UDLR_labels.forEach({ if $0.alpha != 0.0 { $0.alpha = 0.0 } })
 	}
 
 
