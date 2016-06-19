@@ -6,7 +6,6 @@
 //  Copyright © 2016 xiaoyao. All rights reserved.
 //
 
-import Foundation
 import AVFoundation
 
 struct BackgroundSound {
@@ -28,7 +27,7 @@ struct BackgroundSound {
 		sound.stop()
 		if play {
 			sound.currentTime = 0
-			sound.volume = 0.65
+			sound.volume = 0.6
 			sound.prepareToPlay()
 			sound.play()
 		}

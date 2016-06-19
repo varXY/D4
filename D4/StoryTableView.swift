@@ -24,7 +24,6 @@ class StoryTableView: UITableView, CoreDataAndStory {
 	var footerView: UIView!
 
 	var netOrLocalStory = -1
-//	var willDisplayCellAnimate = false
 
 	weak var SDelegate: StoryTableViewDelegate?
 
@@ -49,15 +48,8 @@ class StoryTableView: UITableView, CoreDataAndStory {
 		tableFooterView = footerView
 
 		load100DailyStorys { (storys) in
-			if storys.count != 0 {
-				self.storys = storys
-			}
+			if storys.count != 0 { self.storys = storys }
 		}
-	}
-
-	override func reloadData() {
-//		willDisplayCellAnimate = false
-		super.reloadData()
 	}
 
 	func loading(loading: Bool) {
@@ -96,10 +88,6 @@ class StoryTableView: UITableView, CoreDataAndStory {
 }
 
 extension StoryTableView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
-
-	func scrollViewDidScroll(scrollView: UIScrollView) {
-//		willDisplayCellAnimate = scrollView.contentOffset != CGPointMake(0, 0)
-	}
 
 	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
 		return 1
@@ -149,24 +137,12 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate, UIScrollVi
 		return cell
 	}
 
-	func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-//		if willDisplayCellAnimate {
-//			cell.transform = CGAffineTransformMakeScale(0.85, 0.85)
-//			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-//				cell.transform = CGAffineTransformIdentity
-//				}, completion: nil)
-//		}
-	}
-
 	func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-		if storys.count != 0 {
-			let cell = tableView.cellForRowAtIndexPath(indexPath)
-			let colorCode = storys[indexPath.row].colors[0]
-			cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[0]
-			return true
-		} else {
-			return false
-		}
+		if storys.count == 0 { return false }
+		let cell = tableView.cellForRowAtIndexPath(indexPath)
+		let colorCode = storys[indexPath.row].colors[0]
+		cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[0]
+		return true
 	}
 
 	func tableView(tableView: UITableView, didUnhighlightRowAtIndexPath indexPath: NSIndexPath) {
@@ -181,9 +157,7 @@ extension StoryTableView: UITableViewDataSource, UITableViewDelegate, UIScrollVi
 
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 		SDelegate?.didSelectedStory(indexPath.row)
-		delay(seconds: 0.5) { 
-			tableView.deselectRowAtIndexPath(indexPath, animated: true)
-		}
+		delay(seconds: 0.5) { tableView.deselectRowAtIndexPath(indexPath, animated: true) }
 	}
 
 	func tableView(tableView: UITableView, willDeselectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {

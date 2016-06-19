@@ -6,7 +6,6 @@
 //  Copyright © 2016 xiaoyao. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 let colorCode = [0, 10, 20, 30, 40,

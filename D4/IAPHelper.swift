@@ -8,60 +8,46 @@
 
 import StoreKit
 
-/// Notification that is generated when a product is purchased.
 public let IAPHelperProductPurchasedNotification = "IAPHelperProductPurchasedNotification"
 
-/// Product identifiers are unique strings registered on the app store.
 public typealias ProductIdentifier = String
-
-/// Completion handler called when products are fetched.
 public typealias RequestProductsCompletionHandler = (success: Bool, products: [SKProduct]) -> ()
 
 
-/// A Helper class for In-App-Purchases, it can fetch products, tell you if a product has been purchased,
-/// purchase products, and restore purchases.  Uses NSUserDefaults to cache if a product has been purchased.
 public class IAPHelper : NSObject  {
-  
-  /// MARK: - User facing API
-  
-  /// Initialize the helper.  Pass in the set of ProductIdentifiers supported by the app.
-  public init(productIdentifiers: Set<ProductIdentifier>) {
-	self.productIdentifiers = productIdentifiers
-	super.init()
-	SKPaymentQueue.defaultQueue().addTransactionObserver(self)
-  }
 
 	private let productIdentifiers: Set<ProductIdentifier>
 	private var purchasedProductIdentifiers = Set<ProductIdentifier>()
 
 	private var productsRequest: SKProductsRequest?
 	private var completionHandler: RequestProductsCompletionHandler?
-  
-  /// Gets the list of SKProducts from the Apple server calls the handler with the list of products.
-  public func requestProductsWithCompletionHandler(handler: RequestProductsCompletionHandler) {
-	completionHandler = handler
-	productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers)
-	productsRequest?.delegate = self
-	productsRequest?.start()
-//    handler(success: false, products: [])
-  }
 
-  /// Initiates purchase of a product.
-  public func purchaseProduct(product: SKProduct) {
-	print("Buying \(product.productIdentifier)")
-	let payment = SKPayment(product: product)
-	SKPaymentQueue.defaultQueue().addPayment(payment)
-  }
+
+	public init(productIdentifiers: Set<ProductIdentifier>) {
+		self.productIdentifiers = productIdentifiers
+		super.init()
+		SKPaymentQueue.defaultQueue().addTransactionObserver(self)
+	}
+
+	public func requestProductsWithCompletionHandler(handler: RequestProductsCompletionHandler) {
+		completionHandler = handler
+		productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers)
+		productsRequest?.delegate = self
+		productsRequest?.start()
+	}
+
+	public func purchaseProduct(product: SKProduct) {
+		print("Buying \(product.productIdentifier)")
+		let payment = SKPayment(product: product)
+		SKPaymentQueue.defaultQueue().addPayment(payment)
+	}
   
-  /// Given the product identifier, returns true if that product has been purchased.
-  public func isProductPurchased(productIdentifier: ProductIdentifier) -> Bool {
-    return false
-  }
+	public func isProductPurchased(productIdentifier: ProductIdentifier) -> Bool {
+		return false
+	}
   
-  /// If the state of whether purchases have been made is lost  (e.g. the
-  /// user deletes and reinstalls the app) this will recover the purchases.
-  public func restoreCompletedTransactions() {
-  }
+	public func restoreCompletedTransactions() {
+	}
 
 	public class func canMakePayments() -> Bool {
 		return SKPaymentQueue.canMakePayments()

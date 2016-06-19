@@ -88,6 +88,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	func applicationWillEnterForeground(application: UIApplication) {
+		print(application.applicationState.rawValue)
 		mainVC.changeBarStyleBaseOnTime()
 		mainVC.reloadDailyStory()
 

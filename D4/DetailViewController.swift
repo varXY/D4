@@ -6,7 +6,6 @@
 //  Copyright © 2016 xiaoyao. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 protocol DetailViewControllerDelegate: class {
@@ -54,7 +53,7 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		transitioningDelegate = self
+//		transitioningDelegate = self
 
 		pointerView = PointerView(VC: self)
 		view = pointerView

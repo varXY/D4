@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SettingViewProtocol: class {
+protocol SettingViewDelegate: class {
 	func presentViewControllerForSettringView(VC: UIViewController)
 	func saveNotificationIndexToUserDefaults(index: Int)
 	func saveAskedAllowNotificationToUserDefaults(asked: Bool)
@@ -20,7 +20,7 @@ class SettingView: UIView {
 	var primaticButtons: [UIButton]!
 	var promptlabel: UILabel!
 	
-	private let notificationTitles = ["关", "晚8点", "晚9点", "晚10点", "早7点", "早8点", "早9点"]
+	private let notificationTitles = ["关", "晚八点", "晚九点", "晚十点", "早七点", "早八点", "早九点"]
 
 	var nightStyle = false {
 		didSet {
@@ -37,7 +37,7 @@ class SettingView: UIView {
 
 	var askedForAllowNotification: Bool!
 
-	weak var delegate: SettingViewProtocol?
+	weak var delegate: SettingViewDelegate?
 
 	init() {
 		super.init(frame: CGRectMake(0, 0, ScreenWidth, ScreenHeight))
@@ -155,6 +155,7 @@ class SettingView: UIView {
 		fatalError("init(coder:) has not been implemented")
 	}
 }
+
 
 // MARK: - Button Tapped
 

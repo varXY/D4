@@ -6,7 +6,6 @@
 //  Copyright © 2015年 farawei. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 extension UIImage {

@@ -6,7 +6,6 @@
 //  Copyright © 2016 myname. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import StoreKit
 

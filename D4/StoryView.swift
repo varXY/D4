@@ -6,7 +6,6 @@
 //  Copyright © 2016 xiaoyao. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 class StoryView: UIView {
@@ -49,10 +48,6 @@ class StoryView: UIView {
 			$0.textColor = MyColor.code(story.colors[index]).BTColors[1]
 			$0.text = story.sentences[index]
 		})
-	}
-
-	func removeTitle() {
-		labels[0].text = ""
 	}
 
 	func blockFrames() -> [CGRect] {

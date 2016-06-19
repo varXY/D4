@@ -6,7 +6,6 @@
 //  Copyright © 2016 xiaoyao. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 protocol InputViewControllerDelegate: class {
@@ -46,7 +45,7 @@ class InputViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		view.backgroundColor = MyColor.code(colorCode).BTColors[0]
-		transitioningDelegate = self
+//		transitioningDelegate = self
 
 		numberLabel = UILabel(frame: CGRectMake(0, 0, ScreenWidth, 60))
 		numberLabel.backgroundColor = UIColor.clearColor()
@@ -109,7 +108,6 @@ class InputViewController: UIViewController {
 
 	override func viewDidAppear(animated: Bool) {
 		super.viewDidAppear(animated)
-		
 		if ScreenWidth == 320 { textView.becomeFirstResponder() }
 	}
 

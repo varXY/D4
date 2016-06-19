@@ -219,6 +219,7 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 	func changeBarStyleBaseOnTime() {
 //		let hour = Int(NSDate().string(.HH))
 //		nightStyle = (hour >= 18 && hour < 24) || (hour >= 0 && hour < 6)
+		if nightStyle != false { return }
 		nightStyle = true
 		pointerView.nightStyle = nightStyle
 		xyScrollView.writeView.nightStyle = nightStyle
@@ -295,43 +296,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		}
 	}
 
-}
-
-// MARK: - XYScrollViewDelegate
-
-extension MainViewController: XYScrollViewDelegate {
-
-	func scrollTypeDidChange(type: XYScrollType) {
-
-//		if self.topViewIndex == 0 {
-//			switch type {
-//			case .Up:
-//				pointerView.changeTextForUpInWriteView()
-//			case .Down:
-//				pointerView.changeLabelTextForCanSaveStory(self.xyScrollView.writeView.doneWriting, ready: self.xyScrollView.writeView.ready)
-//			default:
-//				break
-//			}
-//		}
-
-		pointerView.showPointer(type)
-	}
-
-	func didSelectedStory(storyIndex: Int) {
-		forceTouchWay = false
-		hideOrShowStatusViewAndToolbar(true)
-
-		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-			self.view.alpha = 0.0
-			}, completion: nil)
-
-		let detailVC = DetailViewController()
-		detailVC.topStoryIndex = storyIndex
-		setUpDetailVC(detailVC)
-		presentViewController(detailVC, animated: true) { 
-		}
-	}
-
 	func setUpDetailVC(detailVC: DetailViewController) {
 		detailVC.modalPresentationStyle = .Custom
 		detailVC.transitioningDelegate = detailVC
@@ -341,6 +305,30 @@ extension MainViewController: XYScrollViewDelegate {
 		detailVC.delegate = self
 	}
 
+}
+
+
+// MARK: - XYScrollViewDelegate
+
+extension MainViewController: XYScrollViewDelegate {
+
+	func scrollTypeDidChange(type: XYScrollType) {
+		pointerView.showPointer(type)
+	}
+
+	func didSelectedStory(storyIndex: Int) {
+		forceTouchWay = false
+		hideOrShowStatusViewAndToolbar(true)
+
+		let detailVC = DetailViewController()
+		detailVC.topStoryIndex = storyIndex
+		setUpDetailVC(detailVC)
+		presentViewController(detailVC, animated: true, completion: nil)
+
+		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
+			self.view.alpha = 0.0
+			}, completion: nil)
+	}
 
 	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
 		pointerView.hidePointersAndLabels()
@@ -361,14 +349,12 @@ extension MainViewController: XYScrollViewDelegate {
 				case .Down:
 					pointerView.changeLabelTextForCanSaveStory(self.xyScrollView.writeView.doneWriting, ready: self.xyScrollView.writeView.ready)
 
-					delay(seconds: 0.7) {
-						self.goBackSaveUploadStory()
-					}
+					delay(seconds: 0.7) { self.goBackSaveUploadStory() }
 
 				case .Left:
 					xyScrollView.writeView.labelsGetRandomColors()
 
-				case.Right:
+				case .Right:
 					break
 
 				default:
@@ -396,6 +382,7 @@ extension MainViewController: XYScrollViewDelegate {
 			default:
 				break
 			}
+
 		} else {
 			pointerView.showTextBaseOnTopIndex(topViewIndex)
 			pointerView.addOrRemoveUpAndDownPointerAndLabel(topViewIndex)
@@ -468,6 +455,7 @@ extension MainViewController: XYScrollViewDelegate {
 
 }
 
+
 // MARK: - DetailViewControllerDelegate
 
 extension MainViewController: DetailViewControllerDelegate {
@@ -503,6 +491,7 @@ extension MainViewController: DetailViewControllerDelegate {
 	}
 }
 
+
 // MARK: - 3D Touch To DetailViewController
 
 extension MainViewController: UIViewControllerPreviewingDelegate {
@@ -528,6 +517,7 @@ extension MainViewController: UIViewControllerPreviewingDelegate {
 	}
 }
 
+
 // MARK: - InputViewControllerDelegate
 
 extension MainViewController: InputViewControllerDelegate {
@@ -539,7 +529,10 @@ extension MainViewController: InputViewControllerDelegate {
 	}
 }
 
-extension MainViewController: SettingViewProtocol {
+
+// MARK: - SettingViewDelegate
+
+extension MainViewController: SettingViewDelegate {
 
 	func presentViewControllerForSettringView(VC: UIViewController) {
 		presentViewController(VC, animated: true, completion: nil)
