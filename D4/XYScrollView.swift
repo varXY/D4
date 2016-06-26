@@ -137,6 +137,7 @@ class XYScrollView: UIScrollView {
 	}
 
 	func threeIndex(topIndex: Int) -> [Int] {
+        if storys.count == 1 { return [0, 0, 0] }
 		switch topIndex {
 		case 0:
 			return [0, 0, 1]

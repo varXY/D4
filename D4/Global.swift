@@ -6,7 +6,6 @@
 //  Copyright (c) 2015年 xiaoyao. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 // 屏幕尺寸信息
@@ -53,7 +52,6 @@ func delay(seconds seconds: Double, completion: () -> ()) {
 	dispatch_after(popTime, dispatch_get_main_queue()) {
 		completion()
 	}
-
 }
 
 

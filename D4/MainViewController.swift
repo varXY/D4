@@ -69,8 +69,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(reachabilityChanged(_:)), name: kReachabilityChangedNotification, object: nil)
 		internetReachability = Reachability.reachabilityForInternetConnection()
 		internetReachability.startNotifier()
-
-
 	}
 
  	override func viewWillAppear(animated: Bool) {
@@ -147,7 +145,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 				pointerView.lastUpdateText = ""
 			}
 		}
-
 	}
 
 	func loadingStory(loading: Bool) {
@@ -266,7 +263,6 @@ class MainViewController: UIViewController, LeanCloud, CoreDataAndStory, UserDef
 			xyScrollView.moveContentViewToTop(pageIndex == 0 ? .Left : .Right)
 			xyScrollViewDidScroll((pageIndex == 0 ? .Left : .Right), topViewIndex: pageIndex)
 		}
-
 	}
 
 	func hideOrShowStatusViewAndToolbar(presentedVC: Bool?) {

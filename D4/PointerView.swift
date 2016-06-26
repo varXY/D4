@@ -52,6 +52,7 @@ class PointerView: UIView {
 	var blankViews: [UIView]!
 
 	let pointerAlpha: CGFloat = 0.3
+    let labelAlpha: CGFloat = 0.8
 
 	var nightStyle = false {
 		didSet {
@@ -167,7 +168,7 @@ class PointerView: UIView {
 
 			move({
 				self.pointers[type.rawValue].alpha = self.pointerAlpha
-				self.UDLR_labels[type.rawValue].alpha = 1.0
+				self.UDLR_labels[type.rawValue].alpha = self.labelAlpha
 				}, done: {
 			})
 
