@@ -52,7 +52,7 @@ class PointerView: UIView {
 	var blankViews: [UIView]!
 
 	let pointerAlpha: CGFloat = 0.3
-    let labelAlpha: CGFloat = 0.8
+    let labelAlpha: CGFloat = 1.0
 
 	var nightStyle = false {
 		didSet {
@@ -165,7 +165,6 @@ class PointerView: UIView {
 	func showPointer(type: XYScrollType) {
 		switch type {
 		case .Up, .Down, .Left, .Right:
-
 			move({
 				self.pointers[type.rawValue].alpha = self.pointerAlpha
 				self.UDLR_labels[type.rawValue].alpha = self.labelAlpha

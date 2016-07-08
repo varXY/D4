@@ -219,7 +219,7 @@ extension SettingView {
 		let title = "开放匿名分享故事社区"
 		let message = "\n一天的故事\n=\n标题\n+\n上午 + 下午 + 晚上\n+\n睡前哲思\n=\n10 + 100 + 100 + 100 + 20\n\n今日100\n=\n50个今日最新\n+\n49个昨日最热\n+\n1个你的故事\n=\n(50 + 49 + 1) × 330\n\nPS：今日100每天刷新一次 <= 100"
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .ActionSheet)
-		let cancelAction = UIAlertAction(title: "了解了", style: .Cancel, handler: nil)
+		let cancelAction = UIAlertAction(title: "知道了", style: .Cancel, handler: nil)
 		alertController.addAction(cancelAction)
 		delegate?.presentViewControllerForSettringView(alertController)
 	}

@@ -69,7 +69,7 @@ extension LeanCloud {
 					UIApplication.sharedApplication().networkActivityIndicatorVisible = false
 					let story100 = self.mergeThree(storys, array_1: bestStorys, myStory: myStory)
 					print(story100.count)
-					if story100.count <= 16 {
+					if story100.count <= 20 {
 						self.getAllStory({ (storys) in
 							gotStorys(storys)
 						})

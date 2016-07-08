@@ -86,7 +86,7 @@ enum MyColor {
 		case .code(colorCode[28]): colorValue = [136, 129, 240, 1.0]   //35： 3
 		case .code(colorCode[29]): colorValue = [132, 167, 233, 1.0]; black = true //45： 浅紫4
 
-		default: colorValue = [0, 0, 0, 0]
+		default: colorValue = [66, 66, 66, 1.0]
 		}
 
 		let backgroundColor = UIColor.colorWithValues(colorValue)
