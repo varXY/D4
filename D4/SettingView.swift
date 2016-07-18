@@ -205,7 +205,7 @@ extension SettingView {
 	}
 
 	func shareContent() {
-		let text: String = "我在我的一天里写我一天的故事 —— 我的一天：写故事应用"
+		let text: String = "App Store: 天的故事"
 		let arr: [AnyObject] = [text, appStoreURL!]
 		let shareVC = UIActivityViewController(activityItems: arr, applicationActivities: [])
 		delegate?.presentViewControllerForSettringView(shareVC)

@@ -19,36 +19,44 @@ class StoryView: UIView {
 		clipsToBounds = true
 
 		labels = blockFrames().map({ SLabel(frame: $0) })
-		labels.forEach({
-			let index = labels.indexOf($0)!
-			$0.backgroundColor = MyColor.code(story.colors[index]).BTColors[0]
-			$0.textColor = MyColor.code(story.colors[index]).BTColors[1]
-			$0.textAlignment = .Center
-			$0.numberOfLines = 0
-			$0.adjustsFontSizeToFitWidth = true
-			$0.text = story.sentences[index]
-			addSubview($0)
-
-			if index == 0 {
-				$0.font = UIFont.boldSystemFontOfSize(17)
-			}
-
-			if index == 4 {
-				$0.font = UIFont.italicSystemFontOfSize(17)
-				$0.numberOfLines = 1
-			}
-		})
-
+        labelsLoadStory(story)
+        labels.forEach({ addSubview($0) })
+    
 	}
 
 	func reloadStory(story: Story) {
-		labels.forEach({
-			let index = labels.indexOf($0)!
-			$0.backgroundColor = MyColor.code(story.colors[index]).BTColors[0]
-			$0.textColor = MyColor.code(story.colors[index]).BTColors[1]
-			$0.text = story.sentences[index]
-		})
+        labels.forEach({
+            let index = labels.indexOf($0)!
+            $0.backgroundColor = MyColor.code(story.colors[index]).BTColors[0]
+            
+            if index == 0 || index == 4 {
+                $0.textColor = MyColor.code(story.colors[index]).BTColors[1]
+                $0.text = story.sentences[index]
+            } else {
+                $0.attributedText = textWithStyle(story.sentences[index], color: MyColor.code(story.colors[index]).BTColors[1], font: UIFont.systemFontOfSize(17))
+            }
+            
+        })
 	}
+    
+    func labelsLoadStory(story: Story) {
+        labels.forEach({
+            let index = labels.indexOf($0)!
+            $0.backgroundColor = MyColor.code(story.colors[index]).BTColors[0]
+            $0.adjustsFontSizeToFitWidth = true
+            
+            if index == 0 || index == 4 {
+                $0.textColor = MyColor.code(story.colors[index]).BTColors[1]
+                $0.textAlignment = .Center
+                $0.text = story.sentences[index]
+                $0.font = index == 0 ? UIFont.boldSystemFontOfSize(17) : UIFont.italicSystemFontOfSize(17)
+            } else {
+                $0.numberOfLines = 0
+                $0.attributedText = textWithStyle(story.sentences[index], color: MyColor.code(story.colors[index]).BTColors[1], font: UIFont.systemFontOfSize(17))
+            }
+            
+        })
+    }
 
 	func blockFrames() -> [CGRect] {
 		func blockFrame(index: Int) -> CGRect {

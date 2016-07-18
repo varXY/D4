@@ -46,7 +46,7 @@ class WriteView: UIView, UserDefaults {
 		"上 午",
 		"下 午",
 		"晚 上",
-		"睡 前 哲 思"
+		"总 结"
 	]
 
 	weak var delegate: WriteViewDelegate?
@@ -64,14 +64,14 @@ class WriteView: UIView, UserDefaults {
 		labels = blockFrames().map({ SLabel(frame: $0) })
 		labels.forEach({
 			let index = labels.indexOf($0)!
-			$0.backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
-			$0.textColor = MyColor.code(colorCodes[index]).BTColors[1]
+//			$0.backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
+//			$0.textColor = MyColor.code(colorCodes[index]).BTColors[1]
 			$0.textAlignment = .Center
 			$0.numberOfLines = 0
 			$0.adjustsFontSizeToFitWidth = true
-			$0.text = sentences[index]
+//			$0.text = sentences[index]
 			addSubview($0)
-			changeLabelTextFont(index, inputted: sentences[index] != placeHolderTexts[index])
+			fillLabel(index, inputted: sentences[index] != placeHolderTexts[index], text: sentences[index])
 		})
 
 		dots = dotFrames().map({ UIView(frame: $0) })
@@ -169,28 +169,27 @@ class WriteView: UIView, UserDefaults {
 		addtipLabels(false, removeIndex: 0)
 		let inputted = text != ""
 		let newText = inputted ? text : placeHolderTexts[index]
-		changeLabelTextFont(index, inputted: inputted)
-		labels[index].text = newText
+		fillLabel(index, inputted: inputted, text: newText)
+//		labels[index].text = newText
 		checkText()
 
 		sentences = labels.map({ $0.text! })
 	}
 
-	func changeLabelTextFont(index: Int, inputted: Bool) {
-		if inputted {
-			labels[index].font = UIFont.systemFontOfSize(17)
-		} else {
-			labels[index].font = UIFont.boldSystemFontOfSize(35)
-		}
-
-		if index == 0 {
-			labels[index].font = UIFont.boldSystemFontOfSize(17)
-		}
-
-		if index == 4 {
-			labels[index].font = UIFont.italicSystemFontOfSize(17)
-			labels[index].numberOfLines = 1
-		}
+    func fillLabel(index: Int, inputted: Bool, text: String) {
+        
+        if index == 0 || index == 4 {
+            labels[index].font = index == 0 ? UIFont.boldSystemFontOfSize(17) : UIFont.italicSystemFontOfSize(17)
+            labels[index].text = text
+            labels[index].backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
+            labels[index].textColor = MyColor.code(colorCodes[index]).BTColors[1]
+            labels[index].numberOfLines = 1
+        } else {
+            let font = inputted ? UIFont.systemFontOfSize(17) : UIFont.boldSystemFontOfSize(35)
+            labels[index].backgroundColor = MyColor.code(colorCodes[index]).BTColors[0]
+            labels[index].attributedText = textWithStyle(text, color: MyColor.code(colorCodes[index]).BTColors[1], font: font)
+        }
+        
 	}
 
 	func checkText() {
@@ -236,7 +235,7 @@ class WriteView: UIView, UserDefaults {
 		labels.forEach({
 			let index = labels.indexOf($0)!
 			$0.text = placeHolderTexts[index]
-			changeLabelTextFont(index, inputted: false)
+			fillLabel(index, inputted: false, text: placeHolderTexts[index])
 		})
 
 		sentences = placeHolderTexts

@@ -60,12 +60,14 @@ class InputViewController: UIViewController {
 		textView = UITextView(frame: CGRectMake(0, 60, ScreenWidth, ScreenHeight * factor))
 		textView.backgroundColor = UIColor.clearColor()
 		textView.tintColor = MyColor.code(colorCode).BTColors[1]
-		textView.textColor = MyColor.code(colorCode).BTColors[1]
-		textView.font = UIFont.systemFontOfSize(25)
-		textView.textAlignment = .Center
+//		textView.textColor = MyColor.code(colorCode).BTColors[1]
+//		textView.font = UIFont.systemFontOfSize(25)
+//		textView.textAlignment = .Center
 		textView.textContainerInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
 		textView.delegate = self
 		view.addSubview(textView)
+        
+        textView.typingAttributes = textAttributes(MyColor.code(colorCode).BTColors[1], font: UIFont.systemFontOfSize(25))
 
 		if index == 0 || index == 4 {
 			let length = textView.frame.size.height / 2 - 40
@@ -100,7 +102,8 @@ class InputViewController: UIViewController {
 			oldText = String(oldText.characters.dropLast())
 		}
 
-		textView.text = oldText
+//		textView.text = oldText
+        textView.attributedText = textWithStyle(oldText, color: MyColor.code(colorCode).BTColors[1], font: UIFont.systemFontOfSize(25))
 		numberLabel.text = String(textLimit - oldText.characters.count)
 
 		if ScreenWidth != 320 { textView.becomeFirstResponder() }
@@ -155,10 +158,10 @@ extension InputViewController: UITextViewDelegate {
 				var text = ""
 				if index == 0 {
 					if textView.text != "" {
-						text = textView.text + "的一天"
+						text = textView.attributedText.string + "的一天"
 					}
 				} else {
-					text = textView.text
+					text = textView.attributedText.string
 				}
 
 				delegate?.inputTextViewDidReturn(index, text: text)
@@ -181,7 +184,7 @@ extension InputViewController: UITextViewDelegate {
 			}
 
 		} else {
-			let count = textView.text.characters.count
+			let count = textView.attributedText.string.characters.count
 			newLimit = textLimit - count
 			numberLabel.text = String(newLimit)
 			numberLabel.textColor = newLimit < 0 ? alertColor : MyColor.code(colorCode).BTColors[1]

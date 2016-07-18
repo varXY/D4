@@ -54,4 +54,30 @@ func delay(seconds seconds: Double, completion: () -> ()) {
 	}
 }
 
+// 自定义文字样式
+func textWithStyle(text: String, color: UIColor, font: UIFont) -> NSMutableAttributedString {
+    let attributedText = NSMutableAttributedString(string: text)
+    attributedText.addAttributes(textAttributes(color, font: font), range: NSMakeRange(0, attributedText.length))
+    return attributedText
+}
+
+
+func textAttributes(color: UIColor, font: UIFont) -> [String: AnyObject] {
+    let textAttributes = [
+        NSParagraphStyleAttributeName: textStyle(),
+        NSForegroundColorAttributeName: color,
+        NSFontAttributeName: font
+    ]
+    
+    return textAttributes
+}
+
+
+func textStyle() -> NSMutableParagraphStyle {
+    let style = NSMutableParagraphStyle()
+    style.lineSpacing = 3
+    style.alignment = NSTextAlignment.Center
+    return style
+}
+
 
