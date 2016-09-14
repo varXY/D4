@@ -19,10 +19,12 @@ let TriggerDistance: CGFloat = 50
 
 let globalRadius: CGFloat = ScreenHeight * 0.007
 
+
 // URL
 let jianShuURL = NSURL(string: "http://www.jianshu.com/users/83ddcf71e52c")
 let appStoreURL = NSURL(string: "https://itunes.apple.com/us/app/tian-gu-shi-yi-ge-gu-shi-yu/id1104752673?mt=8")
 // https://appsto.re/us/Hat2bb.i
+
 
 // 获取不重复随机数
 func getRandomNumbers(amount: Int, lessThan: Int) -> [Int] {
@@ -61,7 +63,6 @@ func textWithStyle(text: String, color: UIColor, font: UIFont) -> NSMutableAttri
     return attributedText
 }
 
-
 func textAttributes(color: UIColor, font: UIFont) -> [String: AnyObject] {
     let textAttributes = [
         NSParagraphStyleAttributeName: textStyle(),
@@ -71,7 +72,6 @@ func textAttributes(color: UIColor, font: UIFont) -> [String: AnyObject] {
     
     return textAttributes
 }
-
 
 func textStyle() -> NSMutableParagraphStyle {
     let style = NSMutableParagraphStyle()

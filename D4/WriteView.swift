@@ -46,7 +46,7 @@ class WriteView: UIView, UserDefaults {
 		"上 午",
 		"下 午",
 		"晚 上",
-		"总 结"
+		"睡 前 哲 思"
 	]
 
 	weak var delegate: WriteViewDelegate?
