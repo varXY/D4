@@ -38,7 +38,7 @@ class DimmingPresentationController: UIPresentationController {
 //		}
 	}
 	
-	override func shouldRemovePresentersView() -> Bool {
+	override var shouldRemovePresentersView : Bool {
 		return false
 	}
 }

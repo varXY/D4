@@ -9,11 +9,11 @@
 import UIKit
 
 enum StoryTableViewScrollType {
-	case Up, Down
+	case up, down
 }
 
 protocol StoryTableViewDelegate: class {
-	func didSelectedStory(storyIndex: Int)
+	func didSelectedStory(_ storyIndex: Int)
 }
 
 class StoryTableView: UITableView, CoreDataAndStory {
@@ -29,22 +29,22 @@ class StoryTableView: UITableView, CoreDataAndStory {
 
 	init(frame: CGRect, storys: [Story]) {
 		self.storys = storys
-		super.init(frame: frame, style: .Plain)
+		super.init(frame: frame, style: .plain)
 		contentOffset.y = -20
 		layer.cornerRadius = globalRadius
 		clipsToBounds = true
-		backgroundColor = UIColor.clearColor()
-		separatorStyle = .None
+		backgroundColor = UIColor.clear
+		separatorStyle = .none
 		dataSource = self
 		delegate = self
-		exclusiveTouch = true
+		isExclusiveTouch = true
 
-		headerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 20))
-		headerView.backgroundColor = UIColor.clearColor()
+		headerView = UIView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 20))
+		headerView.backgroundColor = UIColor.clear
 		tableHeaderView = headerView
 
-		footerView = UIView(frame: CGRectMake(0, 0, ScreenWidth, 44))
-		footerView.backgroundColor = UIColor.clearColor()
+		footerView = UIView(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 44))
+		footerView.backgroundColor = UIColor.clear
 		tableFooterView = footerView
 
 		load100DailyStorys { (storys) in
@@ -52,7 +52,7 @@ class StoryTableView: UITableView, CoreDataAndStory {
 		}
 	}
 
-	func loading(loading: Bool) {
+	func loading(_ loading: Bool) {
 		let distance: CGFloat = storys.count == 0 ? 70 : 50
 
 		if loading && frame.origin.y == 0 {
@@ -60,19 +60,19 @@ class StoryTableView: UITableView, CoreDataAndStory {
 		}
 
 		if !loading && frame.origin.y == distance {
-			UIView.animateWithDuration(0.3, animations: {
+			UIView.animate(withDuration: 0.3, animations: {
 				self.frame.origin.y -= distance
 				}, completion: { (_) in
 			})
 		}
 	}
 
-	func insertNewStory(story: Story) {
+	func insertNewStory(_ story: Story) {
 		if storys.count != 0 {
-			storys.insert(story, atIndex: 0)
-			let indexPath = NSIndexPath(forRow: 0, inSection: 0)
-			scrollToRowAtIndexPath(indexPath, atScrollPosition: .Middle, animated: true)
-			insertRowsAtIndexPaths([indexPath], withRowAnimation: .Top)
+			storys.insert(story, at: 0)
+			let indexPath = IndexPath(row: 0, section: 0)
+			scrollToRow(at: indexPath, at: .middle, animated: true)
+			insertRows(at: [indexPath], with: .top)
 		} else {
 			storys.append(story)
 			reloadData()
@@ -89,78 +89,78 @@ class StoryTableView: UITableView, CoreDataAndStory {
 
 extension StoryTableView: UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
 
-	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+	func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
 	}
 
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		let number = storys.count != 0 ? storys.count : 1
-		backgroundColor = number > 9 ? UIColor.clearColor() : MyColor.code(5).BTColors[0]
+		backgroundColor = number > 9 ? UIColor.clear : MyColor.code(5).BTColors[0]
 		return number
 	}
 
-	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 50
 	}
 
-	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let style = netOrLocalStory != 1 ? UITableViewCellStyle.Default : UITableViewCellStyle.Value1
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let style = netOrLocalStory != 1 ? UITableViewCellStyle.default : UITableViewCellStyle.value1
 		let reuseIdentifier = netOrLocalStory != 1 ? "DefaultCell" : "Value1Cell"
-		var cell: UITableViewCell! = tableView.dequeueReusableCellWithIdentifier(reuseIdentifier)
+		var cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier)
 		if cell == nil { cell = UITableViewCell(style: style, reuseIdentifier: reuseIdentifier) }
-		cell.textLabel?.font = UIFont.systemFontOfSize(17)
+		cell.textLabel?.font = UIFont.systemFont(ofSize: 17)
 
 		if storys.count != 0 {
 			cell.selectedBackgroundView = UIView()
-			cell.selectedBackgroundView?.backgroundColor = UIColor.whiteColor()
+			cell.selectedBackgroundView?.backgroundColor = UIColor.white
 
-			let colorCode = storys[indexPath.row].colors[0]
+			let colorCode = storys[(indexPath as NSIndexPath).row].colors[0]
 			cell.backgroundColor = MyColor.code(colorCode).BTColors[0]
 			cell.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
-			cell.textLabel!.text = storys[indexPath.row].sentences[0]
+			cell.textLabel!.text = storys[(indexPath as NSIndexPath).row].sentences[0]
 
-			cell.detailTextLabel?.text = storys[indexPath.row].date.string(.MMddyy)
+			cell.detailTextLabel?.text = storys[(indexPath as NSIndexPath).row].date.string(.MMddyy)
 			cell.detailTextLabel?.textColor = MyColor.code(colorCode).BTColors[1]
 			cell.detailTextLabel?.alpha = 0.4
 
 		} else {
-			cell = UITableViewCell(style: .Default, reuseIdentifier: "EmptyCell")
-			cell.backgroundColor = UIColor.clearColor()
-			cell.textLabel?.textColor = UIColor.whiteColor()
+			cell = UITableViewCell(style: .default, reuseIdentifier: "EmptyCell")
+			cell.backgroundColor = UIColor.clear
+			cell.textLabel?.textColor = UIColor.white
 			var text = "故事需要下载"
 			if netOrLocalStory == 0 { text = "网络故障 无法加载" }
 			if netOrLocalStory == 1 { text = "没有故事 右滑添加" }
 			cell.textLabel?.text = text
-			cell.textLabel?.textAlignment = .Center
+			cell.textLabel?.textAlignment = .center
 		}
 
 		return cell
 	}
 
-	func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+	func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
 		if storys.count == 0 { return false }
-		let cell = tableView.cellForRowAtIndexPath(indexPath)
-		let colorCode = storys[indexPath.row].colors[0]
+		let cell = tableView.cellForRow(at: indexPath)
+		let colorCode = storys[(indexPath as NSIndexPath).row].colors[0]
 		cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[0]
 		return true
 	}
 
-	func tableView(tableView: UITableView, didUnhighlightRowAtIndexPath indexPath: NSIndexPath) {
-		let cell = tableView.cellForRowAtIndexPath(indexPath)
-		let colorCode = storys[indexPath.row].colors[0]
+	func tableView(_ tableView: UITableView, didUnhighlightRowAt indexPath: IndexPath) {
+		let cell = tableView.cellForRow(at: indexPath)
+		let colorCode = storys[(indexPath as NSIndexPath).row].colors[0]
 		cell?.textLabel?.textColor = MyColor.code(colorCode).BTColors[1]
 	}
 
-	func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+	func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
 		return storys.count != 0 ? indexPath : nil
 	}
 
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		SDelegate?.didSelectedStory(indexPath.row)
-		delay(seconds: 0.5) { tableView.deselectRowAtIndexPath(indexPath, animated: true) }
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		SDelegate?.didSelectedStory((indexPath as NSIndexPath).row)
+		delay(seconds: 0.5) { tableView.deselectRow(at: indexPath, animated: true) }
 	}
 
-	func tableView(tableView: UITableView, willDeselectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+	func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
 		return indexPath
 	}
 }

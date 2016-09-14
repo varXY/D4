@@ -12,10 +12,10 @@ extension UIViewController {
 
 	func captureScreen() -> UIImage {
 
-		let screen = UIApplication.sharedApplication().windows[0]
+		let screen = UIApplication.shared.windows[0]
 
 		UIGraphicsBeginImageContextWithOptions(screen.frame.size, false, 0)
-		view.drawViewHierarchyInRect(screen.bounds, afterScreenUpdates: true)
+		view.drawHierarchy(in: screen.bounds, afterScreenUpdates: true)
 		let image = UIGraphicsGetImageFromCurrentImageContext()
 		UIGraphicsEndImageContext()
 
@@ -27,8 +27,8 @@ extension UIViewController {
 			rect = CGRect(x: 0, y: 20, width: ScreenWidth * 2, height: ScreenHeight * 2 - 20)
 		}
 
-		let cuttedmage = CGImageCreateWithImageInRect(image.CGImage, rect)
-		let resultImage = UIImage(CGImage: cuttedmage!)
+		let cuttedmage = image?.cgImage?.cropping(to: rect)
+		let resultImage = UIImage(cgImage: cuttedmage!)
 		
 		return resultImage
 	}

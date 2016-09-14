@@ -11,8 +11,8 @@ import Foundation
 extension Array {
 
 	// 批量删除数字中的元素
-	mutating func removeAtIndexes(incs: [Int]) {
-		incs.sort(>).forEach { removeAtIndex($0) }
+	mutating func removeAtIndexes(_ incs: [Int]) {
+		incs.sorted(by: >).forEach { remove(at: $0) }
 	}
 
 }
@@ -31,7 +31,7 @@ extension Array where Element:Equatable {
 	}
 }
 
-func uniq<S: SequenceType, E: Hashable where E==S.Generator.Element>(source: S) -> [E] {
+func uniq<S: Sequence, E: Hashable>(_ source: S) -> [E] where E==S.Iterator.Element {
 	var seen: [E:Bool] = [:]
 	return source.filter({ (v) -> Bool in
 		return seen.updateValue(true, forKey: v) == nil

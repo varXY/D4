@@ -16,17 +16,17 @@ protocol MailSending: UserDefaults {
 extension MailSending where Self: UIViewController {
 
 	func sendSupportEmail() {
-		let parts = UIDevice.currentDevice().identifierForVendor?.UUIDString.componentsSeparatedByString("-")
-		let index = random() % parts!.count
+		let parts = UIDevice.current.identifierForVendor?.uuidString.components(separatedBy: "-")
+		let index = Int(arc4random()) % parts!.count
 		let code = "\n\n\n" + "用户_" + "\(index)" + parts![index] + "\n"
 
-		let firstStory = getAuthor() != "" ? "第一个故事_" + getAuthor().componentsSeparatedByString("&")[0] + "\n\n" : ""
+		let firstStory = getAuthor() != "" ? "第一个故事_" + getAuthor().components(separatedBy: "&")[0] + "\n\n" : ""
 
-		let appInfoDict = NSBundle.mainBundle().infoDictionary
+		let appInfoDict = Bundle.main.infoDictionary
 		let appName = appInfoDict!["CFBundleName"] as! String
 		let appVersion = appInfoDict!["CFBundleShortVersionString"] as! String
-		let deviceName = UIDevice.currentDevice().model
-		let iOSVersion = UIDevice.currentDevice().systemVersion
+		let deviceName = UIDevice.current.model
+		let iOSVersion = UIDevice.current.systemVersion
 		let deviceInfo = appName + "_" + appVersion + "\n" + deviceName + "_" + iOSVersion
 
 		let messageBody = code + firstStory + deviceInfo
@@ -37,12 +37,12 @@ extension MailSending where Self: UIViewController {
 			controller.setSubject("反馈的一天")
 			controller.setMessageBody(messageBody, isHTML: false)
 			controller.setToRecipients(["pmlcfwcs@foxmail.com"])
-			presentViewController(controller, animated: true, completion: nil)
+			present(controller, animated: true, completion: nil)
 		} else {
-			let alertController = UIAlertController(title: "无法发送邮件", message: "你的设备无法发送邮件，请检测你的设置。", preferredStyle: .Alert)
-			let action = UIAlertAction(title: "确定", style: .Default, handler: nil)
+			let alertController = UIAlertController(title: "无法发送邮件", message: "你的设备无法发送邮件，请检测你的设置。", preferredStyle: .alert)
+			let action = UIAlertAction(title: "确定", style: .default, handler: nil)
 			alertController.addAction(action)
-			presentViewController(alertController, animated: true, completion: nil)
+			present(alertController, animated: true, completion: nil)
 		}
 	}
 
@@ -50,8 +50,8 @@ extension MailSending where Self: UIViewController {
 
 extension UIViewController: MFMailComposeViewControllerDelegate {
 
-	public func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
-		controller.dismissViewControllerAnimated(true, completion: nil)
+	public func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+		controller.dismiss(animated: true, completion: nil)
 	}
 }
 

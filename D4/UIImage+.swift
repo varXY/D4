@@ -11,29 +11,29 @@ import UIKit
 extension UIImage {
 
 	// 生成颜色图片
-    class func imageWithColor(color: UIColor, rect: CGRect) -> UIImage {
+    class func imageWithColor(_ color: UIColor, rect: CGRect) -> UIImage {
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()
         
-        CGContextSetFillColorWithColor(context, color.CGColor)
-        CGContextFillRect(context, rect)
+        context?.setFillColor(color.cgColor)
+        context?.fill(rect)
         
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        return image
+        return image!
     }
 
 	// 下载网络图片
-	class func imageWithURL(url: NSURL, done: (UIImage) -> Void) {
+	class func imageWithURL(_ url: URL, done: @escaping (UIImage) -> Void) {
 
-		let session = NSURLSession.sharedSession()
+		let session = URLSession.shared
 
-		session.downloadTaskWithURL(url, completionHandler: { url, response, error in
+		session.downloadTask(with: url, completionHandler: { url, response, error in
 			if error == nil && url != nil {
-				if let data = NSData(contentsOfURL: url!) {
+				if let data = try? Data(contentsOf: url!) {
 					if let image = UIImage(data: data) {
-						dispatch_async(dispatch_get_main_queue()) {
+						DispatchQueue.main.async {
 							done(image)
 						}
 					}

@@ -9,33 +9,33 @@
 import UIKit
 
 enum AnimationType {
-	case Appear, Disappear, Touched, IsRightAnswer, Bigger, BecomeVisble, Other
+	case appear, disappear, touched, isRightAnswer, bigger, becomeVisble, other
 }
 
 extension UIView {
 
 	// 加动画
-	func animateWithType(animationType: AnimationType, delay: Double, distance: CGFloat) {
+	func animateWithType(_ animationType: AnimationType, delay: Double, distance: CGFloat) {
 
 		switch animationType {
-		case .BecomeVisble:
+		case .becomeVisble:
 			self.alpha = 0.0
 
-			UIView.animateWithDuration(0.5, delay: delay, options: [], animations: { () -> Void in
+			UIView.animate(withDuration: 0.5, delay: delay, options: [], animations: { () -> Void in
 				self.alpha = 0.6
 				}, completion: nil)
 
-		case .Appear:
+		case .appear:
 			self.alpha = 0.0
 			self.frame.origin.y += distance
 
-			UIView.animateWithDuration(0.5, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.2, options: [], animations: { () -> Void in
+			UIView.animate(withDuration: 0.5, delay: delay, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.2, options: [], animations: { () -> Void in
 				self.alpha = 1.0
 				self.frame.origin.y -= distance
 				}, completion: nil)
 
-		case .Disappear:
-			UIView.animateWithDuration(0.5, delay: delay, options: [], animations: { () -> Void in
+		case .disappear:
+			UIView.animate(withDuration: 0.5, delay: delay, options: [], animations: { () -> Void in
 				self.alpha = 0.0
 				}, completion: nil)
 
@@ -45,12 +45,12 @@ extension UIView {
 		}
 	}
 
-	func inOutAnimate(distance: CGFloat, toAlpha: CGFloat) {
+	func inOutAnimate(_ distance: CGFloat, toAlpha: CGFloat) {
 	}
 
 	// 加边框
-	func addBorder(borderColor borderColor: UIColor, width: CGFloat) {
-		self.layer.borderColor = borderColor.CGColor
+	func addBorder(borderColor: UIColor, width: CGFloat) {
+		self.layer.borderColor = borderColor.cgColor
 		self.layer.borderWidth = width
 	}
 

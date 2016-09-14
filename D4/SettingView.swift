@@ -9,9 +9,9 @@
 import UIKit
 
 protocol SettingViewDelegate: class {
-	func presentViewControllerForSettringView(VC: UIViewController)
-	func saveNotificationIndexToUserDefaults(index: Int)
-	func saveAskedAllowNotificationToUserDefaults(asked: Bool)
+	func presentViewControllerForSettringView(_ VC: UIViewController)
+	func saveNotificationIndexToUserDefaults(_ index: Int)
+	func saveAskedAllowNotificationToUserDefaults(_ asked: Bool)
 }
 
 class SettingView: UIView {
@@ -20,7 +20,7 @@ class SettingView: UIView {
 	var primaticButtons: [UIButton]!
 	var promptlabel: UILabel!
 	
-	private let notificationTitles = ["关", "晚八点", "晚九点", "晚十点", "早七点", "早八点", "早九点"]
+	fileprivate let notificationTitles = ["关", "晚八点", "晚九点", "晚十点", "早七点", "早八点", "早九点"]
 
 	var nightStyle = false {
 		didSet {
@@ -40,26 +40,26 @@ class SettingView: UIView {
 	weak var delegate: SettingViewDelegate?
 
 	init() {
-		super.init(frame: CGRectMake(0, 0, ScreenWidth, ScreenHeight))
-		backgroundColor = UIColor.whiteColor()
+		super.init(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: ScreenHeight))
+		backgroundColor = UIColor.white
 		layer.cornerRadius = globalRadius
 		clipsToBounds = true
-		exclusiveTouch = true
+		isExclusiveTouch = true
 
-		iconButton = UIButton(type: .Custom)
+		iconButton = UIButton(type: .custom)
 		iconButton.frame.size = CGSize(width: 60, height: 60)
-		iconButton.center = CGPointMake(center.x, 80)
-		iconButton.setImage(UIImage(named: "Icon"), forState: .Normal)
-		iconButton.addTarget(self, action: #selector(gotoAppStore), forControlEvents: .TouchUpInside)
+		iconButton.center = CGPoint(x: center.x, y: 80)
+		iconButton.setImage(UIImage(named: "Icon"), for: UIControlState())
+		iconButton.addTarget(self, action: #selector(gotoAppStore), for: .touchUpInside)
 		addSubview(iconButton)
 
 		generatePrimaticButtons()
 
 		promptlabel = UILabel()
-		promptlabel.frame.size = CGSizeMake(ScreenWidth, 60)
-		promptlabel.center = CGPointMake(center.x, ScreenHeight - 80)
+		promptlabel.frame.size = CGSize(width: ScreenWidth, height: 60)
+		promptlabel.center = CGPoint(x: center.x, y: ScreenHeight - 80)
 		promptlabel.numberOfLines = 0
-		promptlabel.textAlignment = .Center
+		promptlabel.textAlignment = .center
 		promptlabel.attributedText = attributedString(false)
 		addSubview(promptlabel)
 
@@ -71,52 +71,52 @@ class SettingView: UIView {
 		let center = CGPoint(x: ScreenWidth / 2, y: ScreenHeight / 2)
 		let centerDistance = diagonalLength / 2 + gap
 		let buttonCenters = [
-			CGPointMake(center.x, center.y - centerDistance),
-			CGPointMake(center.x - centerDistance, center.y),
-			CGPointMake(center.x + centerDistance, center.y),
-			CGPointMake(center.x, center.y + centerDistance)
+			CGPoint(x: center.x, y: center.y - centerDistance),
+			CGPoint(x: center.x - centerDistance, y: center.y),
+			CGPoint(x: center.x + centerDistance, y: center.y),
+			CGPoint(x: center.x, y: center.y + centerDistance)
 		]
 
-		let buttonSize = CGSizeMake(diagonalLength / sqrt(2), diagonalLength / sqrt(2))
+		let buttonSize = CGSize(width: diagonalLength / sqrt(2), height: diagonalLength / sqrt(2))
 		let titles = ["\n写作提醒\n" + notificationTitles[0], "分享", "评分", "简介"]
 
 		primaticButtons = buttonCenters.map({
-			let i = buttonCenters.indexOf($0)!
+			let i = buttonCenters.index(of: $0)!
 			let button = prismaticButton(titles[i], center: buttonCenters[i], size: buttonSize)
-			button.addTarget(self, action: #selector(prismaticButtonTouchDown(_:)), forControlEvents: .TouchDown)
-			button.addTarget(self, action: #selector(prismaticButtonTouchInside(_:)), forControlEvents: .TouchUpInside)
+			button.addTarget(self, action: #selector(prismaticButtonTouchDown(_:)), for: .touchDown)
+			button.addTarget(self, action: #selector(prismaticButtonTouchInside(_:)), for: .touchUpInside)
 			addSubview(button)
 			return button
 		})
 
 	}
 
-	func prismaticButton(title: String, center: CGPoint, size: CGSize) -> UIButton {
+	func prismaticButton(_ title: String, center: CGPoint, size: CGSize) -> UIButton {
 		let colorCode = randomColorCode()
-		let button = UIButton(type: .System)
+		let button = UIButton(type: .system)
 		button.backgroundColor = MyColor.code(colorCode).BTColors[0]
 		button.frame.size = size
 		button.center = center
-		button.exclusiveTouch = true
-		button.transform = CGAffineTransformMakeRotation(CGFloat(45 * M_PI / 180))
+		button.isExclusiveTouch = true
+		button.transform = CGAffineTransform(rotationAngle: CGFloat(45 * M_PI / 180))
 
-		let titleLabel = UILabel(frame: CGRectMake(0, 0, size.width, size.height))
-		titleLabel.transform = CGAffineTransformMakeRotation(CGFloat(-45 * M_PI / 180))
+		let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height))
+		titleLabel.transform = CGAffineTransform(rotationAngle: CGFloat(-45 * M_PI / 180))
 		button.addSubview(titleLabel)
 
-		titleLabel.font = ScreenWidth == 320 ? UIFont.systemFontOfSize(14) : UIFont.systemFontOfSize(15)
+		titleLabel.font = ScreenWidth == 320 ? UIFont.systemFont(ofSize: 14) : UIFont.systemFont(ofSize: 15)
 		titleLabel.text = title
 		titleLabel.numberOfLines = 0
 		titleLabel.textColor = MyColor.code(colorCode).BTColors[1]
-		titleLabel.textAlignment = .Center
+		titleLabel.textAlignment = .center
 		return button
 	}
 
 
 
-	func changeColorBaseOnNightStyle(nightStyle: Bool) {
-		backgroundColor = nightStyle ? MyColor.code(5).BTColors[0] : UIColor.whiteColor()
-		iconButton.setImage(UIImage(named: nightStyle ? "IconBlack" : "Icon"), forState: .Normal)
+	func changeColorBaseOnNightStyle(_ nightStyle: Bool) {
+		backgroundColor = nightStyle ? MyColor.code(5).BTColors[0] : UIColor.white
+		iconButton.setImage(UIImage(named: nightStyle ? "IconBlack" : "Icon"), for: UIControlState())
 		randomColorForPrimaticButtons()
 		promptlabel.attributedText = attributedString(nightStyle)
 	}
@@ -130,22 +130,22 @@ class SettingView: UIView {
 		})
 	}
 
-	func attributedString(nightStyle: Bool) -> NSMutableAttributedString {
+	func attributedString(_ nightStyle: Bool) -> NSMutableAttributedString {
 		let texts = ["操作提示\n上下左右划"]
-		let bodyColor = nightStyle ? UIColor.whiteColor() : MyColor.code(5).BTColors[0]
+		let bodyColor = nightStyle ? UIColor.white : MyColor.code(5).BTColors[0]
 
 		let titleAttributes = [
 			NSForegroundColorAttributeName: bodyColor,
-			NSFontAttributeName: UIFont.systemFontOfSize(12)
+			NSFontAttributeName: UIFont.systemFont(ofSize: 12)
 		]
 
 		let bodyAttributes = [
 			NSForegroundColorAttributeName: MyColor.code(14).BTColors[0],
-			NSFontAttributeName: UIFont.boldSystemFontOfSize(15)
+			NSFontAttributeName: UIFont.boldSystemFont(ofSize: 15)
 		]
 
 		let string = NSMutableAttributedString(string: texts[0], attributes: bodyAttributes)
-		let range = string.mutableString.rangeOfString("操作提示")
+		let range = string.mutableString.range(of: "操作提示")
 		string.addAttributes(titleAttributes, range: range)
 
 		return string
@@ -161,18 +161,18 @@ class SettingView: UIView {
 
 extension SettingView {
 
-	func prismaticButtonTouchDown(sender: UIButton) {
+	func prismaticButtonTouchDown(_ sender: UIButton) {
 		let colorCode = randomColorCodeForPrimaticButton()
 		sender.backgroundColor = MyColor.code(colorCode).BTColors[0]
 		guard let titleLabel = sender.subviews[0] as? UILabel else { return }
 		titleLabel.textColor = MyColor.code(colorCode).BTColors[1]
 	}
 
-	func prismaticButtonTouchInside(sender: UIButton) {
-		primaticButtons.forEach({ $0.userInteractionEnabled = false })
-		iconButton.userInteractionEnabled = false
+	func prismaticButtonTouchInside(_ sender: UIButton) {
+		primaticButtons.forEach({ $0.isUserInteractionEnabled = false })
+		iconButton.isUserInteractionEnabled = false
 
-		switch primaticButtons.indexOf(sender)! {
+		switch primaticButtons.index(of: sender)! {
 		case 0: changeNotification()
 		case 1: shareContent()
 		case 2: gotoAppStore()
@@ -180,46 +180,46 @@ extension SettingView {
 		default: break
 		}
 
-		primaticButtons.forEach({ $0.userInteractionEnabled = true })
-		iconButton.userInteractionEnabled = true
+		primaticButtons.forEach({ $0.isUserInteractionEnabled = true })
+		iconButton.isUserInteractionEnabled = true
 	}
 
 	func changeNotification() {
-		let alertController = UIAlertController(title: "设置每日写作提醒", message: "每天写一个故事，提醒一次", preferredStyle: .ActionSheet)
+		let alertController = UIAlertController(title: "设置每日写作提醒", message: "每天写一个故事，提醒一次", preferredStyle: .actionSheet)
 		let actions: [UIAlertAction] = notificationTitles.map({
-			let index = notificationTitles.indexOf($0)!
-			let action = UIAlertAction(title: $0, style: .Default, handler: { (_) in
+			let index = notificationTitles.index(of: $0)!
+			let action = UIAlertAction(title: $0, style: .default, handler: { (_) in
 				self.notificationSelected(index)
 			})
 			return action
 		})
 
 		actions.forEach({ alertController.addAction($0) })
-		alertController.addAction(UIAlertAction(title: "取消", style: .Cancel, handler: nil))
+		alertController.addAction(UIAlertAction(title: "取消", style: .cancel, handler: nil))
 		delegate?.presentViewControllerForSettringView(alertController)
 	}
 
-	func notificationSelected(index: Int) {
+	func notificationSelected(_ index: Int) {
 		delegate?.saveNotificationIndexToUserDefaults(index)
 		scheduleNotification(index)
 	}
 
 	func shareContent() {
 		let text: String = "App Store: 天的故事"
-		let arr: [AnyObject] = [text, appStoreURL!]
+		let arr: [AnyObject] = [text as AnyObject, appStoreURL! as AnyObject]
 		let shareVC = UIActivityViewController(activityItems: arr, applicationActivities: [])
 		delegate?.presentViewControllerForSettringView(shareVC)
 	}
 
 	func gotoAppStore() {
-		UIApplication.sharedApplication().openURL(appStoreURL!)
+		UIApplication.shared.openURL(appStoreURL! as URL)
 	}
 
 	func showInfo() {
 		let title = "开放匿名分享故事社区"
 		let message = "\n一天的故事\n=\n标题\n+\n上午 + 下午 + 晚上\n+\n睡前哲思\n=\n10 + 100 + 100 + 100 + 20\n\n今日100\n=\n50个今日最新\n+\n49个昨日最热\n+\n1个你的故事\n=\n(50 + 49 + 1) × 330\n\nPS：今日100每天刷新一次 <= 100"
-		let alertController = UIAlertController(title: title, message: message, preferredStyle: .ActionSheet)
-		let cancelAction = UIAlertAction(title: "知道了", style: .Cancel, handler: nil)
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+		let cancelAction = UIAlertAction(title: "知道了", style: .cancel, handler: nil)
 		alertController.addAction(cancelAction)
 		delegate?.presentViewControllerForSettringView(alertController)
 	}
@@ -229,29 +229,29 @@ extension SettingView {
 
 extension SettingView {
 
-	func scheduleNotification(index: Int) {
-		let notificationSettings = UIUserNotificationSettings(forTypes: .Alert, categories: nil)
-		let notificationSetting_Sound = UIUserNotificationSettings(forTypes: .Sound, categories: nil)
-		UIApplication.sharedApplication().registerUserNotificationSettings(notificationSettings)
-		UIApplication.sharedApplication().registerUserNotificationSettings(notificationSetting_Sound)
+	func scheduleNotification(_ index: Int) {
+		let notificationSettings = UIUserNotificationSettings(types: .alert, categories: nil)
+		let notificationSetting_Sound = UIUserNotificationSettings(types: .sound, categories: nil)
+		UIApplication.shared.registerUserNotificationSettings(notificationSettings)
+		UIApplication.shared.registerUserNotificationSettings(notificationSetting_Sound)
 
-		let setting = UIApplication.sharedApplication().currentUserNotificationSettings()!
-		let notificationEnable = setting.types != UIUserNotificationType.None
+		let setting = UIApplication.shared.currentUserNotificationSettings!
+		let notificationEnable = setting.types != UIUserNotificationType()
 
 		if notificationEnable || !askedForAllowNotification {
 			if let notification = oldNotification() {
-				UIApplication.sharedApplication().cancelLocalNotification(notification)
+				UIApplication.shared.cancelLocalNotification(notification)
 			}
 
 			if index != 0 {
 				let localNotification = UILocalNotification()
 				localNotification.fireDate = dateFromIndex(index)
-				localNotification.timeZone = NSTimeZone.defaultTimeZone()
-				localNotification.repeatInterval = .Day
+				localNotification.timeZone = TimeZone.current
+				localNotification.repeatInterval = .day
 				localNotification.alertBody = "写故事时间到"
 				localNotification.soundName = UILocalNotificationDefaultSoundName
 
-				UIApplication.sharedApplication().scheduleLocalNotification(localNotification)
+				UIApplication.shared.scheduleLocalNotification(localNotification)
 			}
 
 			if notificationEnable {
@@ -265,11 +265,11 @@ extension SettingView {
 			}
 
 		} else {
-			let alertController = UIAlertController(title: "无法提醒", message: "请在设置里打开通知", preferredStyle: .Alert)
-			let setAction = UIAlertAction(title: "去设置", style: .Default, handler: { (_) in
-				UIApplication.sharedApplication().openURL(NSURL(string: UIApplicationOpenSettingsURLString)!)
+			let alertController = UIAlertController(title: "无法提醒", message: "请在设置里打开通知", preferredStyle: .alert)
+			let setAction = UIAlertAction(title: "去设置", style: .default, handler: { (_) in
+				UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
 			})
-			let cancelAction = UIAlertAction(title: "取消", style: .Default, handler: nil)
+			let cancelAction = UIAlertAction(title: "取消", style: .default, handler: nil)
 
 			alertController.addAction(cancelAction)
 			alertController.addAction(setAction)
@@ -280,12 +280,12 @@ extension SettingView {
 	}
 
 	func oldNotification() -> UILocalNotification? {
-		let allNotifications = UIApplication.sharedApplication().scheduledLocalNotifications
+		let allNotifications = UIApplication.shared.scheduledLocalNotifications
 		if allNotifications?.count == 1 { return allNotifications![0] }
 		return nil
 	}
 
-	func dateFromIndex(index: Int) -> NSDate {
+	func dateFromIndex(_ index: Int) -> Date {
 		var HH = "20"
 		switch index {
 		case 1, 2, 3: HH = "\(index + 19)"
@@ -293,8 +293,8 @@ extension SettingView {
 		default: break
 		}
 
-		let scheduledToday = NSDate.specificDate(tomorrow: false, HH: HH)
-		return scheduledToday.timeIntervalSinceDate(NSDate()) <= 0 ? NSDate.specificDate(tomorrow: true, HH: HH) : scheduledToday
+		let scheduledToday = Date.specificDate(tomorrow: false, HH: HH)
+		return scheduledToday.timeIntervalSince(Date()) <= 0 ? Date.specificDate(tomorrow: true, HH: HH) : scheduledToday
 	}
 }
 

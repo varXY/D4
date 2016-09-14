@@ -25,180 +25,180 @@ struct UDKey {
 }
 
 protocol UserDefaults {
-	var userDefaults: NSUserDefaults { get }
+	var userDefaults: Foundation.UserDefaults { get }
 
-	func saveAuthor(author: String)
+	func saveAuthor(_ author: String)
 	func getAuthor() -> String
 
-	func updateLastWriteDate(date: NSDate)
-	func lastWriteDate() -> NSDate
+	func updateLastWriteDate(_ date: Date)
+	func lastWriteDate() -> Date
 
 	func tip_A_shown() -> Bool
 	func tip_B_shown() -> Bool
 	func saveTip_A_asShown()
 	func saveTip_B_asShown()
 
-	func updateLastLoadDate(date: NSDate)
-	func lastLoadDate() -> NSDate
+	func updateLastLoadDate(_ date: Date)
+	func lastLoadDate() -> Date
 
-	func saveSentencesAndColors(sentences: [String], colors: [Int])
+	func saveSentencesAndColors(_ sentences: [String], colors: [Int])
 	func getSentences() -> [String]?
 	func getColors() -> [Int]?
 	func removeSentencesAndColors()
 
-	func saveLikedStoryIndex(index: Int)
-	func removeLikedStoryIndex(index: Int)
+	func saveLikedStoryIndex(_ index: Int)
+	func removeLikedStoryIndex(_ index: Int)
 	func likedStoryIndexes() -> [Int]
 	func removeAllLikedStoryIndexes()
 
-	func saveLastStoryID(ID: String)
+	func saveLastStoryID(_ ID: String)
 	func getLastStoryID() -> String
 
-	func saveNotificationIndex(index: Int)
+	func saveNotificationIndex(_ index: Int)
 	func getNotificationIndex() -> Int
 
-	func saveAskedAllowNotification(allow: Bool)
+	func saveAskedAllowNotification(_ allow: Bool)
 	func getAskedAllowNotification() -> Bool
 }
 
 extension UserDefaults {
 
-	var userDefaults: NSUserDefaults {
-		return NSUserDefaults.standardUserDefaults()
+	var userDefaults: Foundation.UserDefaults {
+		return Foundation.UserDefaults.standard
 	}
 
-	var yesterday: NSDate {
-		let yesterday = NSDate(timeIntervalSinceNow: -86400)
+	var yesterday: Date {
+		let yesterday = Date(timeIntervalSinceNow: -86400)
 		let stringYesterday = yesterday.string(.MMddyy)
-		return NSDate.getDateWithString(stringYesterday)
+		return Date.getDateWithString(stringYesterday)
 	}
 
-	func saveAuthor(author: String) {
-		userDefaults.setObject(author, forKey: UDKey.Author)
+	func saveAuthor(_ author: String) {
+		userDefaults.set(author, forKey: UDKey.Author)
 		userDefaults.synchronize()
 	}
 
 	func getAuthor() -> String {
-		guard let author = userDefaults.stringForKey(UDKey.Author) else { return "" }
+		guard let author = userDefaults.string(forKey: UDKey.Author) else { return "" }
 		return author
 	}
 
 
-	func updateLastWriteDate(date: NSDate) {
-		userDefaults.setObject(date, forKey: UDKey.LastWriteDate)
+	func updateLastWriteDate(_ date: Date) {
+		userDefaults.set(date, forKey: UDKey.LastWriteDate)
 		userDefaults.synchronize()
 	}
 
-	func lastWriteDate() -> NSDate {
-		guard let date = userDefaults.objectForKey(UDKey.LastWriteDate) as? NSDate else { return yesterday }
+	func lastWriteDate() -> Date {
+		guard let date = userDefaults.object(forKey: UDKey.LastWriteDate) as? Date else { return yesterday }
 		return date
 	}
 
 	func tip_A_shown() -> Bool {
-		guard let shown = userDefaults.objectForKey(UDKey.TipA) as? Bool else { return false }
+		guard let shown = userDefaults.object(forKey: UDKey.TipA) as? Bool else { return false }
 		return shown
 	}
 
 	func tip_B_shown() -> Bool {
-		guard let shown = userDefaults.objectForKey(UDKey.TipB) as? Bool else { return false }
+		guard let shown = userDefaults.object(forKey: UDKey.TipB) as? Bool else { return false }
 		return shown
 	}
 
 	func saveTip_A_asShown() {
-		userDefaults.setBool(true, forKey: UDKey.TipA)
+		userDefaults.set(true, forKey: UDKey.TipA)
 		userDefaults.synchronize()
 	}
 
 	func saveTip_B_asShown() {
-		userDefaults.setBool(true, forKey: UDKey.TipB)
+		userDefaults.set(true, forKey: UDKey.TipB)
 		userDefaults.synchronize()
 	}
 
 
-	func updateLastLoadDate(date: NSDate) {
-		userDefaults.setObject(date, forKey: UDKey.LastLoadDate)
+	func updateLastLoadDate(_ date: Date) {
+		userDefaults.set(date, forKey: UDKey.LastLoadDate)
 		userDefaults.synchronize()
 	}
 
-	func lastLoadDate() -> NSDate {
-		guard let date = userDefaults.objectForKey(UDKey.LastLoadDate) as? NSDate else { return yesterday }
+	func lastLoadDate() -> Date {
+		guard let date = userDefaults.object(forKey: UDKey.LastLoadDate) as? Date else { return yesterday }
 		return date
 	}
 
-	func saveSentencesAndColors(sentences: [String], colors: [Int]) {
-		userDefaults.setObject(sentences, forKey: UDKey.Sentences)
-		userDefaults.setObject(colors, forKey: UDKey.Colors)
+	func saveSentencesAndColors(_ sentences: [String], colors: [Int]) {
+		userDefaults.set(sentences, forKey: UDKey.Sentences)
+		userDefaults.set(colors, forKey: UDKey.Colors)
 		userDefaults.synchronize()
 	}
 
 	func getSentences() -> [String]? {
-		return userDefaults.objectForKey(UDKey.Sentences) as? [String]
+		return userDefaults.object(forKey: UDKey.Sentences) as? [String]
 	}
 
 	func getColors() -> [Int]? {
-		return userDefaults.objectForKey(UDKey.Colors) as? [Int]
+		return userDefaults.object(forKey: UDKey.Colors) as? [Int]
 	}
 
 	func removeSentencesAndColors() {
-		userDefaults.setObject(nil, forKey: UDKey.Sentences)
-		userDefaults.setObject(nil, forKey: UDKey.Colors)
+		userDefaults.set(nil, forKey: UDKey.Sentences)
+		userDefaults.set(nil, forKey: UDKey.Colors)
 		userDefaults.synchronize()
 	}
 
 
-	func saveLikedStoryIndex(index: Int) {
-		guard let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] else { return }
+	func saveLikedStoryIndex(_ index: Int) {
+		guard let likes = userDefaults.object(forKey: UDKey.LikedStoryIndexes) as? [Int] else { return }
 		let newLikes = likes + [index]
-		userDefaults.setObject(newLikes, forKey: UDKey.LikedStoryIndexes)
+		userDefaults.set(newLikes, forKey: UDKey.LikedStoryIndexes)
 		userDefaults.synchronize()
 	}
 
-	func removeLikedStoryIndex(index: Int) {
-		guard let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] else { return }
+	func removeLikedStoryIndex(_ index: Int) {
+		guard let likes = userDefaults.object(forKey: UDKey.LikedStoryIndexes) as? [Int] else { return }
 		let newLikes = likes.filter({ $0 != index })
-		userDefaults.setObject(newLikes, forKey: UDKey.LikedStoryIndexes)
+		userDefaults.set(newLikes, forKey: UDKey.LikedStoryIndexes)
 		userDefaults.synchronize()
 	}
 
 	func likedStoryIndexes() -> [Int] {
-		guard let likes = userDefaults.objectForKey(UDKey.LikedStoryIndexes) as? [Int] else { return [Int]() }
+		guard let likes = userDefaults.object(forKey: UDKey.LikedStoryIndexes) as? [Int] else { return [Int]() }
 		return likes
 	}
 
 	func removeAllLikedStoryIndexes() {
-		userDefaults.setObject([Int](), forKey: UDKey.LikedStoryIndexes)
+		userDefaults.set([Int](), forKey: UDKey.LikedStoryIndexes)
 		userDefaults.synchronize()
 	}
 
 
 
-	func saveLastStoryID(ID: String) {
-		userDefaults.setObject(ID, forKey: UDKey.LastStoryID)
+	func saveLastStoryID(_ ID: String) {
+		userDefaults.set(ID, forKey: UDKey.LastStoryID)
 		userDefaults.synchronize()
 	}
 
 	func getLastStoryID() -> String {
-		guard let ID = userDefaults.stringForKey(UDKey.LastStoryID) else { return "" }
+		guard let ID = userDefaults.string(forKey: UDKey.LastStoryID) else { return "" }
 		return ID
 	}
 
-	func saveNotificationIndex(index: Int) {
-		userDefaults.setObject(index, forKey: UDKey.notificationIndex)
+	func saveNotificationIndex(_ index: Int) {
+		userDefaults.set(index, forKey: UDKey.notificationIndex)
 		userDefaults.synchronize()
 	}
 
 	func getNotificationIndex() -> Int {
-		guard let index = userDefaults.objectForKey(UDKey.notificationIndex) as? Int else { return 0 }
+		guard let index = userDefaults.object(forKey: UDKey.notificationIndex) as? Int else { return 0 }
 		return index
 	}
 
-	func saveAskedAllowNotification(allow: Bool) {
-		userDefaults.setBool(allow, forKey: UDKey.askedAllowNotification)
+	func saveAskedAllowNotification(_ allow: Bool) {
+		userDefaults.set(allow, forKey: UDKey.askedAllowNotification)
 		userDefaults.synchronize()
 	}
 
 	func getAskedAllowNotification() -> Bool {
-		guard let allow = userDefaults.objectForKey(UDKey.askedAllowNotification) as? Bool else { return false }
+		guard let allow = userDefaults.object(forKey: UDKey.askedAllowNotification) as? Bool else { return false }
 		return allow
 	}
 

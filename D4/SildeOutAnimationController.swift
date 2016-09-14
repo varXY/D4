@@ -10,16 +10,16 @@ import UIKit
 
 class SlideOutAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
 
-	func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+	func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
 		return 0.4
 	}
 
-	func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
+	func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 
-		if let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey) {
-			fromView.backgroundColor = UIColor.clearColor()
+		if let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from) {
+			fromView.backgroundColor = UIColor.clear
 
-			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
+			UIView.perform(.delete, on: [], options: [], animations: {
 				fromView.alpha = 0.0
 				fromView.frame.origin.x += ScreenWidth
 				}, completion: { (finished) in

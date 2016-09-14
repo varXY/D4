@@ -14,7 +14,7 @@ class StoryView: UIView {
 
 	init(story: Story) {
 		super.init(frame: ScreenBounds)
-		backgroundColor = UIColor.clearColor()
+		backgroundColor = UIColor.clear
 		layer.cornerRadius = globalRadius
 		clipsToBounds = true
 
@@ -24,48 +24,48 @@ class StoryView: UIView {
     
 	}
 
-	func reloadStory(story: Story) {
+	func reloadStory(_ story: Story) {
         labels.forEach({
-            let index = labels.indexOf($0)!
+            let index = labels.index(of: $0)!
             $0.backgroundColor = MyColor.code(story.colors[index]).BTColors[0]
             
             if index == 0 || index == 4 {
                 $0.textColor = MyColor.code(story.colors[index]).BTColors[1]
                 $0.text = story.sentences[index]
             } else {
-                $0.attributedText = textWithStyle(story.sentences[index], color: MyColor.code(story.colors[index]).BTColors[1], font: UIFont.systemFontOfSize(17))
+                $0.attributedText = textWithStyle(story.sentences[index], color: MyColor.code(story.colors[index]).BTColors[1], font: UIFont.systemFont(ofSize: 17))
             }
             
         })
 	}
     
-    func labelsLoadStory(story: Story) {
+    func labelsLoadStory(_ story: Story) {
         labels.forEach({
-            let index = labels.indexOf($0)!
+            let index = labels.index(of: $0)!
             $0.backgroundColor = MyColor.code(story.colors[index]).BTColors[0]
             $0.adjustsFontSizeToFitWidth = true
             
             if index == 0 || index == 4 {
                 $0.textColor = MyColor.code(story.colors[index]).BTColors[1]
-                $0.textAlignment = .Center
+                $0.textAlignment = .center
                 $0.text = story.sentences[index]
-                $0.font = index == 0 ? UIFont.boldSystemFontOfSize(17) : UIFont.italicSystemFontOfSize(17)
+                $0.font = index == 0 ? UIFont.boldSystemFont(ofSize: 17) : UIFont.italicSystemFont(ofSize: 17)
             } else {
                 $0.numberOfLines = 0
-                $0.attributedText = textWithStyle(story.sentences[index], color: MyColor.code(story.colors[index]).BTColors[1], font: UIFont.systemFontOfSize(17))
+                $0.attributedText = textWithStyle(story.sentences[index], color: MyColor.code(story.colors[index]).BTColors[1], font: UIFont.systemFont(ofSize: 17))
             }
             
         })
     }
 
 	func blockFrames() -> [CGRect] {
-		func blockFrame(index: Int) -> CGRect {
+		func blockFrame(_ index: Int) -> CGRect {
 			let bigBlockHeight = (ScreenHeight - 100) / 3
 			let addend = index == 0 ? 0 : smallBlockHeight
 			let factor = index == 0 ? 0 : index - 1
 			let y = addend + bigBlockHeight * CGFloat(factor)
 			let height = (index == 0 || index == 4) ? smallBlockHeight : bigBlockHeight
-			return CGRectMake(0, y, ScreenWidth, height)
+			return CGRect(x: 0, y: y, width: ScreenWidth, height: height)
 		}
 
 		let indexes = [0, 1, 2, 3, 4]

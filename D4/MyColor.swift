@@ -23,7 +23,7 @@ func fiveRandomColorCodes() -> [Int] {
 }
 
 func randomColorCode() -> Int {
-	let index = random() % colorCode.count
+	let index = Int(arc4random()) % colorCode.count
 	return colorCode[index]
 }
 
@@ -34,7 +34,7 @@ func randomColorCodeForPrimaticButton() -> Int {
 	             3, 13, 23, 33, 43,
 	             4, 14, 24, 34, 44,
 	             15, 25, 35, 45]
-	return codes[random() % codes.count]
+	return codes[Int(arc4random()) % codes.count]
 }
 
 func randomBTColors() -> [UIColor] {
@@ -90,7 +90,7 @@ enum MyColor {
 		}
 
 		let backgroundColor = UIColor.colorWithValues(colorValue)
-		let textColor = black ? UIColor.blackColor() : UIColor.whiteColor()
+		let textColor = black ? UIColor.black : UIColor.white
 
 		return [backgroundColor, textColor]
 	}

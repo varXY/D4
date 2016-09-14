@@ -9,7 +9,7 @@
 import UIKit
 
 protocol InputViewControllerDelegate: class {
-	func inputTextViewDidReturn(index: Int, text: String)
+	func inputTextViewDidReturn(_ index: Int, text: String)
 }
 
 class InputViewController: UIViewController {
@@ -38,7 +38,7 @@ class InputViewController: UIViewController {
 
 	weak var delegate: InputViewControllerDelegate?
 
-	override func prefersStatusBarHidden() -> Bool {
+	override var prefersStatusBarHidden : Bool {
 		return true
 	}
 
@@ -47,18 +47,18 @@ class InputViewController: UIViewController {
 		view.backgroundColor = MyColor.code(colorCode).BTColors[0]
 //		transitioningDelegate = self
 
-		numberLabel = UILabel(frame: CGRectMake(0, 0, ScreenWidth, 60))
-		numberLabel.backgroundColor = UIColor.clearColor()
+		numberLabel = UILabel(frame: CGRect(x: 0, y: 0, width: ScreenWidth, height: 60))
+		numberLabel.backgroundColor = UIColor.clear
 		numberLabel.textColor = MyColor.code(colorCode).BTColors[1]
 		numberLabel.alpha = elementAlpha
-		numberLabel.textAlignment = .Center
-		numberLabel.font = UIFont.boldSystemFontOfSize(28)
+		numberLabel.textAlignment = .center
+		numberLabel.font = UIFont.boldSystemFont(ofSize: 28)
 		numberLabel.text = String(textLimit)
 		view.addSubview(numberLabel)
 
 		let factor: CGFloat = ScreenHeight != 480 ? 0.38 : 0.3
-		textView = UITextView(frame: CGRectMake(0, 60, ScreenWidth, ScreenHeight * factor))
-		textView.backgroundColor = UIColor.clearColor()
+		textView = UITextView(frame: CGRect(x: 0, y: 60, width: ScreenWidth, height: ScreenHeight * factor))
+		textView.backgroundColor = UIColor.clear
 		textView.tintColor = MyColor.code(colorCode).BTColors[1]
 //		textView.textColor = MyColor.code(colorCode).BTColors[1]
 //		textView.font = UIFont.systemFontOfSize(25)
@@ -67,7 +67,7 @@ class InputViewController: UIViewController {
 		textView.delegate = self
 		view.addSubview(textView)
         
-        textView.typingAttributes = textAttributes(MyColor.code(colorCode).BTColors[1], font: UIFont.systemFontOfSize(25))
+        textView.typingAttributes = textAttributes(MyColor.code(colorCode).BTColors[1], font: UIFont.systemFont(ofSize: 25))
 
 		if index == 0 || index == 4 {
 			let length = textView.frame.size.height / 2 - 40
@@ -79,13 +79,13 @@ class InputViewController: UIViewController {
 				if ScreenHeight == 568 { addend = -40 }
 				if ScreenHeight == 480 { addend = -70 }
 
-				let dayLabel = UILabel(frame: CGRectMake(0, textView.frame.origin.y + textView.frame.height + addend, ScreenWidth, 40))
+				let dayLabel = UILabel(frame: CGRect(x: 0, y: textView.frame.origin.y + textView.frame.height + addend, width: ScreenWidth, height: 40))
 				dayLabel.text = "的一天"
-				dayLabel.backgroundColor = UIColor.clearColor()
+				dayLabel.backgroundColor = UIColor.clear
 				dayLabel.textColor = MyColor.code(colorCode).BTColors[1]
 				dayLabel.alpha = elementAlpha
-				dayLabel.textAlignment = .Center
-				dayLabel.font = UIFont.boldSystemFontOfSize(28)
+				dayLabel.textAlignment = .center
+				dayLabel.font = UIFont.boldSystemFont(ofSize: 28)
 				view.addSubview(dayLabel)
 			}
 
@@ -93,7 +93,7 @@ class InputViewController: UIViewController {
 
 	}
 
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 
 		if index == 0 && oldText != "" && oldText.characters.count >= 3 {
@@ -103,32 +103,32 @@ class InputViewController: UIViewController {
 		}
 
 //		textView.text = oldText
-        textView.attributedText = textWithStyle(oldText, color: MyColor.code(colorCode).BTColors[1], font: UIFont.systemFontOfSize(25))
+        textView.attributedText = textWithStyle(oldText, color: MyColor.code(colorCode).BTColors[1], font: UIFont.systemFont(ofSize: 25))
 		numberLabel.text = String(textLimit - oldText.characters.count)
 
 		if ScreenWidth != 320 { textView.becomeFirstResponder() }
 	}
 
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		if ScreenWidth == 320 { textView.becomeFirstResponder() }
 	}
 
 	func addBackButton() {
-		let backButton = UIButton(type: .System)
-		backButton.frame = CGRectMake(0, ScreenHeight / 2 + 20, ScreenWidth, ScreenHeight / 2 - 20)
-		backButton.setImage(UIImage(named: "Pointer"), forState: .Normal)
-		backButton.transform = CGAffineTransformMakeRotation(CGFloat(180 * M_PI / 180))
-		backButton.addTarget(self, action: #selector(back), forControlEvents: .TouchUpInside)
+		let backButton = UIButton(type: .system)
+		backButton.frame = CGRect(x: 0, y: ScreenHeight / 2 + 20, width: ScreenWidth, height: ScreenHeight / 2 - 20)
+		backButton.setImage(UIImage(named: "Pointer"), for: UIControlState())
+		backButton.transform = CGAffineTransform(rotationAngle: CGFloat(180 * M_PI / 180))
+		backButton.addTarget(self, action: #selector(back), for: .touchUpInside)
 		backButton.tintColor = MyColor.code(colorCode).BTColors[1]
-		backButton.exclusiveTouch = true
+		backButton.isExclusiveTouch = true
 		view.addSubview(backButton)
 	}
 
 	func back() {
 		if newLimit >= 0 {
 			delegate?.inputTextViewDidReturn(index, text: textView.text)
-			dismissViewControllerAnimated(true, completion: nil)
+			dismiss(animated: true, completion: nil)
 		}
 	}
 
@@ -139,18 +139,18 @@ class InputViewController: UIViewController {
 			"话太多",
 			"少说两句"
 		]
-		let index = random() % alertTexts.count
+		let index = Int(arc4random()) % alertTexts.count
 		return alertTexts[index]
 	}
 }
 
 extension InputViewController: UITextViewDelegate {
 
-	func textViewDidChange(textView: UITextView) {
-		let alertColor = colorCode == 14 ? MyColor.code(34).BTColors[0] : UIColor.redColor()
+	func textViewDidChange(_ textView: UITextView) {
+		let alertColor = colorCode == 14 ? MyColor.code(34).BTColors[0] : UIColor.red
 
-		if let range = textView.text.rangeOfString("\n") {
-			textView.text.removeRange(range)
+		if let range = textView.text.range(of: "\n") {
+			textView.text.removeSubrange(range)
 
 			if newLimit >= 0 {
 				textView.resignFirstResponder()
@@ -165,14 +165,14 @@ extension InputViewController: UITextViewDelegate {
 				}
 
 				delegate?.inputTextViewDidReturn(index, text: text)
-				dismissViewControllerAnimated(true, completion: nil)
+				dismiss(animated: true, completion: nil)
 			} else {
-				UIView.animateWithDuration(0.1, animations: {
+				UIView.animate(withDuration: 0.1, animations: {
 					self.numberLabel.alpha = 0.0
 					}, completion: { (_) in
 						self.numberLabel.text = self.randomAlertText()
 						self.numberLabel.textColor = MyColor.code(self.colorCode).BTColors[1]
-						UIView.animateWithDuration(0.2, animations: { 
+						UIView.animate(withDuration: 0.2, animations: { 
 							self.numberLabel.alpha = self.elementAlpha
 							}, completion: { (_) in
 								delay(seconds: 0.3, completion: { 
@@ -192,18 +192,18 @@ extension InputViewController: UITextViewDelegate {
 
 	}
 
-	func textViewDidEndEditing(textView: UITextView) {
+	func textViewDidEndEditing(_ textView: UITextView) {
 		delay(seconds: 1.5) { self.addBackButton() }
 	}
 }
 
 extension InputViewController: UIViewControllerTransitioningDelegate {
 
-	func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return BounceAnimationController()
 	}
 
-	func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return FadeOutAnimationController()
 	}
 }

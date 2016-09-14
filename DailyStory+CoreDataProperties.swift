@@ -15,7 +15,7 @@ import CoreData
 extension DailyStory {
 
 	@NSManaged var id: String?
-    @NSManaged var date: NSDate?
+    @NSManaged var date: Date?
     @NSManaged var rating: NSNumber?
     @NSManaged var author: String?
     @NSManaged var sentences: Sentences?

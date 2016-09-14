@@ -11,8 +11,8 @@ import UIKit
 
 class SLabel: UILabel {
 
-	override func drawTextInRect(rect: CGRect) {
+	override func drawText(in rect: CGRect) {
 		let insets = UIEdgeInsets.init(top: 0, left: 10, bottom: 0, right: 10)
-		super.drawTextInRect(UIEdgeInsetsInsetRect(rect, insets))
+		super.drawText(in: UIEdgeInsetsInsetRect(rect, insets))
 	}
 }

@@ -10,15 +10,15 @@ import UIKit
 
 class FadeOutAnimationController: NSObject, UIViewControllerAnimatedTransitioning {
 
-	func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+	func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
 		return 0.4
 	}
 
-	func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-		if let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey) {
-			let duration = transitionDuration(transitionContext)
+	func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+		if let fromView = transitionContext.view(forKey: UITransitionContextViewKey.from) {
+			let duration = transitionDuration(using: transitionContext)
 
-			UIView.animateWithDuration(duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
+			UIView.animate(withDuration: duration, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.5, options: [], animations: {
 				fromView.alpha = 0
 			}, completion: { (finished) -> Void in
 				transitionContext.completeTransition(finished)

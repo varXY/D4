@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension NSDate {
+extension Date {
 
 	enum Fomatter: String {
 		case MMddyy = "MM/dd/yy"
@@ -19,25 +19,25 @@ extension NSDate {
 		case MMdd = "MM/dd"
 	}
 
-	func string(fomatter: Fomatter) -> String {
-		let dateFomatter = NSDateFormatter()
+	func string(_ fomatter: Fomatter) -> String {
+		let dateFomatter = DateFormatter()
 		dateFomatter.dateFormat = fomatter.rawValue
-		let stringDate = dateFomatter.stringFromDate(self)
+		let stringDate = dateFomatter.string(from: self)
 		return stringDate
 	}
 
-	class func getDateWithString(string: String) -> NSDate {
-		let dateFomatter = NSDateFormatter()
+	static func getDateWithString(_ string: String) -> Date {
+		let dateFomatter = DateFormatter()
 		dateFomatter.dateFormat = Fomatter.MMddyyHHmm.rawValue
-		let date = dateFomatter.dateFromString(string + ", 00:00")!
+		let date = dateFomatter.date(from: string + ", 00:00")!
 		return date
 	}
 
-	class func specificDate(tomorrow tomorrow: Bool, HH: String) -> NSDate {
-		let dateFomatter = NSDateFormatter()
+	static func specificDate(tomorrow: Bool, HH: String) -> Date {
+		let dateFomatter = DateFormatter()
 		dateFomatter.dateFormat = Fomatter.MMddyyHHmm.rawValue
-		let day = tomorrow ? NSDate(timeIntervalSinceNow: 86400) : NSDate()
-		let specificDate = dateFomatter.dateFromString(day.string(.MMddyy) + ", " + HH + ":00")!
+		let day = tomorrow ? Date(timeIntervalSinceNow: 86400) : Date()
+		let specificDate = dateFomatter.date(from: day.string(.MMddyy) + ", " + HH + ":00")!
 		return specificDate
 	}
 }

@@ -23,18 +23,18 @@ extension String {
 
 	// 加密和解密URL
     func URLEncodedString() -> String? {
-        let customAllowedSet =  NSCharacterSet.URLQueryAllowedCharacterSet()
-        let escapedString = self.stringByAddingPercentEncodingWithAllowedCharacters(customAllowedSet)
+        let customAllowedSet =  CharacterSet.urlQueryAllowed
+        let escapedString = self.addingPercentEncoding(withAllowedCharacters: customAllowedSet)
         return escapedString
     }
     
     func URLDecodeString() -> String? {
-        let decodedString = self.stringByRemovingPercentEncoding
+        let decodedString = self.removingPercentEncoding
         return decodedString
     }
 
 	// 把.POST时的参数变成.GET时的一串字符
-    static func queryStringFromParameters(parameters: Dictionary<String,String>) -> String? {
+    static func queryStringFromParameters(_ parameters: Dictionary<String,String>) -> String? {
         if (parameters.count == 0)
         {
             return nil

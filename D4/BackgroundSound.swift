@@ -14,16 +14,16 @@ struct BackgroundSound {
 	let done_sound: AVAudioPlayer
 
 	init() {
-		let soundPath_0 = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("Selected", ofType: "m4a")!)
-		let soundPath_1 = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("SwitchOn", ofType: "m4a")!)
-		let soundPath_2 = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("Done3", ofType: "wav")!)
+		let soundPath_0 = URL(fileURLWithPath: Bundle.main.path(forResource: "Selected", ofType: "m4a")!)
+		let soundPath_1 = URL(fileURLWithPath: Bundle.main.path(forResource: "SwitchOn", ofType: "m4a")!)
+		let soundPath_2 = URL(fileURLWithPath: Bundle.main.path(forResource: "Done3", ofType: "wav")!)
 
-		selected_sound = try! AVAudioPlayer(contentsOfURL: soundPath_0)
-		switchOn_sound = try! AVAudioPlayer(contentsOfURL: soundPath_1)
-		done_sound = try! AVAudioPlayer(contentsOfURL: soundPath_2)
+		selected_sound = try! AVAudioPlayer(contentsOf: soundPath_0)
+		switchOn_sound = try! AVAudioPlayer(contentsOf: soundPath_1)
+		done_sound = try! AVAudioPlayer(contentsOf: soundPath_2)
 	}
 
-	func playSound(play: Bool, sound: AVAudioPlayer) {
+	func playSound(_ play: Bool, sound: AVAudioPlayer) {
 		sound.stop()
 		if play {
 			sound.currentTime = 0

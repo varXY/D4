@@ -9,14 +9,14 @@
 import UIKit
 
 protocol DetailViewControllerDelegate: class {
-	func detailViewControllerWillDismiss(topStoryIndex: Int)
-	func ratingChanged(index: Int, rating: Int)
+	func detailViewControllerWillDismiss(_ topStoryIndex: Int)
+	func ratingChanged(_ index: Int, rating: Int)
 }
 
 class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	lazy var previewActions: [UIPreviewActionItem] = {
-		func previewActionForTitle(title: String, style: UIPreviewActionStyle = .Default) -> UIPreviewAction {
+		func previewActionForTitle(_ title: String, style: UIPreviewActionStyle = .default) -> UIPreviewAction {
 			return UIPreviewAction(title: title, style: style) { previewAction, viewController in
 				guard let detailViewController = viewController as? DetailViewController else { return }
 				let like = previewAction.title == "顶"
@@ -43,11 +43,11 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	weak var delegate: DetailViewControllerDelegate?
 
-	override func previewActionItems() -> [UIPreviewActionItem] {
+	override var previewActionItems : [UIPreviewActionItem] {
 		return !likedStoryIndexes().contains(topStoryIndex) && netOrLocalStory != 1 ? previewActions : []
 	}
 
-	override func prefersStatusBarHidden() -> Bool {
+	override var prefersStatusBarHidden : Bool {
 		return true
 	}
 
@@ -66,12 +66,12 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 		view.addGestureRecognizer(tapGesture)
 	}
 
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		showPointerTextBaseOnStoryIndex(topStoryIndex)
 	}
 
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		pointerView.nightStyle = nightStyle
 		
@@ -80,12 +80,12 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 	}
 
-	override func viewWillDisappear(animated: Bool) {
+	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		delegate?.detailViewControllerWillDismiss(topStoryIndex)
 	}
 
-	func showPointerTextBaseOnStoryIndex(index: Int) {
+	func showPointerTextBaseOnStoryIndex(_ index: Int) {
 		pointerView.showNoMore(nil)
 		
 		if index == 0 {
@@ -100,8 +100,8 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 		}
 	}
 
-	func rateButtonTapped(sender: UIButton) {
-		view.userInteractionEnabled = false
+	func rateButtonTapped(_ sender: UIButton) {
+		view.isUserInteractionEnabled = false
 
 		let like = sender.tag == 100
 		let amount = like ? 1 : -1
@@ -112,11 +112,11 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 		likeItOrNot(like, forceTouchWay: false)
 
 		rateViews.ratingLabel.text = "\(newRating)"
-		rateViews.hideAfterTapped({ self.view.userInteractionEnabled = true })
+		rateViews.hideAfterTapped({ self.view.isUserInteractionEnabled = true })
 		rateViewShowed = false
 	}
 
-	func likeItOrNot(like: Bool, forceTouchWay: Bool) {
+	func likeItOrNot(_ like: Bool, forceTouchWay: Bool) {
 		let amount = like ? 1 : -1
 		let newRating = storys[topStoryIndex].rating + amount
 
@@ -126,10 +126,10 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 		}
 
 		let topIndex = topStoryIndex
-		updateRating(storys[topIndex].ID, rating: newRating, done: { (success) in
+		updateRating(storys[topIndex!].ID, rating: newRating, done: { (success) in
 			if success {
-				self.storys[topIndex].rating = newRating
-				self.delegate?.ratingChanged(topIndex, rating: self.storys[topIndex].rating)
+				self.storys[topIndex!].rating = newRating
+				self.delegate?.ratingChanged(topIndex!, rating: self.storys[topIndex!].rating)
 			} else {
 				self.removeLikedStoryIndex(self.topStoryIndex)
 				self.rateViews.likedIndexes = self.likedStoryIndexes()
@@ -150,25 +150,25 @@ class DetailViewController: UIViewController, LeanCloud, UserDefaults {
 
 extension DetailViewController: XYScrollViewDelegate {
 
-	func scrollTypeDidChange(type: XYScrollType) {
+	func scrollTypeDidChange(_ type: XYScrollType) {
 		pointerView.showPointer(type)
 	}
 
-	func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int) {
+	func xyScrollViewWillScroll(_ scrollType: XYScrollType, topViewIndex: Int) {
 		pointerView.hidePointersAndLabels()
 
-		if rateViewShowed && (scrollType == .Up || scrollType == .Down) {
+		if rateViewShowed && (scrollType == .up || scrollType == .down) {
 			rateViewShowed = false
 			rateViews.show(rateViewShowed, rating: storys[topStoryIndex].rating, storyIndex: topStoryIndex)
 		}
 	}
 
-	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int) {
+	func xyScrollViewDidScroll(_ scrollType: XYScrollType, topViewIndex: Int) {
 		switch scrollType {
-		case .Left:
-			dismissViewControllerAnimated(true, completion: nil)
+		case .left:
+			dismiss(animated: true, completion: nil)
 
-		case .Right:
+		case .right:
 			netOrLocalStory != 1 ? showOrHideRateViews() : copyTextOfStory()
 
 		default:
@@ -181,8 +181,8 @@ extension DetailViewController: XYScrollViewDelegate {
 	}
 
 	func copyTextOfStory() {
-		let text = storys[topStoryIndex].sentences.reduce("", combine: { $0 + $1 + "\n\n" })
-		UIPasteboard.generalPasteboard().string = text
+		let text = storys[topStoryIndex].sentences.reduce("", { $0 + $1 + "\n\n" })
+		UIPasteboard.general.string = text
 
 		let hudView = HudView.hudInView(view, animated: true)
 		hudView.text = "已复制"
@@ -195,11 +195,11 @@ extension DetailViewController: XYScrollViewDelegate {
 
 extension DetailViewController: UIViewControllerTransitioningDelegate {
 
-	func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return BounceAnimationController()
 	}
 
-	func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		return SlideOutAnimationController()
 	}
 }

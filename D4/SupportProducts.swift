@@ -10,17 +10,17 @@ import Foundation
 
 public enum SupportProducts {
 
-	private static let Prefix = "com.xiaoyao.StoryOfDay."
+	fileprivate static let Prefix = "com.xiaoyao.StoryOfDay."
 
 	public static let SupportOne = Prefix + "SupportOne"
 
-	private static let productIdentifiers: Set<ProductIdentifier> = [
+	fileprivate static let productIdentifiers: Set<ProductIdentifier> = [
 		SupportProducts.SupportOne,
 		]
 
 	public static let store = IAPHelper(productIdentifiers: SupportProducts.productIdentifiers)
 }
 
-func resourceNameForProductIdentifier(productIdentifier: String) -> String? {
-	return productIdentifier.componentsSeparatedByString(".").last
+func resourceNameForProductIdentifier(_ productIdentifier: String) -> String? {
+	return productIdentifier.components(separatedBy: ".").last
 }

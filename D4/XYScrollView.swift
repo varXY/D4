@@ -9,15 +9,15 @@
 import UIKit
 
 @objc enum XYScrollType: Int {
-	case Up, Down, Left, Right, NotScrollYet
+	case up, down, left, right, notScrollYet
 }
 
 @objc protocol XYScrollViewDelegate: class {
-	func xyScrollViewDidScroll(scrollType: XYScrollType, topViewIndex: Int)
-	optional func xyScrollViewWillScroll(scrollType: XYScrollType, topViewIndex: Int)
-	optional func writeViewWillInputText(index: Int, oldText: String, colorCode: Int)
-	optional func didSelectedStory(storyIndex: Int)
-	func scrollTypeDidChange(type: XYScrollType)
+	func xyScrollViewDidScroll(_ scrollType: XYScrollType, topViewIndex: Int)
+	@objc optional func xyScrollViewWillScroll(_ scrollType: XYScrollType, topViewIndex: Int)
+	@objc optional func writeViewWillInputText(_ index: Int, oldText: String, colorCode: Int)
+	@objc optional func didSelectedStory(_ storyIndex: Int)
+	func scrollTypeDidChange(_ type: XYScrollType)
 }
 
 class XYScrollView: UIScrollView {
@@ -28,9 +28,9 @@ class XYScrollView: UIScrollView {
 	var writeView: WriteView!
 	var settingView: SettingView!
 
-	private let topOrigin = CGPoint(x: 0, y: -ScreenHeight)
-	private let middleOrigin = CGPoint(x: 0, y: 0)
-	private let bottomOrigin = CGPoint(x: 0, y: ScreenHeight)
+	fileprivate let topOrigin = CGPoint(x: 0, y: -ScreenHeight)
+	fileprivate let middleOrigin = CGPoint(x: 0, y: 0)
+	fileprivate let bottomOrigin = CGPoint(x: 0, y: ScreenHeight)
 
 	var storys: [Story]! {
 		didSet {
@@ -47,7 +47,7 @@ class XYScrollView: UIScrollView {
 	var doneReorder = true
 
 
-	var scrolledType: XYScrollType = .NotScrollYet {
+	var scrolledType: XYScrollType = .notScrollYet {
 		didSet {
 			if scrolledType != oldValue {
 				XYDelegate?.scrollTypeDidChange(scrolledType)
@@ -61,7 +61,7 @@ class XYScrollView: UIScrollView {
 
 	init(VC: UIViewController, storys: [Story]?, topStoryIndex: Int?) {
 		super.init(frame: VC.view.bounds)
-		backgroundColor = UIColor.clearColor()
+		backgroundColor = UIColor.clear
 		contentSize = CGSize(width: frame.width, height: 0)
 		alwaysBounceHorizontal = true
 		commonSetUp(self)
@@ -77,7 +77,7 @@ class XYScrollView: UIScrollView {
 
 			let origins_X = [-ScreenWidth, 0, ScreenWidth]
 			contentViews = origins_X.map({
-				let index = origins_X.indexOf($0)
+				let index = origins_X.index(of: $0)
 				if index != 1 {
 					let contentView = UIScrollView(frame: bounds)
 					commonSetUp(contentView)
@@ -103,7 +103,7 @@ class XYScrollView: UIScrollView {
 
 			let origins_Y = [-ScreenHeight, 0, ScreenHeight]
 			contentViews = origins_Y.map({
-				let index = origins_Y.indexOf($0)!
+				let index = origins_Y.index(of: $0)!
 				let contentView = UIScrollView(frame: bounds)
 				commonSetUp(contentView)
 				contentView.frame.origin.y = $0
@@ -125,18 +125,18 @@ class XYScrollView: UIScrollView {
 
 	}
 
-	func commonSetUp(scrollView: UIScrollView) {
+	func commonSetUp(_ scrollView: UIScrollView) {
 		scrollView.layer.cornerRadius = globalRadius
 		scrollView.clipsToBounds = true
-		scrollView.exclusiveTouch = true
-		scrollView.directionalLockEnabled = true
-		scrollView.pagingEnabled = false
+		scrollView.isExclusiveTouch = true
+		scrollView.isDirectionalLockEnabled = true
+		scrollView.isPagingEnabled = false
 		scrollView.scrollsToTop = false
 		scrollView.delegate = self
 		scrollView.decelerationRate = UIScrollViewDecelerationRateFast
 	}
 
-	func threeIndex(topIndex: Int) -> [Int] {
+	func threeIndex(_ topIndex: Int) -> [Int] {
         if storys.count == 1 { return [0, 0, 0] }
 		switch topIndex {
 		case 0:
@@ -149,12 +149,12 @@ class XYScrollView: UIScrollView {
 	}
 
 
-	func moveContentViewToTop(scrollType: XYScrollType) {
+	func moveContentViewToTop(_ scrollType: XYScrollType) {
 		if inMainVC {
 
 			if topViewIndex == 1 {
 				switch scrollType {
-				case .Left:
+				case .left:
 					topViewIndex = 0
 					contentViews[0].alpha = 1.0
 					contentViews[1].removeFromSuperview()
@@ -164,13 +164,13 @@ class XYScrollView: UIScrollView {
 						self.contentViews[0].frame.origin.x += ScreenWidth
 						}, completion: {
 							self.addSubview(self.contentViews[1])
-							self.sendSubviewToBack(self.contentViews[1])
+							self.sendSubview(toBack: self.contentViews[1])
 							delay(seconds: 0.5, completion: {
 								self.writeView.layer.cornerRadius = globalRadius
 							})
 					})
 
-				case .Right:
+				case .right:
 					topViewIndex = 2
 					contentViews[2].alpha = 1.0
 					contentViews[1].removeFromSuperview()
@@ -180,7 +180,7 @@ class XYScrollView: UIScrollView {
 						self.contentViews[2].frame.origin.x -= ScreenWidth
 						}, completion: {
 							self.addSubview(self.contentViews[1])
-							self.sendSubviewToBack(self.contentViews[1])
+							self.sendSubview(toBack: self.contentViews[1])
 					})
 					
 				default:
@@ -188,7 +188,7 @@ class XYScrollView: UIScrollView {
 				}
 			}
 
-			if topViewIndex == 0 && scrollType == .Right {
+			if topViewIndex == 0 && scrollType == .right {
 				topViewIndex = 1
 				contentViews[1].alpha = 1.0
 					
@@ -201,7 +201,7 @@ class XYScrollView: UIScrollView {
 
 			}
 
-			if topViewIndex == 2 && scrollType == .Left {
+			if topViewIndex == 2 && scrollType == .left {
 				topViewIndex = 1
 				contentViews[1].alpha = 1.0
 
@@ -214,21 +214,21 @@ class XYScrollView: UIScrollView {
 		} else {
 
 			switch scrolledType {
-			case .Up:
+			case .up:
 				if topStoryIndex >= 1 && doneReorder {
 					topStoryIndex -= 1
 					doneReorder = false
 
 					contentViews[0].frame.origin = middleOrigin
-					contentViews[0].transform = CGAffineTransformMakeScale(0.9, 0.9)
+					contentViews[0].transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
 					contentViews[0].alpha = 1.0
 					removePartOfStory(contentViews[1], labelIndex: 4)
 
 					animate({
-						self.contentViews[0].transform = CGAffineTransformIdentity
+						self.contentViews[0].transform = CGAffineTransform.identity
 						self.contentViews[1].frame.origin = self.bottomOrigin
 						}, completion: {
-							self.sendSubviewToBack(self.contentViews[1])
+							self.sendSubview(toBack: self.contentViews[1])
 							self.contentViews[1].alpha = 0.0
 							self.contentViews[1].frame.origin = self.topOrigin
 
@@ -241,21 +241,21 @@ class XYScrollView: UIScrollView {
 					})
 				}
 
-			case .Down:
+			case .down:
 				if topStoryIndex <= storys.count - 2 && doneReorder {
 					topStoryIndex += 1
 					doneReorder = false
 
-					bringSubviewToFront(contentViews[2])
+					bringSubview(toFront: contentViews[2])
 					contentViews[2].alpha = 1.0
 					removePartOfStory(contentViews[1], labelIndex: 0)
 
 					animate({
 						self.contentViews[1].alpha = 0.4
-						self.contentViews[1].transform = CGAffineTransformMakeScale(0.9, 0.9)
+						self.contentViews[1].transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
 						self.contentViews[2].frame.origin = self.middleOrigin
 						}, completion: {
-							self.contentViews[1].transform = CGAffineTransformIdentity
+							self.contentViews[1].transform = CGAffineTransform.identity
 							self.contentViews[1].alpha = 0.0
 							self.contentViews[1].frame.origin = self.bottomOrigin
 
@@ -276,21 +276,21 @@ class XYScrollView: UIScrollView {
 
 	}
 
-	func animate(animations: () -> (), completion: (() -> ())?) {
-		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
+	func animate(_ animations: @escaping () -> (), completion: (() -> ())?) {
+		UIView.perform(.delete, on: [], options: [], animations: {
 			animations()
 			}) { (_) in
 				if completion != nil { completion!() }
 		}
 	}
 
-	func changeStoryForContentView(contentView: UIScrollView, storyIndex: Int) {
+	func changeStoryForContentView(_ contentView: UIScrollView, storyIndex: Int) {
 		if let storyView = contentView.subviews[0] as? StoryView {
 			storyView.reloadStory(storys[storyIndex])
 		}
 	}
 
-	func removePartOfStory(contentView: UIScrollView, labelIndex: Int) {
+	func removePartOfStory(_ contentView: UIScrollView, labelIndex: Int) {
 		if let storyView = contentView.subviews[0] as? StoryView {
 			storyView.labels[labelIndex].text = ""
 			if labelIndex == 0 {
@@ -313,27 +313,27 @@ class XYScrollView: UIScrollView {
 
 extension XYScrollView: UIScrollViewDelegate {
 
-	func scrollViewDidScroll(scrollView: UIScrollView) {
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		if scrollView != self {
 			if scrollView.contentOffset.y > TriggerDistance {
-				if scrolledType != .Down { scrolledType = .Down }
+				if scrolledType != .down { scrolledType = .down }
 			} else if scrollView.contentOffset.y < -TriggerDistance {
-				if scrolledType != .Up { scrolledType = .Up }
+				if scrolledType != .up { scrolledType = .up }
 			} else {
-				if scrolledType != .NotScrollYet { scrolledType = .NotScrollYet }
+				if scrolledType != .notScrollYet { scrolledType = .notScrollYet }
 			}
 		} else {
 			if scrollView.contentOffset.x < -TriggerDistance {
-				if scrolledType != .Left { scrolledType = .Left }
+				if scrolledType != .left { scrolledType = .left }
 			} else if scrollView.contentOffset.x > TriggerDistance {
-				if scrolledType != .Right { scrolledType = .Right }
+				if scrolledType != .right { scrolledType = .right }
 			} else {
-				if scrolledType != .NotScrollYet { scrolledType = .NotScrollYet }
+				if scrolledType != .notScrollYet { scrolledType = .notScrollYet }
 			}
 		}
 	}
 
-	func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+	func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
 		XYDelegate?.xyScrollViewWillScroll?(scrolledType, topViewIndex: topViewIndex)
 		moveContentViewToTop(scrolledType)
 		if !inMainVC { topViewIndex = topStoryIndex }
@@ -345,7 +345,7 @@ extension XYScrollView: UIScrollViewDelegate {
 
 extension XYScrollView: StoryTableViewDelegate {
 
-	func didSelectedStory(storyIndex: Int) {
+	func didSelectedStory(_ storyIndex: Int) {
 		XYDelegate?.didSelectedStory!(storyIndex)
 	}
 }
@@ -353,12 +353,12 @@ extension XYScrollView: StoryTableViewDelegate {
 
 extension XYScrollView: WriteViewDelegate {
 
-	func selectingColor(selecting: Bool) {
-		scrollEnabled = !selecting
-		contentViews[0].scrollEnabled = !selecting
+	func selectingColor(_ selecting: Bool) {
+		isScrollEnabled = !selecting
+		contentViews[0].isScrollEnabled = !selecting
 	}
 
-	func willInputText(index: Int, oldText: String, colorCode: Int) {
+	func willInputText(_ index: Int, oldText: String, colorCode: Int) {
 		XYDelegate?.writeViewWillInputText!(index, oldText: oldText, colorCode: colorCode)
 	}
 }

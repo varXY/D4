@@ -9,6 +9,9 @@
 import UIKit
 
 
+let RateViewWidth = ScreenWidth / 4
+
+
 struct RateViews {
 
 	let ratingView: UIVisualEffectView!
@@ -18,40 +21,40 @@ struct RateViews {
 	var buttons = [UIButton]()
 
 	var likedIndexes: [Int]!
-	let width = ScreenWidth / 4
 
 	
+    
 	init(VC: DetailViewController) {
-		let effect = VC.nightStyle ? UIBlurEffect(style: .Dark) : UIBlurEffect(style: .ExtraLight)
-		let textColor = VC.nightStyle ? UIColor.whiteColor() : UIColor.blackColor()
+		let effect = VC.nightStyle ? UIBlurEffect(style: .dark) : UIBlurEffect(style: .extraLight)
+		let textColor = VC.nightStyle ? UIColor.white : UIColor.black
 
 		ratingView = UIVisualEffectView(effect: effect)
-		ratingView.frame = CGRectMake(ScreenWidth, 50, width + 20, 50)
+		ratingView.frame = CGRect(x: ScreenWidth, y: 50, width: RateViewWidth + 20, height: 50)
 		ratingView.layer.cornerRadius = globalRadius
 		ratingView.clipsToBounds = true
 
-		ratingLabel = UILabel(frame: CGRectMake(0, 0, width, 50))
-		ratingLabel.textAlignment = .Center
+		ratingLabel = UILabel(frame: CGRect(x: 0, y: 0, width: RateViewWidth, height: 50))
+		ratingLabel.textAlignment = .center
 		ratingLabel.textColor = textColor
 		ratingView.addSubview(ratingLabel)
 
 		buttonsView = UIVisualEffectView(effect: effect)
-		buttonsView.frame = CGRectMake(ScreenWidth, ScreenHeight - 150, width + 20, 100)
+		buttonsView.frame = CGRect(x: ScreenWidth, y: ScreenHeight - 150, width: RateViewWidth + 20, height: 100)
 		buttonsView.layer.cornerRadius = globalRadius
 		buttonsView.clipsToBounds = true
 
 		let titles = ["顶", "踩"]
-		let frames = [CGRectMake(0, 0, width, 50), CGRectMake(0, 50, width, 50)]
-		buttons = [UIButton(type: .System), UIButton(type: .System)]
+		let frames = [CGRect(x: 0, y: 0, width: RateViewWidth, height: 50), CGRect(x: 0, y: 50, width: RateViewWidth, height: 50)]
+		buttons = [UIButton(type: .system), UIButton(type: .system)]
 		buttons.forEach({
-			let i = buttons.indexOf($0)!
+			let i = buttons.index(of: $0)!
 			$0.frame = frames[i]
-			$0.backgroundColor = UIColor.clearColor()
-			$0.setTitle(titles[i], forState: .Normal)
+			$0.backgroundColor = UIColor.clear
+			$0.setTitle(titles[i], for: UIControlState())
 			$0.tintColor = textColor
 			$0.tag = 100 + i
-			$0.exclusiveTouch = true
-			$0.addTarget(VC, action: #selector(VC.rateButtonTapped(_:)), forControlEvents: .TouchUpInside)
+			$0.isExclusiveTouch = true
+			$0.addTarget(VC, action: #selector(VC.rateButtonTapped(_:)), for: .touchUpInside)
 			buttonsView.addSubview($0)
 		})
 
@@ -62,29 +65,30 @@ struct RateViews {
 
 	}
 
-	mutating func show(show: Bool, rating: Int, storyIndex: Int) {
+    
+	func show(_ show: Bool, rating: Int, storyIndex: Int) {
 		ratingLabel.text = "\(rating)"
 
 		if show {
-			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: { 
-				self.ratingView.frame.origin.x -= self.width
+			UIView.perform(.delete, on: [], options: [], animations: { 
+				self.ratingView.frame.origin.x -= RateViewWidth
 				}, completion: nil)
 
 			let liked = likedIndexes.contains(storyIndex)
 			if !liked {
-				UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-					self.buttonsView.frame.origin.x -= self.width
+				UIView.perform(.delete, on: [], options: [], animations: {
+					self.buttonsView.frame.origin.x -= RateViewWidth
 					}, completion: nil)
 			}
 
 		} else {
-			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-				self.ratingView.frame.origin.x += self.width
+			UIView.perform(.delete, on: [], options: [], animations: {
+				self.ratingView.frame.origin.x += RateViewWidth
 				}, completion: nil)
 
-			if buttonsView.frame.origin.x == ScreenWidth - width {
-				UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-					self.buttonsView.frame.origin.x += self.width
+			if buttonsView.frame.origin.x == ScreenWidth - RateViewWidth {
+				UIView.perform(.delete, on: [], options: [], animations: {
+					self.buttonsView.frame.origin.x += RateViewWidth
 					}, completion: nil)
 			}
 
@@ -92,15 +96,16 @@ struct RateViews {
 
 	}
 
-	func hideAfterTapped(done: () -> ()) {
-		UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-			self.buttonsView.frame.origin.x += self.width
+    
+	func hideAfterTapped(_ done: @escaping () -> ()) {
+		UIView.perform(.delete, on: [], options: [], animations: {
+			self.buttonsView.frame.origin.x += RateViewWidth
 			}) { (_) in
 		}
 
 		delay(seconds: 0.2) {
-			UIView.performSystemAnimation(.Delete, onViews: [], options: [], animations: {
-				self.ratingView.frame.origin.x += self.width
+			UIView.perform(.delete, on: [], options: [], animations: {
+				self.ratingView.frame.origin.x += RateViewWidth
 				}, completion: { (_) in
 					done()
 			})
@@ -108,4 +113,5 @@ struct RateViews {
 
 	}
 
+    
 }
