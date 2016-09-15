@@ -17,7 +17,7 @@ extension MailSending where Self: UIViewController {
 
 	func sendSupportEmail() {
 		let parts = UIDevice.current.identifierForVendor?.uuidString.components(separatedBy: "-")
-		let index = Int(arc4random()) % parts!.count
+		let index = Int(arc4random_uniform(UInt32(parts!.count)))
 		let code = "\n\n\n" + "用户_" + "\(index)" + parts![index] + "\n"
 
 		let firstStory = getAuthor() != "" ? "第一个故事_" + getAuthor().components(separatedBy: "&")[0] + "\n\n" : ""

@@ -139,7 +139,7 @@ class InputViewController: UIViewController {
 			"话太多",
 			"少说两句"
 		]
-		let index = Int(arc4random()) % alertTexts.count
+		let index = Int(arc4random_uniform(UInt32(alertTexts.count)))
 		return alertTexts[index]
 	}
 }

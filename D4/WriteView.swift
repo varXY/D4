@@ -9,10 +9,12 @@
 import Foundation
 import UIKit
 
+
 protocol WriteViewDelegate: class {
 	func selectingColor(_ selecting: Bool)
 	func willInputText(_ index: Int, oldText: String, colorCode: Int)
 }
+
 
 class WriteView: UIView, UserDefaults {
 

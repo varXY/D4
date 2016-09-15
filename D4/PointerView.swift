@@ -281,7 +281,7 @@ class PointerView: UIView {
 			break
 
 		}
-		let index = Int(arc4random()) % tips.count
+		let index = Int(arc4random_uniform(UInt32(tips.count)))
 		return tips[index]
 	}
 

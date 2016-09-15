@@ -23,7 +23,7 @@ func fiveRandomColorCodes() -> [Int] {
 }
 
 func randomColorCode() -> Int {
-	let index = Int(arc4random()) % colorCode.count
+	let index = Int(arc4random_uniform(UInt32(colorCode.count)))
 	return colorCode[index]
 }
 
@@ -34,7 +34,7 @@ func randomColorCodeForPrimaticButton() -> Int {
 	             3, 13, 23, 33, 43,
 	             4, 14, 24, 34, 44,
 	             15, 25, 35, 45]
-	return codes[Int(arc4random()) % codes.count]
+	return codes[Int(arc4random_uniform(UInt32(codes.count)))]
 }
 
 func randomBTColors() -> [UIColor] {

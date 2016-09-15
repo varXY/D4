@@ -196,7 +196,7 @@ extension LeanCloud {
 		}
 
 		if myStory != nil {
-			let randomIndex = newArray.count != 0 ? Int(arc4random()) % newArray.count : 0
+			let randomIndex = newArray.count != 0 ? Int(arc4random_uniform(UInt32(newArray.count))) : 0
 			newArray.insert(myStory!, at: randomIndex)
 		}
 
