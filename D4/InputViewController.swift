@@ -65,6 +65,7 @@ class InputViewController: UIViewController {
 //		textView.textAlignment = .Center
 		textView.textContainerInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
 		textView.delegate = self
+        textView.returnKeyType = .done
 		view.addSubview(textView)
         
         textView.typingAttributes = textAttributes(MyColor.code(colorCode).BTColors[1], font: UIFont.systemFont(ofSize: 25))
