@@ -81,7 +81,7 @@ extension LeanCloud {
 			}
 
 			if error != nil {
-				print(error)
+				print(error!)
 				gotStorys([Story]())
 			}
 
@@ -124,7 +124,7 @@ extension LeanCloud {
 			}
 
 			if error != nil {
-				print(error)
+				print(error!)
 				gotStorys([Story]())
 			}
 			
@@ -154,7 +154,7 @@ extension LeanCloud {
 		let story = AVObject(outDataWithClassName: AVKey.classStory, objectId: ID)
 		story?.setObject(rating, forKey: AVKey.rating)
 		story?.saveInBackground { (success, error) in
-			if error != nil { print(error) }
+			if error != nil { print(error!) }
 			done(success)
 		}
 	}

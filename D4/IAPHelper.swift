@@ -112,7 +112,7 @@ extension IAPHelper: SKPaymentTransactionObserver {
 
 	fileprivate func restoreTransaction(_ transaction: SKPaymentTransaction) {
 		let productIdentifier = transaction.original?.payment.productIdentifier
-		print("restoreTransaction... \(productIdentifier)")
+		print("restoreTransaction... \(String(describing: productIdentifier))")
 		provideContentForProductIdentifier(productIdentifier!)
 		SKPaymentQueue.default().restoreCompletedTransactions()
 		SKPaymentQueue.default().finishTransaction(transaction)
@@ -127,7 +127,7 @@ extension IAPHelper: SKPaymentTransactionObserver {
 
 	fileprivate func failedTransaction(_ transaction: SKPaymentTransaction) {
 		print("failedTransaction...")
-		if (transaction.error as! NSError).code != SKError.Code.paymentCancelled.rawValue {
+		if (transaction.error! as NSError).code != SKError.Code.paymentCancelled.rawValue {
 			print("Transaction error: \(transaction.error!)")
 		}
 		SKPaymentQueue.default().finishTransaction(transaction)

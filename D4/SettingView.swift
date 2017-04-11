@@ -98,10 +98,10 @@ class SettingView: UIView {
 		button.frame.size = size
 		button.center = center
 		button.isExclusiveTouch = true
-		button.transform = CGAffineTransform(rotationAngle: CGFloat(45 * M_PI / 180))
+		button.transform = CGAffineTransform(rotationAngle: CGFloat(45 * Double.pi / 180))
 
 		let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-		titleLabel.transform = CGAffineTransform(rotationAngle: CGFloat(-45 * M_PI / 180))
+		titleLabel.transform = CGAffineTransform(rotationAngle: CGFloat(-45 * Double.pi / 180))
 		button.addSubview(titleLabel)
 
 		titleLabel.font = ScreenWidth == 320 ? UIFont.systemFont(ofSize: 14) : UIFont.systemFont(ofSize: 15)

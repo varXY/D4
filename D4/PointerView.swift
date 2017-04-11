@@ -14,10 +14,10 @@ struct Pointer {
 	let imageName = "Pointer"
 
 	let transforms = [
-		CGAffineTransform(rotationAngle: CGFloat(0 * M_PI / 180)),
-		CGAffineTransform(rotationAngle: CGFloat(180 * M_PI / 180)),
-		CGAffineTransform(rotationAngle: CGFloat(-90 * M_PI / 180)),
-		CGAffineTransform(rotationAngle: CGFloat(90 * M_PI / 180)),
+		CGAffineTransform(rotationAngle: CGFloat(0 * Double.pi / 180)),
+		CGAffineTransform(rotationAngle: CGFloat(180 * Double.pi / 180)),
+		CGAffineTransform(rotationAngle: CGFloat(-90 * Double.pi / 180)),
+		CGAffineTransform(rotationAngle: CGFloat(90 * Double.pi / 180)),
 	]
 
 //	let originCenters = [

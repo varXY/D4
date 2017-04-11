@@ -119,7 +119,7 @@ class InputViewController: UIViewController {
 		let backButton = UIButton(type: .system)
 		backButton.frame = CGRect(x: 0, y: ScreenHeight / 2 + 20, width: ScreenWidth, height: ScreenHeight / 2 - 20)
 		backButton.setImage(UIImage(named: "Pointer"), for: UIControlState())
-		backButton.transform = CGAffineTransform(rotationAngle: CGFloat(180 * M_PI / 180))
+		backButton.transform = CGAffineTransform(rotationAngle: CGFloat(180 * Double.pi / 180))
 		backButton.addTarget(self, action: #selector(back), for: .touchUpInside)
 		backButton.tintColor = MyColor.code(colorCode).BTColors[1]
 		backButton.isExclusiveTouch = true

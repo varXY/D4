@@ -73,8 +73,8 @@ extension CoreDataAndStory {
             if myStorys.count != 0 {
                 storys = myStorys.map({
                     let sentences = [$0.sentences!.s0!, $0.sentences!.s1!, $0.sentences!.s2!, $0.sentences!.s3!, $0.sentences!.s4!]
-                    let colors = [$0.colors!.c0! as Int, $0.colors!.c1! as Int, $0.colors!.c2! as Int, $0.colors!.c3! as Int, $0.colors!.c4! as Int]
-                    let story = Story(date: $0.date!, sentences: sentences, colors: colors, rating: $0.rating! as Int, author: $0.author!)
+                    let colors = [$0.colors!.c0! as! Int, $0.colors!.c1! as! Int, $0.colors!.c2! as! Int, $0.colors!.c3! as! Int, $0.colors!.c4! as! Int]
+                    let story = Story(date: $0.date!, sentences: sentences, colors: colors, rating: $0.rating! as! Int, author: $0.author!)
                     return story
                 })
                 storys = storys.reversed()
@@ -162,8 +162,8 @@ extension CoreDataAndStory {
             if dailyStorys.count != 0 {
                 storys = dailyStorys.map({
                     let sentences = [$0.sentences!.s0!, $0.sentences!.s1!, $0.sentences!.s2!, $0.sentences!.s3!, $0.sentences!.s4!]
-                    let colors = [$0.colors!.c0! as Int, $0.colors!.c1! as Int, $0.colors!.c2! as Int, $0.colors!.c3! as Int, $0.colors!.c4! as Int]
-                    let story = Story(id: $0.id!, date: $0.date!, sentences: sentences, colors: colors, rating: $0.rating! as Int, author: $0.author!)
+                    let colors = [$0.colors!.c0! as! Int, $0.colors!.c1! as! Int, $0.colors!.c2! as! Int, $0.colors!.c3! as! Int, $0.colors!.c4! as! Int]
+                    let story = Story(id: $0.id!, date: $0.date!, sentences: sentences, colors: colors, rating: $0.rating! as! Int, author: $0.author!)
                     return story
                 })
             }
